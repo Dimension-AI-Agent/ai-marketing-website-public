@@ -1,6 +1,6 @@
 # 公開網站協作規則
 
-這個 repository 及其 GitHub Pages 網站完全公開。所有新增檔案、文案、網址和 Git 提交紀錄都可能被外部訪客看到。
+這個 repository 及其 GitHub Pages 網站完全公開，是網站唯一的維護位置。所有新增檔案、文案、網址和 Git 提交紀錄都可能被外部訪客看到。網站只讀取此處的資料，不會自動抓取私人 repository 的內容；移交方式見 `PUBLISHING.md`。
 
 - 此處只維護網站框架及經 Mark 或主題負責人確認可對外使用的內容。原始投稿與待確認素材放在私人 repository `Dimension-AI-Agent/ai-marketing-website` 的 Issue，不要直接放在此處。
 - 素材形式不限；保留來源並避免杜撰產品主張、案例成果或授權狀態。上架前確認文字、圖片、影音及外部連結都適合公開。
