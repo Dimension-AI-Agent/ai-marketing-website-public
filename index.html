@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f4f6fb" />
+    <meta name="description" content="訊達 AI 解決方案行銷內容工作台 Demo" />
+    <title>訊達 AI 解決方案｜內容工作台</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="site-shell">
+      <header class="topbar">
+        <a class="brand" href="#top" aria-label="回到頁首">
+          <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+          <span class="brand-copy"><strong>訊達</strong><small>AI SOLUTIONS</small></span>
+        </a>
+        <nav class="top-nav" aria-label="主要導覽">
+          <a href="#tracks">內容主題</a>
+          <a href="#formats">呈現形式</a>
+          <a href="#timeline">專案時程</a>
+        </nav>
+        <span class="demo-pill"><i></i> 公開 Demo</span>
+      </header>
+
+      <main id="top">
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow"><span class="eyebrow-line"></span> AI MARKETING CONTENT HUB</p>
+            <h1>讓好的 AI 解決方案，<br /><em>有內容，也有入口。</em></h1>
+            <p class="hero-intro">先從素材與主題開始，逐步整理成客戶看得懂、團隊也能持續更新的內容體驗。</p>
+            <div class="hero-actions">
+              <a class="button button-primary" href="#tracks">瀏覽內容主題 <span aria-hidden="true">↘</span></a>
+              <a class="text-link" href="#timeline">查看專案時程 <span aria-hidden="true">→</span></a>
+            </div>
+          </div>
+          <div class="hero-side" aria-label="專案進度摘要">
+            <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+            <div class="hero-orb"><span>AI</span><small>FROM IDEA<br />TO IMPACT</small></div>
+            <div class="floating-note note-top"><span class="note-icon">✳</span><span><b>2</b><small>內容主線</small></span></div>
+            <div class="floating-note note-bottom"><span class="note-icon note-icon-green">↗</span><span><b id="hero-material-count">0</b><small>已收集素材</small></span></div>
+          </div>
+          <div class="hero-meta">
+            <span><i class="meta-dot orange"></i>素材分享 <b>09.29</b></span>
+            <span><i class="meta-dot green"></i>正式網站目標 <b>11.20</b></span>
+            <span class="hero-meta-note">內容先行・持續更新</span>
+          </div>
+        </section>
+
+        <section class="overview" aria-label="內容概況">
+          <div class="overview-heading">
+            <p class="eyebrow">AT A GLANCE</p>
+            <h2>從兩條主線，<span>整理 AI 內容地圖</span></h2>
+          </div>
+          <div class="overview-stats">
+            <div class="stat"><strong>02</strong><span>內容主線</span></div>
+            <div class="stat"><strong id="topic-count">15</strong><span>待整理主題</span></div>
+            <div class="stat"><strong id="material-count">00</strong><span>已收集素材</span></div>
+          </div>
+        </section>
+
+        <section class="tracks-section section-block" id="tracks">
+          <div class="section-heading">
+            <div><p class="eyebrow">CONTENT PILLARS</p><h2>內容主題</h2></div>
+            <p>每個子題先收集一份素材，<br class="desktop-break" />再一起決定內容深度與呈現方式。</p>
+          </div>
+          <div id="track-list" class="track-list" aria-live="polite">
+            <div class="loading-state">正在讀取主題資料…</div>
+          </div>
+        </section>
+
+        <section class="formats-section section-block" id="formats">
+          <div class="section-heading">
+            <div><p class="eyebrow">CONTENT FORMATS</p><h2>同一個主題，多種表達</h2></div>
+            <p>依內容與受眾選擇形式，<br class="desktop-break" />不需要每個主題都做成全套。</p>
+          </div>
+          <div id="format-list" class="format-list" aria-label="內容呈現形式"></div>
+        </section>
+
+        <section class="timeline-section section-block" id="timeline">
+          <div class="section-heading">
+            <div><p class="eyebrow">ROAD TO LAUNCH</p><h2>專案時程</h2></div>
+            <span class="launch-badge"><span class="pulse"></span>目標上線日 <b>2026.11.20</b></span>
+          </div>
+          <div class="timeline-card">
+            <div class="timeline-line" aria-hidden="true"></div>
+            <article class="milestone milestone-current">
+              <div class="milestone-marker"><span></span></div>
+              <div class="milestone-content"><span class="milestone-date">SEP 29 <small>第一階段</small></span><h3>素材分享與盤點</h3><p>兩條主線的各個子題，至少整理一份素材或來源。</p></div>
+              <span class="milestone-status">NEXT</span>
+            </article>
+            <article class="milestone">
+              <div class="milestone-marker"><span></span></div>
+              <div class="milestone-content"><span class="milestone-date">OCT <small>需求與規劃</small></span><h3>與 AP 確認首版範圍</h3><p>釐清平台、內容更新、資安與上線依賴。</p></div>
+              <span class="milestone-status status-planned">PLANNED</span>
+            </article>
+            <article class="milestone">
+              <div class="milestone-marker"><span></span></div>
+              <div class="milestone-content"><span class="milestone-date">NOV 20 <small>正式上線</small></span><h3>發布 AI 行銷網站</h3><p>完成內容確認、驗收及正式環境部署。</p></div>
+              <span class="milestone-status status-planned">TARGET</span>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <a class="brand brand-footer" href="#top"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span><span class="brand-copy"><strong>訊達</strong><small>AI SOLUTIONS</small></span></a>
+        <p>從素材出發，讓 AI 解決方案被看見。</p>
+        <span class="footer-note">CONTENT HUB DEMO · 2026</span>
+      </footer>
+    </div>
+  </body>
+</html>

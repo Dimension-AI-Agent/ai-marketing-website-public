@@ -1,0 +1,42 @@
+{
+  "formats": ["圖片", "影片", "Podcast", "Blog", "互動遊戲", "Agent UI 互動", "問卷", "電子報"],
+  "tracks": [
+    {
+      "id": "hpe-ai-solutions",
+      "number": "01",
+      "title": "HPE & 訊達 AI Solutions",
+      "subtitle": "解決方案與產品內容",
+      "lead": "Gab",
+      "members": ["Gab", "Mark", "Eric"],
+      "accent": "orange",
+      "topics": [
+        {"id": "hardware", "title": "硬體", "description": "AI 基礎架構與硬體產品"},
+        {"id": "software", "title": "軟體", "description": "AI 平台、工具與軟體"},
+        {"id": "integrated-solutions", "title": "整合方案", "description": "從基礎架構到 AI 應用的整體方案"},
+        {"id": "competitive-positioning", "title": "產品定位比較", "description": "產品差異與競爭者比較"},
+        {"id": "hpe-use-cases", "title": "HPE Use Case／成功案例", "description": "HPE 應用情境與成功案例"},
+        {"id": "ai-security", "title": "AI 資安", "description": "AI 架構、資料與資安議題"},
+        {"id": "solutions-other", "title": "其他", "description": "其他相關行銷素材"}
+      ]
+    },
+    {
+      "id": "ai-agent-adoption",
+      "number": "02",
+      "title": "訊達 AI Agent 落地議題",
+      "subtitle": "導入方法與應用內容",
+      "lead": "Derrick",
+      "members": ["Derrick", "Peter", "Ken", "David"],
+      "accent": "green",
+      "topics": [
+        {"id": "enterprise-adoption", "title": "企業導入方法", "description": "企業導入流程、評估方式與 POC"},
+        {"id": "benefit-assessment", "title": "導入效益評估", "description": "效益、成本與成果衡量"},
+        {"id": "on-prem-integration", "title": "地端系統整合方案", "description": "地端 AI 架構與既有系統整合"},
+        {"id": "open-source-tools", "title": "開源工具導入", "description": "開源 AI 工具與導入情境"},
+        {"id": "faq", "title": "常見問題", "description": "客戶常見問題與解答"},
+        {"id": "industry-trends", "title": "AI 業界動態", "description": "AI 技術、產品與市場趨勢"},
+        {"id": "industry-cases", "title": "業界案例／訊達案例分享", "description": "產業應用與訊達實務經驗"},
+        {"id": "agent-other", "title": "其他", "description": "其他 AI Agent 落地素材"}
+      ]
+    }
+  ]
+}
