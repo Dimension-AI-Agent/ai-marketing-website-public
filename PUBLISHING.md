@@ -1,34 +1,17 @@
-# 已確認素材如何上站
+# 素材發布流程
 
-這份說明給 Mark、主題負責人及協助更新網站的 Codex 使用。素材的**提交入口**是 [私人收集區](https://github.com/Dimension-AI-Agent/ai-marketing-website)；這個公開 repository 只存放可對外顯示的版本。
+A 同事在私人專案填表附檔 → 系統檢查並指派 Mark → Mark 確認版本 → 發布程式處理附件與清單 → GitHub Pages 更新網站 → 原提交紀錄收到成功連結或失敗原因。
 
-## 發布流程
+A 與 Mark 不需要手動編輯網站 JSON 或搬檔。技術啟用設定與待驗證事項放在私人專案 SETUP.md。
 
-1. 在私人 Issue 確認子題、內容、原始來源與對外使用狀態。若仍是「待確認」或「不可對外使用」，先留在私人收集區。
-2. 整理要公開的標題、摘要和呈現方式。公開連結必須不依賴私人 GitHub 權限；若是檔案，將已核准的公開版本放入本 repository 的 `assets/`。
-3. 在本 repository 建立 Pull Request，修改 `data/materials.json`；網站框架或主題要調整時，也在這裡修改。Pull Request 請註明對應的私人 Issue 編號，讓有權限的團隊成員能追溯來源；不要把未核准的原稿貼進公開討論。
-4. Mark 或主題負責人確認 Pull Request 後合併到 `main`。GitHub Pages 隨後更新 [固定網址](https://dimension-ai-agent.github.io/ai-marketing-website-public/)；更新不是即時的。
-5. 回到私人 Issue 留下已上站的 Pull Request／網站連結，將標籤改為 `已上站`，再關閉該 Issue。
+## 網站資料
 
-## 網站資料欄位
+data/materials.json 每份素材有固定 id、標題、子題、形式、對外摘要／正文、公開連結、附件清單、核准狀態、版本及更新時間。內部來源、備註與私人附件原始網址不在公開資料內。
 
-每份上站素材在 `data/materials.json` 中是一筆資料。`topicId` 要對應 `data/site.json` 的子題 ID；`url` 或 `file` 至少填一項。`status` 只使用 `已核准`。目前 Demo 顯示素材標題、形式與連結；其他欄位供整理與後續頁面設計使用。
+附件採用系統產生的儲存路徑，顯示時保留原檔名。中文檔名不需人工改名。檔案、素材清單在同一個 Git 提交更新，重試不重複新增。
 
-```json
-{
-  "id": "unique-id",
-  "topicId": "hardware",
-  "title": "公開素材標題",
-  "summary": "公開摘要",
-  "format": "文字",
-  "url": "https://example.com/public-content",
-  "file": "",
-  "owner": "提供者",
-  "status": "已核准",
-  "updatedAt": "2026-09-23"
-}
-```
+新版本修改需要重新核准；舊版本可繼續顯示，直到新版本發布。系統以實際公開站資料的版本回報上站，不能只因 Git 提交成功就宣告完成。
 
-`format` 是素材實際形式的描述，不限定影片、照片、音檔或文字。`file` 若使用檔案，請填入 `assets/` 開頭的路徑，並將檔案一併放入本 repository。不要引用私人 Issue 附件或需要登入私人 GitHub 才能開啟的網址。
+## 人工維護
 
-目前**沒有自動從私人 repository 同步到公開 repository**。私人收集區的新增或修改不會直接影響公開網站；只有此處 `main` 的內容更新才會觸發網站重新發布。
+網站程式調整走 PR。若需緊急下架某項公開素材，由 Mark 明確指示移除相應清單與檔案；Git 歷史仍保有曾公開的版本。素材投稿及內部審核在私人專案處理。
