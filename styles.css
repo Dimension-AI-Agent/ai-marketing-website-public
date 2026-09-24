@@ -158,6 +158,18 @@ h1 em { color: #e78052; font-style: normal; }
 .footer p { margin: 0; color: #919baa; font-size: 9px; }
 .footer-note { margin-left: auto; color: #b1b8c3; font-size: 8px; letter-spacing: .13em; }
 
+.material-list .material-item { display: block; padding: 12px 0; scroll-margin-top: 24px; overflow-wrap: anywhere; }
+.material-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; }
+.material-head strong { font-size: 13px; color: #33445f; }
+.material-item .material-summary { font-size: 12px; line-height: 1.7; margin: 9px 0; white-space: pre-wrap; }
+.material-body { font-size: 12px; line-height: 1.8; margin: 8px 0; }
+.material-body summary { cursor: pointer; color: #576f94; }
+.material-body div { white-space: pre-wrap; margin-top: 8px; }
+.material-attachment { margin-top: 12px; }
+.material-image, .material-attachment video { display: block; max-width: 100%; max-height: 320px; border-radius: 6px; margin-bottom: 8px; }
+.material-attachment audio { display: block; width: 100%; margin-bottom: 8px; }
+.material-attachment a, .material-external { display: block; font-size: 12px; line-height: 1.7; margin: 7px 0; }
+
 @media (max-width: 950px) {
   .topbar { padding: 0 5%; }
   .top-nav { gap: 22px; margin-right: 20px; }

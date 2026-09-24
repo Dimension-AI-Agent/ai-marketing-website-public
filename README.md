@@ -1,13 +1,13 @@
-# ② 公開網站｜網站唯一的維護位置
+# ② 公開網站
 
-網站網址：[https://dimension-ai-agent.github.io/ai-marketing-website-public/](https://dimension-ai-agent.github.io/ai-marketing-website-public/)
+[開啟網站](https://dimension-ai-agent.github.io/ai-marketing-website-public/) · [私人素材提交入口（限團隊）](https://github.com/Dimension-AI-Agent/ai-marketing-website)
 
-這是**網站原始檔與已核准內容**的唯一維護位置。現在先呈現空內容框架 Demo；正式網站目標上線日為 2026-11-20。合併到 `main` 的網站修改會由 GitHub Pages 發布到同一個網址。
+本 repository 放網站前端及已核准公開的內容；任何人都能查看檔案與提交紀錄。
 
-團隊素材請先提交到 [① 私人素材收集區](https://github.com/Dimension-AI-Agent/ai-marketing-website) 的「提交一份素材」表單，由 Mark 或主題負責人確認內容與對外使用狀態。只有可公開的素材才能透過 Pull Request 加入這個 repository。此 repository 的檔案和提交紀錄都可被任何人查看。
+團隊從私人表單交件，Mark 確認後，由私人專案的發布程式複製附件並更新這裡的素材清單。GitHub Pages 會發布到同一個網址。系統只有確認公開網站出現相同版本，才回報已上站。
 
-## 兩個 GitHub 如何接續
+**自動發布仍需在私人專案完成授權設定及真實附件驗證。** 詳情見私人專案的 SETUP.md。
 
-`私人收集區提交 Issue → 人工確認 → 把可公開內容送到此 repository 的 Pull Request → 審核合併到 main → 同一個網站網址更新`
+對外摘要、正文、公開連結和已核准附件可以出現在網站；原始來源與內部備註不會由發布程式帶入。圖片、音訊、影片提供預覽及檔案連結，其他文件提供開啟／下載。
 
-**本站不會自動從私人 repository 抓資料。** 網站只讀取此處的 `data/site.json` 和 `data/materials.json`。提交私人 Issue 不會立即更新網站。請依 [發布說明](PUBLISHING.md) 移交已確認素材。
+網站設計或程式變更走 Pull Request；經 Mark 確認的素材更新由發布程式直接提交 main。參閱 [發布說明](PUBLISHING.md)。

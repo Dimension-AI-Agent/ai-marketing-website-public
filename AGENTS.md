@@ -1,9 +1,10 @@
-# 公開網站協作規則
+# 公開網站規則
 
-這個 repository 及其 GitHub Pages 網站完全公開，是網站唯一的維護位置。所有新增檔案、文案、網址和 Git 提交紀錄都可能被外部訪客看到。網站只讀取此處的資料，不會自動抓取私人 repository 的內容；移交方式見 `PUBLISHING.md`。
+此 repository 是網站前端與公開素材的唯一維護位置，所有檔案和歷史紀錄都可能被訪客看見。
 
-- 此處只維護網站框架及經 Mark 或主題負責人確認可對外使用的內容。原始投稿與待確認素材放在私人 repository `Dimension-AI-Agent/ai-marketing-website` 的 Issue，不要直接放在此處。
-- 素材形式不限；保留來源並避免杜撰產品主張、案例成果或授權狀態。上架前確認文字、圖片、影音及外部連結都適合公開。
-- 新增公開素材時，將其放入 `data/materials.json`，子題 ID 必須存在於 `data/site.json`；網站需要的本機檔案放入 `assets/`。每筆公開素材的 `status` 設為 `已核准`。
-- 先以 Pull Request 提交變更，經確認後合併至 `main`。GitHub Pages 會將同一個公開網址更新為新版本。
-- 不要加入私人 Issue 附件網址、憑證、客戶機敏資料或未取得分享許可的內容。
+- 同事從私人 repository Dimension-AI-Agent/ai-marketing-website 提交素材。不要把待確認的原稿、內部來源或備註放在此處。
+- Mark 於私人專案確認一個素材版本後，發布程式獲授權直接更新此處 main 的附件及素材清單；該步驟不再需要第二次人工 PR。
+- 網站程式或設計變更仍使用 codex/ 分支及 PR。
+- 保留對外內容原意及中文顯示檔名，不自動杜撰產品主張或將文件改寫為文章。
+- data/materials.json 只存公開欄位；附件放 assets/materials/。不要存私人附件網址或憑證。
+- 網頁呈現時轉義文字與檢查連結，只顯示 status 為「已核准」的資料。但資料是否可公開應在加入本 repository 前確認，不能以畫面不顯示當作隱私保護。
