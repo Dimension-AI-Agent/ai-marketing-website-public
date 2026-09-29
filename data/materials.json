@@ -154,5 +154,22 @@
     "status": "已核准",
     "revision": "650c47e9d95e191301fad4ec3b7b139aa53edee8140f0b6a98cfa9188c3bccf8",
     "updatedAt": "2026-09-29T09:16:16.778519+00:00"
+  },
+  {
+    "id": "material-23",
+    "title": "Networking",
+    "topicId": "hardware",
+    "format": "文字／文章",
+    "summary": "HPE Networking 為 AI 資料中心提供高速、可擴充且具韌性的連線基礎。HPE HDR InfiniBand Switches and Cables 支援高效能叢集互連；NVIDIA Spectrum-X Networking for HPE 以乙太網路架構連接並擴充 AI 運算網路；AI-Native Routers 則支援高效能、可程式化的路由與大規模網路營運。三者涵蓋叢集內部互連、AI Ethernet fabric 與跨網域路由需求。",
+    "body": "AI 訓練及推論環境需要在 GPU、伺服器、儲存與不同資料中心之間快速移動大量資料。HPE AI Factory with NVIDIA 提供涵蓋 InfiniBand、AI Ethernet fabric 與路由平台的網路選項。\n\n## HPE HDR InfiniBand Switches and Cables\n\n**產品狀態：目前產品（Current）**\n\nHPE HDR InfiniBand Switches and Cables 為高效能運算與 AI 叢集提供高速互連能力。其 In-Network Computing、適應性路由及網路韌性功能，可支援對延遲、頻寬及大規模資料交換要求較高的工作負載。\n\n[查看 HPE AI Factory 官方介紹](https://www.hpe.com/tw/en/solutions/artificial-intelligence/nvidia-collaboration.html)\n\n## NVIDIA Spectrum-X Networking for HPE\n\n**產品狀態：目前產品（Current）**\n\nNVIDIA Spectrum-X Networking for HPE 是針對 AI 工作負載設計的乙太網路架構。它整合交換器、SuperNIC 等網路技術，用於連接及擴充跨伺服器與資料中心的 AI 運算網路，並兼顧效率及韌性。\n\n[查看 HPE 官方產品資料](https://www.hpe.com/psnow/doc/a00038966enw)\n\n## AI-Native Routers（HPE Juniper Networking PTX10000 Series）\n\n**產品狀態：目前產品（Current）**\n\nHPE AI Factory 將 AI-Native Routers 列為 AI 網路架構的一部分。對應的 HPE Juniper Networking PTX10000 Series 提供高效能、可程式化且可擴充的路由能力，可支援資料中心互連、網路核心及 AI 資料中心等大規模網路需求。\n\n[查看 HPE 官方路由器產品頁](https://www.hpe.com/tw/en/products/networking/routers.html)",
+    "links": [
+      "https://www.hpe.com/tw/en/solutions/artificial-intelligence/nvidia-collaboration.html",
+      "https://www.hpe.com/psnow/doc/a00038966enw",
+      "https://www.hpe.com/tw/en/products/networking/routers.html"
+    ],
+    "files": [],
+    "status": "已核准",
+    "revision": "9cda538a8aa1ad1a07a914e42761843360e33f261876594d344b920f9c45132b",
+    "updatedAt": "2026-09-29T09:17:06.302803+00:00"
   }
 ]
