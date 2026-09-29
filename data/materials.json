@@ -49,5 +49,24 @@
     "status": "已核准",
     "revision": "3350380b5f098d08d4bd02559cfae8954da5b5e35a07be07ddae93b11023b3d1",
     "updatedAt": "2026-09-29T07:09:13.715369+00:00"
+  },
+  {
+    "id": "material-18",
+    "title": "HCI 怎麼選？HPE SimpliVity、Nutanix 與傳統架構有什麼差別？",
+    "topicId": "competitive-positioning",
+    "format": "照片／圖片",
+    "summary": "企業建立虛擬化環境時，不一定只能採用「Server + Storage」的傳統架構。\n\nHPE SimpliVity 與 Nutanix 都屬於 HCI（Hyperconverged Infrastructure，超融合基礎架構），將運算、儲存與虛擬化資源整合在同一套平台中，降低不同設備之間的整合與管理複雜度。\n\n但兩者的起始規模、虛擬化平台、資料保護與擴充方式並不完全相同。\n\n因此選擇 HCI 時，真正需要問的不是「哪一家比較好」，而是：\n\n企業需要多大的起始規模？未來如何擴充？現有 VM 如何移轉？備份與 DR 又準備怎麼做？",
+    "body": "為什麼會出現 HCI？\n\n傳統虛擬化環境通常由不同設備分工：\n\nServer 負責運算 → Storage 負責資料 → Switch 負責連線 → Hypervisor 負責 VM\n\n優點是各層可以獨立規劃。例如 Storage 不夠，就單獨增加 Storage，不一定需要增加 Server。\n\n但代價是企業必須同時管理多套設備與平台。\n\nHCI 的概念，就是將 Compute 與 Storage 整合成 Node，再透過軟體把多個 Node 組成 Cluster。\n\n因此管理方式會從：\n\n管理 Server + SAN + Storage\n\n轉變成：\n\n管理一個 HCI Cluster。\n\nHPE SimpliVity：從較小規模開始，把資料保護一起整合\n\nHPE SimpliVity 是建立在 HPE ProLiant 平台上的 HCI 方案，將 Compute、Storage 與資料服務整合在同一個架構中。\n\n其中一個明顯特色，就是 2 個 SimpliVity Node 即可建立具高可用概念的 Cluster；兩節點環境需要搭配 Arbiter，協助判斷節點狀態，避免兩台主機之間發生 Split-brain。HPE 最新 QuickSpecs 建議至少採用兩個 Node，以發揮完整 HA HCI 架構效益；單一 Cluster 最高可支援 16 Nodes。\n\n簡單來看：\n\nNode 1 + Node 2 + Arbiter\n→ SimpliVity Cluster\n\n這代表企業如果一開始的 VM 數量與工作負載不大，不一定需要從大量節點開始建置。\n\n除了 HCI 本身，SimpliVity 也把 Inline Deduplication、Compression、Backup、Replication 與 Disaster Recovery 等資料服務整合到平台中。\n\n因此 SimpliVity 的定位不只是「把 Server 和 Storage 合在一起」，而是希望進一步減少企業額外建置資料保護架構的複雜度。\n\n目前 SimpliVity 可搭配 Broadcom VMware vSphere，也可以使用 HPE Morpheus VM Essentials；若採 VMware，則需要另外具備 VMware 授權。\n\n比較適合評估的情境\n\n例如：\n\n分公司、Edge Site 或中小型虛擬化環境\n\n希望從 2 Node 起步，再依需求增加節點\n\nIT 人力有限，希望降低 Server、Storage、Backup 的管理複雜度\n\n已經有 VMware 環境，但正在評估未來 Hypervisor 選擇\n\n希望把 Backup / DR 一起納入 HCI 架構\n\nNutanix：從 HCI 往企業虛擬化平台延伸\n\nNutanix 的核心概念同樣是把多台 Server 的 Compute 與 Storage 整合成一個 Cluster。\n\n差異在於 Nutanix 更強調以 AOS + AHV + Prism 建立完整的軟體定義基礎架構。\n\n其中：\n\nAOS 負責分散式 Storage 與資料服務。\n\nAHV 是 Nutanix 自家的 Hypervisor。\n\nPrism 則負責管理 VM、Compute、Storage 等資源。\n\nAHV 不需要獨立購買 Hypervisor 授權，而是包含在 Nutanix Cloud Infrastructure（NCI）授權之中。\n\n一般 Nutanix Cluster 的標準架構為 至少 3 Nodes：\n\nNode 1 + Node 2 + Node 3\n→ Nutanix Cluster\n\n三個節點可以讓 Nutanix 的分散式架構在其中一個 Node 發生故障時，利用其他節點維持資料冗餘與服務。\n\n不過 Nutanix 也提供特殊的 2-Node Cluster，主要針對 ROBO 等小型部署情境，需要另外部署 External Witness，而且只支援部分硬體與功能，因此不能單純理解成所有 Nutanix 環境都一定需要三台。\n\nNutanix 的優勢在於，它不只是 HCI Appliance，而是持續往 Virtualization、Storage、DR、Networking 與 Hybrid Cloud 管理延伸。\n\n因此，如果企業希望未來把多個 Data Center、Private Cloud 或大量 VM 統一到同一套平台管理，Nutanix 就會成為值得評估的方向。\n\n那企業到底該怎麼選？\n\n最簡單可以從三個問題開始。\n\n① 起始規模有多大？\n\n如果是分公司或中小型虛擬化環境，可能只有數十台 VM，SimpliVity 可以從 2 Node 開始建立 HCI Cluster，初期架構相對精簡。\n\n如果企業原本就有較大規模的 VM 環境，希望建立一套持續 Scale-out 的統一平台，則可以進一步評估 Nutanix。\n\n② 未來 Compute 和 Storage 會不會一起成長？\n\nHCI 最自然的擴充方式就是增加 Node。\n\n如果企業增加 VM 的同時，也需要更多 CPU、Memory 與 Storage，那麼 HCI 很適合這種成長模式。\n\n但如果企業只是 Storage 快速增加，CPU 與 Memory 幾乎沒有增加，傳統架構可以單獨擴充 Storage 的特性反而可能更適合。\n\n所以：\n\nHCI 不一定永遠比傳統架構好，關鍵在企業資源如何成長。\n\n③ 企業想管理的是「設備」，還是「平台」？\n\n傳統架構的彈性最高，但 Server、Storage、Backup 與虛擬化平台通常需要分別規劃。\n\nSimpliVity 希望把 HCI + Data Protection 整合起來。\n\nNutanix 則進一步希望把 HCI + Virtualization + Cloud Infrastructure Management 建立成一套平台。\n\n因此三種方案真正的差別，不只是硬體規格，而是：\n\n企業未來想建立什麼樣的 IT 架構。",
+    "links": [],
+    "files": [
+      {
+        "name": "HCI比較圖.png",
+        "file": "assets/materials/18/7f64e4c292325dcb16da-1.png",
+        "kind": "image"
+      }
+    ],
+    "status": "已核准",
+    "revision": "c83383e6488f7bf15153df213bfc403a859ebb00b31767691cb36c8190ee7123",
+    "updatedAt": "2026-09-29T08:00:16.963783+00:00"
   }
 ]
