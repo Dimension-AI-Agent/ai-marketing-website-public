@@ -171,5 +171,23 @@
     "status": "已核准",
     "revision": "9cda538a8aa1ad1a07a914e42761843360e33f261876594d344b920f9c45132b",
     "updatedAt": "2026-09-29T09:17:06.302803+00:00"
+  },
+  {
+    "id": "material-22",
+    "title": "Storage",
+    "topicId": "hardware",
+    "format": "文字／文章",
+    "summary": "HPE Storage 為 AI 資料管線提供可擴充的檔案、物件與區塊儲存基礎。HPE Alletra Storage MP X10000 聚焦高效能檔案與物件儲存，加速將資料轉為 AI-ready 資源；B10000 以 AI 驅動的雲端管理支援關鍵任務區塊與檔案工作負載；HPE GreenLake for File Storage MP 則以企業級效能與規模支援 AI。三項產品協助企業在資料準備、存取、治理與擴充之間建立一致的儲存層。",
+    "body": "AI 專案不只需要運算資源，也需要能持續供應資料、支援大量非結構化內容並配合工作負載擴充的儲存基礎。HPE AI Factory with NVIDIA 將下列產品列為 AI 解決方案中的主要儲存選項。\n\n## HPE Alletra Storage MP X10000\n\n**產品狀態：目前產品（Current）**\n\nHPE Alletra Storage MP X10000 是高效能、可橫向擴充的檔案與物件儲存平台，著重於加速 AI 資料管線。它可協助企業更有效率地提供 AI-ready 資料，支援大量非結構化資料、分析、AI 訓練、推論及資料保護等需求。\n\n[查看 HPE 官方產品頁](https://www.hpe.com/tw/en/products/storage/alletra/mp-x10000.html)\n\n## HPE Alletra Storage MP B10000\n\n**產品狀態：目前產品（Current）**\n\nHPE Alletra Storage MP B10000 提供區塊與檔案儲存能力，採用分離式擴充架構，並透過 AI 驅動的雲端管理簡化儲存營運。它適合需要高可用性、彈性擴充及集中管理的關鍵企業工作負載。\n\n[查看 HPE 官方產品頁](https://www.hpe.com/tw/en/products/storage/alletra/mp-b10000.html)\n\n## HPE GreenLake for File Storage MP\n\n**產品狀態：目前產品（Current）**\n\nHPE GreenLake for File Storage MP 提供企業級檔案儲存效能與擴充能力，可支援 AI、分析及其他資料密集型工作負載。透過一致的雲端操作體驗，企業可依資料與效能需求調整儲存資源。\n\n[查看 HPE 官方產品頁](https://www.hpe.com/tw/en/greenlake/file-storage.html)",
+    "links": [
+      "https://www.hpe.com/tw/en/solutions/artificial-intelligence/nvidia-collaboration.html",
+      "https://www.hpe.com/tw/en/products/storage/alletra/mp-x10000.html",
+      "https://www.hpe.com/tw/en/products/storage/alletra/mp-b10000.html",
+      "https://www.hpe.com/tw/en/greenlake/file-storage.html"
+    ],
+    "files": [],
+    "status": "已核准",
+    "revision": "e1145b0350c4cc296e96522a81d46b48352601f7db3b0f4bf87ad6467a89ad70",
+    "updatedAt": "2026-09-29T09:17:16.505939+00:00"
   }
 ]
