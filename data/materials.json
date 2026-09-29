@@ -291,5 +291,18 @@
     "status": "已核准",
     "revision": "ed3bea89497d0fc9b78f8bb9f8dfde7e1308ccb11001f28b2ce51f6893f9752b",
     "updatedAt": "2026-09-29T11:01:42.695495+00:00"
+  },
+  {
+    "id": "material-33",
+    "title": "企業 AI 名詞辭典｜用簡單的方式看懂 AI",
+    "topicId": "agent-other",
+    "format": "文字／文章",
+    "summary": "LLM、RAG、AI Agent、Vector Database、MCP……企業開始接觸 AI 後，很容易被大量英文名詞搞混。本區將常見 AI 名詞用簡單、不過度技術化的方式說明，並搭配企業實際使用情境，讓非技術人員也能快速了解。",
+    "body": "AI 名詞很多，但不用全部懂技術\n企業開始接觸 AI 後，很容易遇到很多英文縮寫。\n這個 AI 名詞辭典不會只放技術定義，而是固定回答：\n它是什麼？\n企業為什麼需要知道？\n實際可以用在哪裡？\n\n第一批建議名詞：\n\nLLM｜大型語言模型\n可以理解與產生文字的 AI。\n常見用途包括：\n寫文章、摘要、問答、翻譯與文件整理。\n\nRAG｜讓 AI 查企業自己的資料\nRAG 可以讓 AI 在回答問題前，先從企業文件或知識庫找相關資料。\n例如：\n員工詢問公司的請假規定，AI 先查公司 HR 文件再回答。\n\nAI Agent｜可以執行工作的 AI\nAI Agent 不只是回答問題，而是可以：\n理解需求 → 找資料 → 使用工具 → 完成工作。\n例如：\nAI Agent 可以查客戶資料、找歷史維修案件，最後建立工單。\n\nEmbedding｜把文字轉成 AI 可以比較的形式\n可以簡單理解成：\n把一段文字轉成一組數字，讓系統判斷不同內容有多相似。\n\nVector Database｜讓 AI 快速找相似資料\n常用在 RAG。\n例如客戶描述：\n「Server 一直重新啟動。」\n系統可以從數千筆歷史維修案件中找出最相似的案例。\n\nTool Calling｜AI 呼叫工具\nAI 不只回答，還可以呼叫其他系統。\n例如：\n- 查 CRM\n- 查 ERP\n- 查庫存\n- 建立工單\n\nHuman-in-the-loop｜重要步驟由人確認\nAI 提出建議後，不一定直接執行。\n例如：\nAI 建議派工\n→ 人工確認\n→ 才正式建立工單。\n\nLocal LLM｜放在企業自己的 AI 模型\n模型可以部署在企業內部 Server，而不是每次都呼叫外部 Cloud。\n\nFine-tuning｜讓模型針對特定任務進一步訓練\nFine-tuning 與 RAG 不一樣。\nRAG 比較像「讓 AI 查資料」。\nFine-tuning 比較像「調整模型本身的行為」。\n\nHallucination｜AI 看起來很有自信，但答案是錯的\n因此企業 AI 通常需要：\n- RAG\n- Citation\n- 權限\n- 人工審核\n來降低錯誤帶來的風險。\n未來這個辭典可以持續增加，讓客戶在看其他 AI 內容時，可以隨時點進來快速理解。",
+    "links": [],
+    "files": [],
+    "status": "已核准",
+    "revision": "225cbafbcd9a62e56ffa56651e48d78f3f325435658c67e7c0f2143155c54d4b",
+    "updatedAt": "2026-09-29T11:21:56.222124+00:00"
   }
 ]
