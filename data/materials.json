@@ -134,5 +134,25 @@
     "status": "已核准",
     "revision": "588ba03f08d0e73ef1626cc737297aeebbcf7999e9e1e3bfd75ed3588c91d123",
     "updatedAt": "2026-09-29T09:04:29.378787+00:00"
+  },
+  {
+    "id": "material-24",
+    "title": "Supercomputing",
+    "topicId": "hardware",
+    "format": "文字／文章",
+    "summary": "HPE Supercomputing 將機櫃級 AI 系統與 HPE Cray 超級運算整合，用於大規模 AI 訓練、推論及 HPC/AI 融合工作負載。本素材涵蓋 NVIDIA GB200 NVL4 by HPE、NVIDIA GB300 NVL72 by HPE、未來產品 NVIDIA Vera Rubin NVL72 by HPE，以及 HPE Cray Supercomputing 產品系列，協助組織依模型規模、運算密度與部署時程規劃 AI 基礎架構。",
+    "body": "HPE Supercomputing 產品組合涵蓋機櫃級 AI 系統與 HPE Cray 超級運算平台，可支援大型模型訓練、即時推論、科學運算，以及 HPC 與 AI 融合的高密度工作負載。\n\n## NVIDIA GB200 NVL4 by HPE\n\n**產品狀態：目前產品（Current）**\n\nNVIDIA GB200 NVL4 by HPE 是針對 HPC 與 AI 融合工作負載最佳化的系統，著重於運算密度、能源效率及簡化管理。它適合需要在同一基礎架構上執行高效能運算與 AI 工作負載的組織。\n\n[查看 HPE 官方產品資料](https://paths.ext.hpe.com/r/a00155083?cc=tw&lang=en)\n\n## NVIDIA GB300 NVL72 by HPE\n\n**產品狀態：目前產品（Current）**\n\nNVIDIA GB300 NVL72 by HPE 是整合式機櫃級 AI 系統，面向大規模 AI 訓練與即時推論需求，並由 HPE 提供導入、整合與支援能力。\n\n[查看 HPE 官方產品頁](https://www.hpe.com/tw/en/products/compute/hpe-nvidia-gb300-nvl72.html)\n\n## NVIDIA Vera Rubin NVL72 by HPE\n\n**產品狀態：未來產品（Future）**\n\nNVIDIA Vera Rubin NVL72 by HPE 是 HPE 公布的下一代機櫃級 AI 系統，針對大規模推論、agentic AI 與超大型前沿模型設計，並結合 HPE 在直接液冷與大型系統部署方面的能力。\n\n本產品目前屬未來供應項目，不應描述為已普遍上市或目前即可交付。\n\n[查看 HPE 官方產品資料](https://paths.ext.hpe.com/r/a00156978?cc=tw&lang=en)\n\n## HPE Cray Supercomputing\n\n**產品狀態：目前產品系列（Current）**\n\nHPE Cray Supercomputing 是面向大規模 HPC 與 AI 工作負載的超級運算產品系列。其架構整合運算、加速器、高效能互連、儲存、系統軟體及冷卻技術，協助研究機構與企業處理模擬、分析及 AI 等複雜工作流程。\n\n[查看 HPE Cray Supercomputing 官方產品頁](https://www.hpe.com/tw/en/products/supercomputing/cray.html)",
+    "links": [
+      "https://www.hpe.com/tw/en/solutions/artificial-intelligence/nvidia-collaboration.html",
+      "https://www.hpe.com/tw/en/products/supercomputing/ai-rack-scale-systems.html",
+      "https://paths.ext.hpe.com/r/a00155083?cc=tw&lang=en",
+      "https://www.hpe.com/tw/en/products/compute/hpe-nvidia-gb300-nvl72.html",
+      "https://paths.ext.hpe.com/r/a00156978?cc=tw&lang=en",
+      "https://www.hpe.com/tw/en/products/supercomputing/cray.html"
+    ],
+    "files": [],
+    "status": "已核准",
+    "revision": "650c47e9d95e191301fad4ec3b7b139aa53edee8140f0b6a98cfa9188c3bccf8",
+    "updatedAt": "2026-09-29T09:16:16.778519+00:00"
   }
 ]
