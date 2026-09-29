@@ -221,5 +221,18 @@
     "status": "已核准",
     "revision": "b6145958098285e891f3d777c1e7892d4564fa8052b0b0ad6a3fcc745c0b4273",
     "updatedAt": "2026-09-29T10:03:22.297881+00:00"
+  },
+  {
+    "id": "material-27",
+    "title": "企業 AI Agent 地端架構｜AI 如何安全進入企業內部系統",
+    "topicId": "on-prem-integration",
+    "format": "文字／文章",
+    "summary": "企業導入 AI 時，不一定需要把所有資料放到外部雲端。透過地端或混合式架構，可以讓 AI Agent 在企業既有 IT 環境中運作，並依權限連接 CRM、ERP、Database、NAS 等系統，同時保留人工審核、操作紀錄與資安控管。",
+    "body": "AI 不一定只有「把資料丟到外面的 AI」\n\n對企業來說，真正重要的問題通常不是模型多厲害，而是：\n\n* 我的資料放在哪裡？\n* AI 可以看到哪些資料？\n* AI 能不能串公司原本的 ERP？\n* AI 做了哪些操作？\n* 敏感資料能不能留在公司？\n\n一套企業 AI Agent 架構，可以大致分成四個部分。\n\n第一層｜使用者\n\n包括員工、客服、工程師或管理者。\n\n他們透過 Agent UI 或企業內部系統使用 AI。\n\n第二層｜AI Agent\n\nAI Agent 負責理解使用者需求，並判斷下一步需要：\n\n* 查文件\n* 查資料庫\n* 呼叫企業系統\n* 建立工作流程\n* 要求人工審核\n\n第三層｜企業既有系統\n\nAI Agent 可以依權限連接：\n\n* CRM\n* ERP\n* ITSM\n* Database\n* NAS\n* SharePoint\n* 庫存系統\n\n因此企業不一定需要把原本的系統全部換掉。\n\n第四層｜AI 基礎架構\n\n依企業需求，可以使用：\n\n* Cloud AI\n* 地端 AI Server\n* GPU Server\n* Local LLM\n* Vector Database\n* Storage\n\n也可以採 Hybrid 架構，把敏感資料留在企業內部，而部分 AI 能力使用 Cloud。\n\n企業級 AI 還需要安全控制\n\n真正正式上線的 AI 系統通常還需要：\n\n* 使用者登入\n* 角色權限\n* 操作紀錄\n* 人工審核\n* 系統監控\n* 備份\n\n企業 AI 的重點不只是「AI 能不能回答」，而是能不能安全地進入企業原本的 IT 環境。",
+    "links": [],
+    "files": [],
+    "status": "已核准",
+    "revision": "1ae2f0ba5c4b86365aaff399bfcd96b7f808c4c9175992ab69a482071596396b",
+    "updatedAt": "2026-09-29T10:03:26.668380+00:00"
   }
 ]
