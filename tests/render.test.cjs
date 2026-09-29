@@ -38,7 +38,8 @@ test("only approved content appears and Mark's selected article is featured", as
   const { context, elements } = createPage({ records: [...materials, draft] });
   await context.load();
   const html = elements.get("#app").innerHTML;
-  assert.match(html, /共 5 篇/);
+  const approvedCount = materials.filter(item => item.status === "已核准").length;
+  assert.match(html, new RegExp(`共 ${approvedCount} 篇`));
   assert.match(html, /class="focus-label">焦點文章/);
   assert.match(html, /article=material-13/);
   assert.doesNotMatch(html, /未核准內容/);
