@@ -1,122 +1,169 @@
-const formatIcons = {
-  "圖片": "▧",
-  "影片": "▷",
-  "Podcast": "◖))",
-  "Blog": "Aa",
-  "互動遊戲": "✳",
-  "Agent UI 互動": "⌘",
-  "問卷": "☷",
-  "電子報": "✉"
-};
+let content = { items: [], topics: new Map(), featuredMaterialId: "" };
+if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 
-const formatTrack = (track) => `track-${track.accent}`;
-
-function escapeText(value) {
-  return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-  })[char]);
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]);
 }
 
-function safeAssetHref(value) {
+function safeAssetPath(value) {
   if (typeof value !== "string") return "";
   try {
-    const decoded = decodeURIComponent(value);
-    if (!decoded.startsWith("assets/") || /[%\\\u0000-\u001f]/.test(decoded)) return "";
-    const parts = decoded.split("/");
-    if (parts.some((part) => !part || part === "." || part === "..")) return "";
-    return parts.map(encodeURIComponent).join("/");
+    const path = decodeURIComponent(value);
+    if (!path.startsWith("assets/materials/") || /[%\\\u0000-\u001f]/.test(path)) return "";
+    if (path.split("/").some(part => !part || part === "." || part === "..")) return "";
+    return path.split("/").map(encodeURIComponent).join("/");
   } catch { return ""; }
 }
 
-function safePublicHref(value) {
+function safePublicUrl(value) {
   try {
     const url = new URL(value);
-    return ["https:", "http:"].includes(url.protocol) && !url.username && !url.password ? url.href : "";
+    return ["http:", "https:"].includes(url.protocol) && !url.username && !url.password ? url.href : "";
   } catch { return ""; }
 }
 
-function safeMaterialHref(item) {
-  return safePublicHref(item.url) || safeAssetHref(item.file);
+function imageFor(item) {
+  const file = (item.files || []).find(file => file.kind === "image");
+  return file && safeAssetPath(file.file) ? { src: safeAssetPath(file.file), alt: file.name || item.title } : null;
 }
 
-function renderMaterial(item) {
+function teaser(item, max = 115) {
+  const text = (item.summary || item.body || "").replace(/\s+/g, " ").trim();
+  return text.length > max ? `${text.slice(0, max).trimEnd()}…` : text;
+}
+
+function articleUrl(item) { return `?article=${encodeURIComponent(item.id)}`; }
+function topicOf(item) { return content.topics.get(item.topicId) || { title: "其他", track: "內容專欄" }; }
+function artWord(item) { return item.title.includes("Agent") ? "AI Agent" : item.title.includes("VMware") ? "VMware" : item.title.includes("Smart Choice") ? "Smart Choice" : "HPE"; }
+function colorOf(index) { return ["", "orange", "blue"][index % 3]; }
+
+function mediaMarkup(item, index, featured = false) {
+  const image = imageFor(item);
+  const className = featured ? "featured-visual" : `card-media ${colorOf(index)}`;
+  const visual = image ? `<img src="${escapeHtml(image.src)}" alt="${escapeHtml(image.alt)}" loading="lazy">` : `<span class="visual-word" aria-hidden="true">${escapeHtml(artWord(item))}</span>`;
+  return `<div class="${className}">${visual}</div>`;
+}
+
+function cardMarkup(item, index) {
+  const topic = topicOf(item);
+  return `<a class="article-card" href="${articleUrl(item)}" aria-label="閱讀文章：${escapeHtml(item.title)}">
+    ${mediaMarkup(item, index)}
+    <div class="card-content"><div class="card-meta"><span>${escapeHtml(topic.title)}</span><span>${escapeHtml(item.format || "文章")}</span>${item.id === content.featuredMaterialId ? '<span class="focus-label">焦點文章</span>' : ""}</div>
+    <h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(teaser(item, 105))}</p>
+    <div class="card-bottom"><span>${escapeHtml(topic.track)}</span><strong>閱讀文章 ↗</strong></div></div></a>`;
+}
+
+function renderHome(filter = "all") {
+  const items = content.items;
+  const featured = items.find(item => item.id === content.featuredMaterialId) || items[0];
+  if (!featured) {
+    document.querySelector("#app").innerHTML = '<div class="container not-found"><h1>文章準備中</h1><p>已核准的內容發布後，就會出現在這裡。</p></div>';
+    return;
+  }
+  const filters = [{ id: "all", name: "全部文章" }, ...Array.from(new Map(items.map(item => [item.topicId, { id: item.topicId, name: topicOf(item).title }])).values())];
+  const visible = filter === "all" ? items : items.filter(item => item.topicId === filter);
+  const featuredTopic = topicOf(featured);
+  document.title = "訊達 AI 內容專欄";
+  document.querySelector("#app").innerHTML = `<div class="home-page">
+    <section class="home-hero"><div class="container hero-grid"><div class="hero-copy"><div class="eyebrow">AI SOLUTIONS / INSIGHTS</div><h1>從一篇內容開始，<br><em>看見 AI 的實際應用。</em></h1><p>探索訊達 AI 解決方案、基礎架構與導入議題。先找到感興趣的主題，再點進文章完整閱讀。</p><a class="hero-link" href="#articles">探索所有文章 <span>↗</span></a></div><div class="hero-art" aria-hidden="true"><div class="art-orbit"></div><div class="art-center">AI</div><div class="art-card"><strong>${String(items.length).padStart(2, "0")}</strong><span>篇已發布內容</span></div><div class="art-spark">✳</div></div></div></section>
+    <section class="section"><div class="container"><div class="section-heading"><div><div class="eyebrow">FEATURED STORY</div><h2>焦點文章</h2></div><p>先看一個完整的應用情境</p></div><a class="featured" href="${articleUrl(featured)}">${mediaMarkup(featured, 0, true)}<div class="featured-content"><span class="pill">${escapeHtml(featuredTopic.title)}</span><h3>${escapeHtml(featured.title)}</h3><p>${escapeHtml(teaser(featured, 220))}</p><span class="article-link">閱讀完整文章 <span>↗</span></span></div></a></div></section>
+    <section class="topics-section" id="topics"><div class="container"><div class="section-heading"><div><div class="eyebrow">EXPLORE TOPICS</div><h2>依主題探索</h2></div><p>選擇主題，只看你感興趣的文章</p></div><div class="filter-list" role="group" aria-label="文章主題篩選">${filters.map(entry => `<button type="button" class="filter-button" data-filter="${escapeHtml(entry.id)}" aria-pressed="${entry.id === filter}">${escapeHtml(entry.name)}</button>`).join("")}</div></div></section>
+    <section class="listing-section" id="articles"><div class="container"><div class="listing-head"><h2>所有文章</h2><span>共 ${visible.length} 篇</span></div><div class="cards">${visible.length ? visible.map(cardMarkup).join("") : '<div class="empty">目前沒有此主題的文章。</div>'}</div></div></section>
+  </div>`;
+  document.querySelectorAll("[data-filter]").forEach(button => button.addEventListener("click", () => {
+    document.querySelectorAll("[data-filter]").forEach(other => other.setAttribute("aria-pressed", String(other === button)));
+    const selected = button.dataset.filter;
+    const selectedItems = selected === "all" ? items : items.filter(item => item.topicId === selected);
+    document.querySelector(".listing-head span").textContent = `共 ${selectedItems.length} 篇`;
+    document.querySelector(".cards").innerHTML = selectedItems.map(cardMarkup).join("");
+    document.querySelector("#articles").scrollIntoView({ behavior: "smooth", block: "start" });
+  }));
+}
+
+function inlineMarkup(value) {
+  return escapeHtml(value).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+}
+
+function bodyMarkup(value) {
+  const lines = String(value || "").split(/\r?\n/);
+  let html = "";
+  let inList = false;
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+    if (!line) { if (inList) { html += "</ul>"; inList = false; } continue; }
+    const heading = line.match(/^(#{2,3})\s+(.+)$/);
+    if (heading) { if (inList) { html += "</ul>"; inList = false; } const level = heading[1].length; html += `<h${level}>${inlineMarkup(heading[2])}</h${level}>`; continue; }
+    const bullet = line.match(/^[-*]\s+(.+)$/);
+    if (bullet) { if (!inList) { html += "<ul>"; inList = true; } html += `<li>${inlineMarkup(bullet[1])}</li>`; continue; }
+    if (inList) { html += "</ul>"; inList = false; }
+    html += `<p>${inlineMarkup(line)}</p>`;
+  }
+  return html + (inList ? "</ul>" : "");
+}
+
+function attachmentsMarkup(item) {
   const files = Array.isArray(item.files) ? item.files : item.file ? [{ name: item.title, file: item.file }] : [];
   const links = Array.isArray(item.links) ? item.links : item.url ? [item.url] : [];
-  const attachments = files.map((file) => {
-    const href = safeAssetHref(file.file);
-    if (!href) return "";
-    const name = escapeText(file.name || "附件");
-    const src = escapeText(href);
-    let preview = "";
-    if (file.kind === "image") preview = `<img class="material-image" src="${src}" alt="${name}" loading="lazy" />`;
-    if (file.kind === "audio") preview = `<audio controls preload="none" src="${src}" aria-label="${name}"></audio>`;
-    if (file.kind === "video") preview = `<video controls preload="none" src="${src}" aria-label="${name}"></video>`;
-    return `<div class="material-attachment">${preview}<a href="${src}" target="_blank" rel="noopener noreferrer">開啟附件：${name} ↗</a></div>`;
+  const fileHtml = files.map(file => {
+    const src = safeAssetPath(file.file);
+    if (!src) return "";
+    const name = escapeHtml(file.name || "附件");
+    const image = file.kind === "image" ? `<img class="article-image" src="${escapeHtml(src)}" alt="${name}" loading="lazy">` : "";
+    const media = file.kind === "audio" ? `<audio controls preload="none" src="${escapeHtml(src)}"></audio>` : file.kind === "video" ? `<video controls preload="none" src="${escapeHtml(src)}"></video>` : "";
+    return `${image}${media}<a class="attachment-link" href="${escapeHtml(src)}" target="_blank" rel="noopener noreferrer">開啟附件：${name} ↗</a>`;
   }).join("");
-  const linkMarkup = links.map((value, index) => {
-    const href = safePublicHref(value);
-    return href ? `<a class="material-external" href="${escapeText(href)}" target="_blank" rel="noopener noreferrer">開啟素材連結${links.length > 1 ? " " + (index + 1) : ""} ↗</a>` : "";
-  }).join("");
-  const body = item.body ? `<details class="material-body"><summary>閱讀全文</summary><div>${escapeText(item.body)}</div></details>` : "";
-  return `<li class="material-item" id="${escapeText(item.id || "")}">
-    <div class="material-head"><strong>${escapeText(item.title || "未命名素材")}</strong><span class="material-kind">${escapeText(item.format || "素材")}</span></div>
-    ${item.summary ? `<p class="material-summary">${escapeText(item.summary)}</p>` : ""}
-    ${body}${attachments}${linkMarkup}
-  </li>`;
+  const linkHtml = links.map((value, index) => { const href = safePublicUrl(value); return href ? `<a class="attachment-link" href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">開啟素材連結${links.length > 1 ? ` ${index + 1}` : ""} ↗</a>` : ""; }).join("");
+  return fileHtml || linkHtml ? `<h2 class="attachment-title">相關圖片與附件</h2>${fileHtml}${linkHtml}` : "";
 }
 
-function renderTopic(topic, track, materials) {
-  const items = materials.filter((item) => item.topicId === topic.id);
-  const materialMarkup = items.length
-    ? `<ul class="material-list">${items.map(renderMaterial).join("")}</ul>`
-    : `<div class="topic-empty"><span class="empty-icon">＋</span><span>待加入素材</span></div>`;
-
-  return `<article class="topic-card ${formatTrack(track)}">
-    <div class="topic-card-top"><span class="topic-index">${escapeText(track.number)} / ${String(track.topics.indexOf(topic) + 1).padStart(2, "0")}</span><span class="topic-count">${items.length} 份素材</span></div>
-    <h4>${escapeText(topic.title)}</h4>
-    <p>${escapeText(topic.description)}</p>
-    <div class="topic-materials">${materialMarkup}</div>
-  </article>`;
+function renderArticle(item) {
+  const topic = topicOf(item);
+  const related = content.items.filter(other => other.id !== item.id && other.topicId === item.topicId).slice(0, 3);
+  const fallbacks = content.items.filter(other => other.id !== item.id && !related.includes(other)).slice(0, 3 - related.length);
+  const suggestions = [...related, ...fallbacks];
+  document.title = `${item.title}｜訊達 AI 內容專欄`;
+  document.querySelector("#app").innerHTML = `<div class="article-page">
+    <div class="article-top"><div class="container"><nav class="breadcrumb" aria-label="所在位置"><a href="./">內容專欄</a><span>›</span><span>${escapeHtml(topic.title)}</span></nav><div class="article-header"><span class="eyebrow">${escapeHtml(topic.track)} / ${escapeHtml(topic.title)}</span><h1>${escapeHtml(item.title)}</h1>${item.summary ? `<p class="lead">${escapeHtml(item.summary)}</p>` : ""}<div class="article-byline"><b>訊達 AI 內容</b><span>·</span><span>${escapeHtml(item.format || "文章")}</span></div></div></div></div>
+    <div class="container reading-wrap"><article class="article-body">${bodyMarkup(item.body)}${attachmentsMarkup(item)}<div class="article-end"><a class="back-link" href="./#articles">← 回到所有文章</a></div></article><aside class="read-sidebar"><div class="side-kicker">KEEP READING</div><h2>接著看</h2>${suggestions.map(other => `<a href="${articleUrl(other)}">${escapeHtml(other.title)} →</a>`).join("")}</aside></div>
+    <section class="related"><div class="container"><h2>更多內容</h2><div class="cards">${suggestions.map(cardMarkup).join("")}</div></div></section>
+  </div>`;
+  window.scrollTo(0, 0);
 }
 
-function renderTrack(track, materials) {
-  const trackTopics = track.topics.map((topic) => renderTopic(topic, track, materials)).join("");
-  return `<section class="track-panel ${formatTrack(track)}">
-    <div class="track-header">
-      <div class="track-title-group"><span class="track-number">${escapeText(track.number)}</span><div><span class="track-kicker">CONTENT STREAM ${escapeText(track.number)}</span><h3>${escapeText(track.title)}</h3><p>${escapeText(track.subtitle)}</p></div></div>
-      <div class="track-people"><span>主責</span><strong>${escapeText(track.lead)}</strong><small>${track.members.map(escapeText).join(" · ")}</small></div>
-    </div>
-    <div class="topic-grid">${trackTopics}</div>
-  </section>`;
+function openLegacyHash() {
+  const id = /^#(material-\d+)$/.exec(location.hash)?.[1];
+  const item = id && content.items.find(entry => entry.id === id);
+  if (!item) return;
+  history.replaceState(null, "", articleUrl(item));
+  renderArticle(item);
 }
 
-function renderFormats(formats) {
-  document.querySelector("#format-list").innerHTML = formats.map((format, index) =>
-    `<div class="format-chip"><span class="format-icon">${formatIcons[format] || "✦"}</span><span>${escapeText(format)}</span><small>${String(index + 1).padStart(2, "0")}</small></div>`
-  ).join("");
-}
-
-async function loadContent() {
-  const trackContainer = document.querySelector("#track-list");
+async function load() {
   try {
     const [siteResponse, materialsResponse] = await Promise.all([
-      fetch("./data/site.json", { cache: "no-store" }),
-      fetch("./data/materials.json", { cache: "no-store" })
+      fetch("data/site.json", { cache: "no-store" }),
+      fetch("data/materials.json", { cache: "no-store" })
     ]);
-    if (!siteResponse.ok || !materialsResponse.ok) throw new Error("內容資料無法讀取");
-    const [site, sourceMaterials] = await Promise.all([siteResponse.json(), materialsResponse.json()]);
-    const materials = sourceMaterials.filter((item) => item.status === "已核准");
-    trackContainer.innerHTML = site.tracks.map((track) => renderTrack(track, materials)).join("");
-    renderFormats(site.formats);
-    try { document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView(); } catch {}
-
-    const topicCount = site.tracks.reduce((sum, track) => sum + track.topics.length, 0);
-    document.querySelector("#topic-count").textContent = String(topicCount).padStart(2, "0");
-    document.querySelector("#material-count").textContent = String(materials.length).padStart(2, "0");
-    document.querySelector("#hero-material-count").textContent = String(materials.length).padStart(2, "0");
+    if (!siteResponse.ok || !materialsResponse.ok) throw new Error("內容資料讀取失敗");
+    const [site, materials] = await Promise.all([siteResponse.json(), materialsResponse.json()]);
+    const topics = new Map();
+    site.tracks.forEach(track => track.topics.forEach(topic => topics.set(topic.id, { title: topic.title, track: track.title })));
+    content = { topics, items: materials.filter(item => item.status === "已核准"), featuredMaterialId: site.featuredMaterialId || "" };
+    window.addEventListener("hashchange", openLegacyHash);
+    const legacyArticleId = /^#(material-\d+)$/.exec(location.hash)?.[1];
+    const articleId = new URLSearchParams(location.search).get("article") || legacyArticleId;
+    if (articleId) {
+      const item = content.items.find(entry => entry.id === articleId);
+      if (item) {
+        if (legacyArticleId && !location.search) history.replaceState(null, "", articleUrl(item));
+        renderArticle(item);
+      }
+      else document.querySelector("#app").innerHTML = `<div class="container not-found"><h1>找不到這篇文章</h1><p>這篇內容可能尚未發布。</p><a class="back-link" href="./">← 返回內容專欄</a></div>`;
+    } else renderHome();
+    if (["#topics", "#articles"].includes(location.hash) && !articleId) requestAnimationFrame(() => document.querySelector(location.hash)?.scrollIntoView());
   } catch (error) {
-    trackContainer.innerHTML = `<div class="error-state"><strong>資料目前無法載入</strong><span>${escapeText(error.message)}。請稍後重新整理頁面。</span></div>`;
+    document.querySelector("#app").innerHTML = `<div class="container not-found"><h1>資料目前無法載入</h1><p>${escapeHtml(error.message)}</p></div>`;
   }
 }
 
-if (typeof document !== "undefined") loadContent();
+load();
