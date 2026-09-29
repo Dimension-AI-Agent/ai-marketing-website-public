@@ -92,5 +92,28 @@
     "status": "已核准",
     "revision": "c82234fcc5669146ea6c630c8ab66fb8e39b326bf5c705e1603ce5d46e2ca4e1",
     "updatedAt": "2026-09-29T08:19:54.426998+00:00"
+  },
+  {
+    "id": "material-20",
+    "title": "Compute",
+    "topicId": "hardware",
+    "format": "文字／文章",
+    "summary": "HPE Compute 產品涵蓋大型 AI 模型訓練、企業級生成式 AI 推論，以及邊緣端 AI 應用。從支援多 GPU 的高密度平台，到針對 RAG、LLM 微調與邊緣部署設計的 HPE ProLiant 系統，企業可依工作負載、部署環境與擴充需求選擇合適的運算基礎架構。",
+    "body": "HPE AI Factory with NVIDIA 的 Compute 產品組合涵蓋大型模型訓練、企業級 AI 推論、生成式 AI，以及邊緣端 AI 應用。以下整理 HPE 官方 AI 頁面目前展示的主要運算平台。\n\n## HPE ProLiant Compute XD685\n\n**產品狀態：目前產品（Current）**\n\nHPE ProLiant Compute XD685 面向大型 AI 模型的訓練與調校，可依需求搭配 NVIDIA GPU 或 AMD Instinct 加速器，適合需要高密度加速運算能力的 AI 工作負載。\n\n[查看 HPE 官方產品頁](https://www.hpe.com/tw/en/products/compute/proliant/xd685.html)\n\n## HPE Compute XD690\n\n**產品狀態：目前產品（Current）**\n\nHPE Compute XD690 是針對大型 AI 訓練與推論設計的高密度運算平台，可搭載八顆 NVIDIA Blackwell Ultra GPU，並結合 HPE 對大型複雜 AI 環境的建置與支援能力。\n\n[查看 HPE 官方產品頁](https://www.hpe.com/tw/en/products/supercomputing/cray/xd690.html)\n\n## HPE ProLiant DL320 Gen11\n\n**產品狀態：目前產品（Current）**\n\nHPE ProLiant DL320 Gen11 適合在邊緣環境部署 AI 應用，提供 GPU 加速運算能力，可支援需要就近處理資料與快速產生洞察的應用情境。\n\n[查看 HPE 官方產品頁](https://www.hpe.com/tw/en/products/compute/hpe-proliant-compute/dl320-gen11.html)\n\n## HPE ProLiant Compute DL380a Gen12\n\n**產品狀態：目前產品（Current）**\n\nHPE ProLiant Compute DL380a Gen12 是針對 AI 與企業工作負載設計的 4U 加速運算伺服器。系統支援多張 GPU，可用於生成式 AI 微調、大型工作負載推論及其他 GPU 加速應用。\n\n[查看 HPE 官方產品頁](https://www.hpe.com/tw/en/products/compute/proliant/dl380a-gen12.html)\n\n## HPE ProLiant Compute DL384 Gen12\n\n**產品狀態：目前產品（Current）**\n\nHPE ProLiant Compute DL384 Gen12 採用 NVIDIA GH200 Grace Hopper Superchip，面向企業級 AI 推論、LLM 微調及檢索增強生成（RAG）等工作負載。系統提供一致性記憶體與高記憶體頻寬，以支援較大型的 AI 模型與資料密集型應用。\n\n[查看 HPE 官方產品頁](https://www.hpe.com/tw/en/products/compute/hpe-proliant-compute/dl384-gen12.html)\n\n## HPE ProLiant DL385 Gen11\n\n**產品狀態：目前產品（Current）**\n\nHPE ProLiant DL385 Gen11 是一款支援 GPU 加速的 2U 雙處理器伺服器，可用於 AI、Big Data 分析及其他需要較高運算、記憶體與 I/O 擴充能力的企業工作負載。\n\n[查看 HPE 官方產品頁](https://www.hpe.com/tw/en/products/compute/hpe-proliant-compute/dl385-gen11.html)\n\n## HPE ProLiant DL145 Gen11\n\n**產品狀態：目前產品（Current）**\n\nHPE ProLiant DL145 Gen11 是針對邊緣部署設計的緊湊型伺服器，可支援企業應用、虛擬化及 AI 工作負載。其機身設計適合空間與環境條件受限的部署場域。\n\n[查看 HPE 官方產品頁](https://www.hpe.com/tw/en/products/compute/hpe-proliant-compute/dl145-gen11.html)\n\n## HPE ProLiant Compute DL394 Gen12\n\n**產品狀態：已發布（Announced）**\n\nHPE ProLiant Compute DL394 Gen12 採用 NVIDIA Vera CPU，定位於 agentic AI 運算及高效率資料處理，並結合 HPE 的安全與管理能力。\n\n此產品已由 HPE 發布，但實際供應時間與各地區供應狀態仍應以 HPE 最新公告為準。\n\n[查看 HPE 官方產品頁](https://www.hpe.com/tw/en/products/compute/proliant/dl394-gen12.html)",
+    "links": [
+      "https://www.hpe.com/tw/en/solutions/artificial-intelligence/nvidia-collaboration.html",
+      "https://www.hpe.com/tw/en/products/compute/proliant/xd685.html",
+      "https://www.hpe.com/tw/en/products/supercomputing/cray/xd690.html",
+      "https://www.hpe.com/tw/en/products/compute/hpe-proliant-compute/dl320-gen11.html",
+      "https://www.hpe.com/tw/en/products/compute/proliant/dl380a-gen12.html",
+      "https://www.hpe.com/tw/en/products/compute/hpe-proliant-compute/dl384-gen12.html",
+      "https://www.hpe.com/tw/en/products/compute/hpe-proliant-compute/dl385-gen11.html",
+      "https://www.hpe.com/tw/en/products/compute/hpe-proliant-compute/dl145-gen11.html",
+      "https://www.hpe.com/tw/en/products/compute/proliant/dl394-gen12.html"
+    ],
+    "files": [],
+    "status": "已核准",
+    "revision": "29bf3e50cfa1f9a1041d42247c16a83fcf1cf1da6e85ebff5ea3bcbb2c33d3cd",
+    "updatedAt": "2026-09-29T09:02:42.222419+00:00"
   }
 ]
