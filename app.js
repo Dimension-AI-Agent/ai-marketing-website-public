@@ -1,4 +1,4 @@
-let content = { items: [], topics: new Map(), featuredMaterialId: "" };
+let content = { items: [], topics: new Map(), tracks: [], articleOutlines: {}, featuredMaterialId: "" };
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 
 function escapeHtml(value) {
@@ -60,39 +60,58 @@ function renderHome(filter = "all") {
     document.querySelector("#app").innerHTML = '<div class="container not-found"><h1>文章準備中</h1><p>已核准的內容發布後，就會出現在這裡。</p></div>';
     return;
   }
-  const filters = [{ id: "all", name: "全部文章" }, ...Array.from(new Map(items.map(item => [item.topicId, { id: item.topicId, name: topicOf(item).title }])).values())];
+  const topicCounts = new Map();
+  items.forEach(item => topicCounts.set(item.topicId, (topicCounts.get(item.topicId) || 0) + 1));
   const visible = filter === "all" ? items : items.filter(item => item.topicId === filter);
   const featuredTopic = topicOf(featured);
+  const topicGroups = content.tracks.map(track => {
+    const topics = track.topics.filter(topic => topicCounts.has(topic.id));
+    if (!topics.length) return "";
+    return `<div class="topic-group"><h3>${escapeHtml(track.title)}</h3><div class="filter-list">${topics.map(topic => `<button type="button" class="filter-button" data-filter="${escapeHtml(topic.id)}" aria-pressed="${topic.id === filter}"><span>${escapeHtml(topic.title)}</span><span class="filter-count">${topicCounts.get(topic.id)}</span></button>`).join("")}</div></div>`;
+  }).join("");
+  const selectedTitle = filter === "all" ? "所有文章" : topicOf({ topicId: filter }).title;
   document.title = "訊達 AI 內容專欄";
   document.querySelector("#app").innerHTML = `<div class="home-page">
-    <section class="home-hero"><div class="container hero-grid"><div class="hero-copy"><div class="eyebrow">AI SOLUTIONS / INSIGHTS</div><h1>從一篇內容開始，<br><em>看見 AI 的實際應用。</em></h1><p>探索訊達 AI 解決方案、基礎架構與導入議題。先找到感興趣的主題，再點進文章完整閱讀。</p><a class="hero-link" href="#articles">探索所有文章 <span>↗</span></a></div><div class="hero-art" aria-hidden="true"><div class="art-orbit"></div><div class="art-center">AI</div><div class="art-card"><strong>${String(items.length).padStart(2, "0")}</strong><span>篇已發布內容</span></div><div class="art-spark">✳</div></div></div></section>
+    <section class="home-hero"><div class="container hero-grid"><div class="hero-copy"><div class="eyebrow">AI SOLUTIONS / INSIGHTS</div><h1>從一篇內容開始，<br><em>看見 AI 的實際應用。</em></h1><p>探索訊達 AI 解決方案、基礎架構與導入議題。先找到感興趣的主題，再點進文章完整閱讀。</p><a class="hero-link" href="#topics">依主題找文章 <span>↗</span></a></div><div class="hero-art" aria-hidden="true"><div class="art-orbit"></div><div class="art-center">AI</div><div class="art-card"><strong>${String(items.length).padStart(2, "0")}</strong><span>篇已發布內容</span></div><div class="art-spark">✳</div></div></div></section>
+    <section class="topics-section" id="topics"><div class="container"><div class="section-heading"><div><div class="eyebrow">EXPLORE TOPICS</div><h2>依主題探索</h2></div><p>選擇主題，只看你感興趣的文章</p></div><div class="topic-all"><button type="button" class="filter-button" data-filter="all" aria-pressed="${filter === "all"}"><span>全部文章</span><span class="filter-count">${items.length}</span></button></div><div class="topic-groups">${topicGroups}</div></div></section>
     <section class="section"><div class="container"><div class="section-heading"><div><div class="eyebrow">FEATURED STORY</div><h2>焦點文章</h2></div><p>先看一個完整的應用情境</p></div><a class="featured" href="${articleUrl(featured)}">${mediaMarkup(featured, 0, true)}<div class="featured-content"><span class="pill">${escapeHtml(featuredTopic.title)}</span><h3>${escapeHtml(featured.title)}</h3><p>${escapeHtml(teaser(featured, 220))}</p><span class="article-link">閱讀完整文章 <span>↗</span></span></div></a></div></section>
-    <section class="topics-section" id="topics"><div class="container"><div class="section-heading"><div><div class="eyebrow">EXPLORE TOPICS</div><h2>依主題探索</h2></div><p>選擇主題，只看你感興趣的文章</p></div><div class="filter-list" role="group" aria-label="文章主題篩選">${filters.map(entry => `<button type="button" class="filter-button" data-filter="${escapeHtml(entry.id)}" aria-pressed="${entry.id === filter}">${escapeHtml(entry.name)}</button>`).join("")}</div></div></section>
-    <section class="listing-section" id="articles"><div class="container"><div class="listing-head"><h2>所有文章</h2><span>共 ${visible.length} 篇</span></div><div class="cards">${visible.length ? visible.map(cardMarkup).join("") : '<div class="empty">目前沒有此主題的文章。</div>'}</div></div></section>
+    <section class="listing-section" id="articles"><div class="container"><div class="listing-head"><h2 class="listing-title">${escapeHtml(selectedTitle)}</h2><div class="listing-controls"><span class="result-count" aria-live="polite">共 ${visible.length} 篇</span><button type="button" class="reset-filter" ${filter === "all" ? "hidden" : ""}>顯示全部文章</button></div></div><div class="cards">${visible.length ? visible.map(cardMarkup).join("") : '<div class="empty">目前沒有此主題的文章。</div>'}</div></div></section>
   </div>`;
-  document.querySelectorAll("[data-filter]").forEach(button => button.addEventListener("click", () => {
-    document.querySelectorAll("[data-filter]").forEach(other => other.setAttribute("aria-pressed", String(other === button)));
-    const selected = button.dataset.filter;
+  function applyFilter(selected) {
+    document.querySelectorAll("[data-filter]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.filter === selected)));
     const selectedItems = selected === "all" ? items : items.filter(item => item.topicId === selected);
-    document.querySelector(".listing-head span").textContent = `共 ${selectedItems.length} 篇`;
+    document.querySelector(".listing-title").textContent = selected === "all" ? "所有文章" : topicOf({ topicId: selected }).title;
+    document.querySelector(".result-count").textContent = `共 ${selectedItems.length} 篇`;
+    document.querySelector(".reset-filter").hidden = selected === "all";
     document.querySelector(".cards").innerHTML = selectedItems.map(cardMarkup).join("");
     document.querySelector("#articles").scrollIntoView({ behavior: "smooth", block: "start" });
-  }));
+  }
+  document.querySelectorAll("[data-filter]").forEach(button => button.addEventListener("click", () => applyFilter(button.dataset.filter)));
+  document.querySelector(".reset-filter").addEventListener("click", () => applyFilter("all"));
 }
 
 function inlineMarkup(value) {
   return escapeHtml(value).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
 }
 
-function bodyMarkup(value) {
+function bodyMarkup(value, sectionSpecs = [], headings = []) {
   const lines = String(value || "").split(/\r?\n/);
+  const sectionLevels = new Map(sectionSpecs.filter(section => section && typeof section.text === "string" && [2, 3].includes(section.level)).map(section => [section.text, section.level]));
   let html = "";
   let inList = false;
   for (const rawLine of lines) {
     const line = rawLine.trim();
     if (!line) { if (inList) { html += "</ul>"; inList = false; } continue; }
-    const heading = line.match(/^(#{2,3})\s+(.+)$/);
-    if (heading) { if (inList) { html += "</ul>"; inList = false; } const level = heading[1].length; html += `<h${level}>${inlineMarkup(heading[2])}</h${level}>`; continue; }
+    const markdownHeading = line.match(/^(#{2,3})\s+(.+)$/);
+    const level = markdownHeading ? markdownHeading[1].length : sectionLevels.get(line);
+    if (level) {
+      if (inList) { html += "</ul>"; inList = false; }
+      const title = markdownHeading ? markdownHeading[2] : line;
+      const id = `section-${headings.length + 1}`;
+      headings.push({ id, title, level });
+      html += `<h${level} id="${id}">${inlineMarkup(title)}</h${level}>`;
+      continue;
+    }
     const bullet = line.match(/^[-*]\s+(.+)$/);
     if (bullet) { if (!inList) { html += "<ul>"; inList = true; } html += `<li>${inlineMarkup(bullet[1])}</li>`; continue; }
     if (inList) { html += "</ul>"; inList = false; }
@@ -121,12 +140,24 @@ function renderArticle(item) {
   const related = content.items.filter(other => other.id !== item.id && other.topicId === item.topicId).slice(0, 3);
   const fallbacks = content.items.filter(other => other.id !== item.id && !related.includes(other)).slice(0, 3 - related.length);
   const suggestions = [...related, ...fallbacks];
+  const headings = [];
+  const body = bodyMarkup(item.body, content.articleOutlines[item.id] || [], headings);
+  const sections = headings.filter(heading => heading.level === 2);
+  const toc = sections.length >= 3 ? `<nav class="article-toc" aria-label="本文段落"><strong>本文段落</strong><ol>${sections.map(heading => `<li><a href="#${heading.id}">${escapeHtml(heading.title)}</a></li>`).join("")}</ol></nav>` : "";
+  const expandableSummary = item.summary && item.summary.length > 220;
   document.title = `${item.title}｜訊達 AI 內容專欄`;
   document.querySelector("#app").innerHTML = `<div class="article-page">
-    <div class="article-top"><div class="container"><nav class="breadcrumb" aria-label="所在位置"><a href="./">內容專欄</a><span>›</span><span>${escapeHtml(topic.title)}</span></nav><div class="article-header"><span class="eyebrow">${escapeHtml(topic.track)} / ${escapeHtml(topic.title)}</span><h1>${escapeHtml(item.title)}</h1>${item.summary ? `<p class="lead">${escapeHtml(item.summary)}</p>` : ""}<div class="article-byline"><b>訊達 AI 內容</b><span>·</span><span>${escapeHtml(item.format || "文章")}</span></div></div></div></div>
-    <div class="container reading-wrap"><article class="article-body">${bodyMarkup(item.body)}${attachmentsMarkup(item)}<div class="article-end"><a class="back-link" href="./#articles">← 回到所有文章</a></div></article><aside class="read-sidebar"><div class="side-kicker">KEEP READING</div><h2>接著看</h2>${suggestions.map(other => `<a href="${articleUrl(other)}">${escapeHtml(other.title)} →</a>`).join("")}</aside></div>
+    <div class="article-top"><div class="container"><nav class="breadcrumb" aria-label="所在位置"><a href="./">內容專欄</a><span>›</span><span>${escapeHtml(topic.title)}</span></nav><div class="article-header"><span class="eyebrow">${escapeHtml(topic.track)} / ${escapeHtml(topic.title)}</span><h1>${escapeHtml(item.title)}</h1>${item.summary ? `<p class="lead${expandableSummary ? " is-collapsible" : ""}" id="article-summary">${escapeHtml(item.summary)}</p>${expandableSummary ? '<button type="button" class="summary-toggle" aria-controls="article-summary" aria-expanded="false">展開摘要</button>' : ""}` : ""}<div class="article-byline"><b>訊達 AI 內容</b><span>·</span><span>${escapeHtml(item.format || "文章")}</span></div></div></div></div>
+    <div class="container reading-wrap"><article class="article-body">${toc}${body}${attachmentsMarkup(item)}<div class="article-end"><a class="back-link" href="./#articles">← 回到所有文章</a></div></article><aside class="read-sidebar"><div class="side-kicker">KEEP READING</div><h2>接著看</h2>${suggestions.map(other => `<a href="${articleUrl(other)}">${escapeHtml(other.title)} →</a>`).join("")}</aside></div>
     <section class="related"><div class="container"><h2>更多內容</h2><div class="cards">${suggestions.map(cardMarkup).join("")}</div></div></section>
   </div>`;
+  const summaryToggle = document.querySelector(".summary-toggle");
+  if (expandableSummary && summaryToggle?.addEventListener) summaryToggle.addEventListener("click", () => {
+    const expanded = summaryToggle.getAttribute("aria-expanded") !== "true";
+    document.querySelector("#article-summary").classList.toggle("is-expanded", expanded);
+    summaryToggle.setAttribute("aria-expanded", String(expanded));
+    summaryToggle.textContent = expanded ? "收合摘要" : "展開摘要";
+  });
   window.scrollTo(0, 0);
 }
 
@@ -148,7 +179,7 @@ async function load() {
     const [site, materials] = await Promise.all([siteResponse.json(), materialsResponse.json()]);
     const topics = new Map();
     site.tracks.forEach(track => track.topics.forEach(topic => topics.set(topic.id, { title: topic.title, track: track.title })));
-    content = { topics, items: materials.filter(item => item.status === "已核准"), featuredMaterialId: site.featuredMaterialId || "" };
+    content = { topics, tracks: site.tracks, articleOutlines: site.articleOutlines || {}, items: materials.filter(item => item.status === "已核准"), featuredMaterialId: site.featuredMaterialId || "" };
     window.addEventListener("hashchange", openLegacyHash);
     const legacyArticleId = /^#(material-\d+)$/.exec(location.hash)?.[1];
     const articleId = new URLSearchParams(location.search).get("article") || legacyArticleId;
