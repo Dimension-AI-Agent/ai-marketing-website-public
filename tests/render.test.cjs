@@ -11,6 +11,34 @@ const materials = JSON.parse(fs.readFileSync(path.join(__dirname, "../data/mater
 function createPage({ search = "", hash = "", records = materials } = {}) {
   const elements = new Map();
   const navigations = [];
+  const filterButtons = [];
+  function makeElement() {
+    const listeners = new Map();
+    const attributes = new Map();
+    return {
+      innerHTML: "", textContent: "", hidden: false, dataset: {},
+      scrollIntoView() {},
+      addEventListener(type, listener) { listeners.set(type, listener); },
+      setAttribute(name, value) { attributes.set(name, value); },
+      getAttribute(name) { return attributes.get(name); },
+      click() { listeners.get("click")?.(); }
+    };
+  }
+  const app = makeElement();
+  let appHtml = "";
+  Object.defineProperty(app, "innerHTML", {
+    get() { return appHtml; },
+    set(value) {
+      appHtml = value;
+      filterButtons.length = 0;
+      for (const match of value.matchAll(/<button[^>]*data-filter="([^"]+)"[^>]*>/g)) {
+        const button = makeElement();
+        button.dataset.filter = match[1];
+        filterButtons.push(button);
+      }
+    }
+  });
+  elements.set("#app", app);
   const page = {
     URL,
     URLSearchParams,
@@ -21,16 +49,16 @@ function createPage({ search = "", hash = "", records = materials } = {}) {
     document: {
       title: "",
       querySelector(selector) {
-        if (!elements.has(selector)) elements.set(selector, { innerHTML: "", textContent: "", scrollIntoView() {} });
+        if (!elements.has(selector)) elements.set(selector, makeElement());
         return elements.get(selector);
       },
-      querySelectorAll() { return []; }
+      querySelectorAll(selector) { return selector === "[data-filter]" ? filterButtons : []; }
     },
     fetch: async url => ({ ok: true, json: async () => url.includes("site.json") ? site : records })
   };
   const context = vm.createContext(page);
   vm.runInContext(code, context);
-  return { context, elements, navigations };
+  return { context, elements, navigations, filterButtons };
 }
 
 test("only approved content appears and Mark's selected article is featured", async () => {
@@ -46,12 +74,42 @@ test("only approved content appears and Mark's selected article is featured", as
   assert.equal(site.featuredMaterialId, "material-13");
 });
 
+test("topics precede the featured story, show counts, and filtering can be cleared", async () => {
+  const { context, elements, filterButtons } = createPage();
+  await context.load();
+  const html = elements.get("#app").innerHTML;
+  const approved = materials.filter(item => item.status === "已核准");
+  const matching = approved.filter(item => item.topicId === "competitive-positioning");
+  assert.ok(html.indexOf('id="topics"') < html.indexOf("FEATURED STORY"));
+  assert.match(html, new RegExp(`data-filter="competitive-positioning"[^>]*>[\\s\\S]*?產品定位比較[\\s\\S]*?<span class="filter-count">${matching.length}<\\/span>`));
+  filterButtons.find(button => button.dataset.filter === "competitive-positioning").click();
+  assert.equal(elements.get(".listing-title").textContent, "產品定位比較");
+  assert.equal(elements.get(".result-count").textContent, `共 ${matching.length} 篇`);
+  assert.match(elements.get(".cards").innerHTML, /VMware 有哪些替代方案/);
+  assert.doesNotMatch(elements.get(".cards").innerHTML, /HPE Smart Choice/);
+  elements.get(".reset-filter").click();
+  assert.equal(elements.get(".result-count").textContent, `共 ${approved.length} 篇`);
+  assert.equal(elements.get(".reset-filter").hidden, true);
+});
+
 test("legacy material links open the separate article page", async () => {
   const { context, elements, navigations } = createPage({ hash: "#material-19" });
   await context.load();
   assert.deepEqual(navigations, ["?article=material-19"]);
   assert.match(elements.get("#app").innerHTML, /VMware 有哪些替代方案/);
   assert.match(elements.get("#app").innerHTML, /回到所有文章/);
+});
+
+test("long article uses its existing section titles for headings and a linked outline", async () => {
+  const { context, elements } = createPage({ search: "?article=material-19" });
+  await context.load();
+  const html = elements.get("#app").innerHTML;
+  assert.match(html, /<nav class="article-toc" aria-label="本文段落">/);
+  assert.match(html, /<h2 id="section-1">VMware 替代，不只是換掉 ESXi<\/h2>/);
+  assert.match(html, /<a href="#section-1">VMware 替代，不只是換掉 ESXi<\/a>/);
+  assert.match(html, /<h3 id="section-\d+">適合評估的情境<\/h3>/);
+  const oldText = materials.find(item => item.id === "material-19").body;
+  assert.match(oldText, /VMware 替代，不只是換掉 ESXi/);
 });
 
 test("text and article Markdown are escaped", () => {

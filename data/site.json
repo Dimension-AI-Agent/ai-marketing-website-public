@@ -1,5 +1,21 @@
 {
   "featuredMaterialId": "material-13",
+  "articleOutlines": {
+    "material-19": [
+      {"text": "VMware 替代，不只是換掉 ESXi", "level": 2},
+      {"text": "HPE Morpheus VM Essentials：先共存，再逐步離開 VMware", "level": 2},
+      {"text": "Nutanix AHV：直接轉向完整 HCI 平台", "level": 2},
+      {"text": "Azure Local：把地端 VM 納入 Azure 管理模式", "level": 2},
+      {"text": "Windows Server Hyper-V：保留傳統虛擬化架構的方向", "level": 2},
+      {"text": "OpenShift Virtualization：不是只換 Hypervisor，而是 VM 與 Container 整合", "level": 2},
+      {"text": "VMware 替代真正要先確認的 4 件事", "level": 2},
+      {"text": "適合評估的情境", "level": 3},
+      {"text": "① 你是真的要「換 Hypervisor」，還是「換整套架構」？", "level": 3},
+      {"text": "② 所有 VM 都真的可以搬嗎？", "level": 3},
+      {"text": "③ Backup、DR、Monitoring 能不能繼續用？", "level": 3},
+      {"text": "④ 不一定需要一次離開 VMware", "level": 3}
+    ]
+  },
   "formats": ["圖片", "影片", "Podcast", "Blog", "互動遊戲", "Agent UI 互動", "問卷", "電子報"],
   "tracks": [
     {
