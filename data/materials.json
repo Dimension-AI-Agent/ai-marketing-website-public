@@ -357,5 +357,20 @@
     "status": "已核准",
     "revision": "1a9c3e58844a7b2f98141f403d0117d3caa4780fc77b88d1715d6ef24edcd8d2",
     "updatedAt": "2026-09-30T02:13:39.237471+00:00"
+  },
+  {
+    "id": "material-35",
+    "title": "企業如何評估 AI Agent：從任務完成率、穩定性到執行成本",
+    "topicId": "benefit-assessment",
+    "format": "文字／文章",
+    "summary": "Anthropic 說明 AI Agent 的評估方法，強調驗收應確認任務是否實際完成，並透過重複測試觀察結果的一致性。企業可結合程式檢查、模型評分與人工審查，追蹤任務成功率、延遲、錯誤率與每次任務成本，作為 PoC 驗收及上線後持續改善的依據。此素材適合說明企業如何建立可衡量的導入標準；若要進一步計算投資報酬，仍需補充人工處理基準、建置成本與業務收益。",
+    "body": "Anthropic｜Demystifying evals for AI agents",
+    "links": [
+      "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents"
+    ],
+    "files": [],
+    "status": "已核准",
+    "revision": "6d39b5932dae401f30a3f028eb438155cda35ba686feb2246c7bacdeac0ce659",
+    "updatedAt": "2026-09-30T02:13:41.166659+00:00"
   }
 ]
