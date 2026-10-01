@@ -1,5 +1,35 @@
 {
   "featuredMaterialId": "material-13",
+  "relatedReading": {
+    "material-13": [
+      {"id": "material-30", "question": "想規劃導入", "reason": "先釐清需求、驗證與上線步驟"},
+      {"id": "material-27", "question": "想連接內部系統", "reason": "接著看 AI Agent 的地端整合架構"},
+      {"id": "material-35", "question": "想衡量成果", "reason": "從完成率、穩定性與成本評估效果"}
+    ],
+    "material-5": [
+      {"id": "material-18", "question": "想比較其他架構", "reason": "對照 SimpliVity、Nutanix 與傳統架構"}
+    ],
+    "material-18": [
+      {"id": "material-5", "question": "想深入了解 SimpliVity", "reason": "從架構比較進入單一方案的部署條件"},
+      {"id": "material-19", "question": "想看虛擬化替代選項", "reason": "延伸了解不同 VM 平台與移轉方向"}
+    ],
+    "material-19": [
+      {"id": "material-18", "question": "想比較 HCI 架構", "reason": "回看超融合與傳統架構的差異"}
+    ],
+    "material-26": [
+      {"id": "material-34", "question": "想釐清資料存取", "reason": "接著看 AI 讀取內部資料時的權限邊界"},
+      {"id": "material-39", "question": "想管理裝置連線", "reason": "延伸了解陌生設備連入網路時如何判斷權限"}
+    ],
+    "material-34": [
+      {"id": "material-26", "question": "想掌握整體資安檢查點", "reason": "回到企業導入 AI 的資安重點"}
+    ],
+    "material-31": [
+      {"id": "material-35", "question": "想衡量成效", "reason": "用完成率、穩定性與成本檢視成果"}
+    ],
+    "material-35": [
+      {"id": "material-31", "question": "想看效益面向", "reason": "延伸了解 AI Agent 可改善哪些工作"}
+    ]
+  },
   "articleOutlines": {
     "material-19": [
       {"text": "VMware 替代，不只是換掉 ESXi", "level": 2},

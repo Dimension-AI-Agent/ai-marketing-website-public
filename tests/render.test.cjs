@@ -8,7 +8,7 @@ const code = fs.readFileSync(path.join(__dirname, "../app.js"), "utf8").replace(
 const site = JSON.parse(fs.readFileSync(path.join(__dirname, "../data/site.json"), "utf8"));
 const materials = JSON.parse(fs.readFileSync(path.join(__dirname, "../data/materials.json"), "utf8"));
 
-function createPage({ search = "", hash = "", records = materials, views = null } = {}) {
+function createPage({ search = "", hash = "", records = materials, views = null, siteConfig = site } = {}) {
   const elements = new Map();
   const navigations = [];
   const filterButtons = [];
@@ -54,7 +54,7 @@ function createPage({ search = "", hash = "", records = materials, views = null 
       },
       querySelectorAll(selector) { return selector === "[data-filter]" ? filterButtons : []; }
     },
-    fetch: async url => ({ ok: true, json: async () => url.includes("site.json") ? site : url.includes("article-views.json") ? views : records })
+    fetch: async url => ({ ok: true, json: async () => url.includes("site.json") ? siteConfig : url.includes("article-views.json") ? views : records })
   };
   const context = vm.createContext(page);
   vm.runInContext(code, context);
@@ -102,6 +102,15 @@ test("right rail labels articles as starting points when page views are absent o
     assert.match(rail, /從這幾篇開始/);
     assert.doesNotMatch(rail, /熱門文章|次點閱/);
   }
+});
+
+test("mobile starting article follows the configured featured article", async () => {
+  const { context, elements } = createPage({ siteConfig: { ...site, featuredMaterialId: "material-19" } });
+  await context.load();
+  const feature = elements.get("#app").innerHTML.match(/<a class="mobile-feature"[^>]*>.*?<\/a>/)?.[0];
+  assert.ok(feature);
+  assert.match(feature, /article=material-19/);
+  assert.match(feature, /VMware 有哪些替代方案/);
 });
 
 test("three discovery layers, HPE, and detailed topics filter approved articles", async () => {
@@ -157,6 +166,37 @@ test("legacy material links open the separate article page", async () => {
   assert.deepEqual(navigations, ["?article=material-19"]);
   assert.match(elements.get("#app").innerHTML, /VMware 有哪些替代方案/);
   assert.match(elements.get("#app").innerHTML, /回到所有文章/);
+});
+
+test("reading suggestions use approved editorial links once and disappear without a selection", async () => {
+  const smart = createPage({ search: "?article=material-13" });
+  await smart.context.load();
+  const html = smart.elements.get("#app").innerHTML;
+  assert.equal((html.match(/接著想了解什麼？/g) || []).length, 1);
+  for (const id of ["material-30", "material-27", "material-35"]) assert.match(html, new RegExp(`article=${id}`));
+  assert.doesNotMatch(html, /更多內容|article=material-37/);
+
+  const hci = createPage({ search: "?article=material-18" });
+  await hci.context.load();
+  assert.match(hci.elements.get("#app").innerHTML, /article=material-5/);
+  assert.match(hci.elements.get("#app").innerHTML, /article=material-19/);
+
+  const noRelated = createPage({ search: "?article=material-30" });
+  await noRelated.context.load();
+  assert.doesNotMatch(noRelated.elements.get("#app").innerHTML, /接著想了解什麼？|class="read-sidebar"/);
+
+  const sameBroadTopic = createPage({ search: "?article=material-37" });
+  await sameBroadTopic.context.load();
+  assert.doesNotMatch(sameBroadTopic.elements.get("#app").innerHTML, /接著想了解什麼？|article=material-13/);
+
+  const draft = { ...materials[0], id: "draft", status: "待審" };
+  const unapproved = createPage({
+    search: "?article=material-30",
+    records: [...materials, draft],
+    siteConfig: { ...site, relatedReading: { ...site.relatedReading, "material-30": [{ id: "draft", question: "後續", reason: "測試" }] } }
+  });
+  await unapproved.context.load();
+  assert.doesNotMatch(unapproved.elements.get("#app").innerHTML, /article=draft|接著想了解什麼？/);
 });
 
 test("security articles show neutral classification and related security reading", async () => {
