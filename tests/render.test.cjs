@@ -125,6 +125,13 @@ test("three discovery layers, HPE, and detailed topics filter approved articles"
     assert.ok(found.length > 0);
     assert.ok(found.length < approved.length);
   }
+  const security = context.filteredItems("security", "");
+  assert.deepEqual(security.map(item => item.id).sort(), ["material-26", "material-34", "material-39"]);
+  context.setDiscovery("security", "");
+  assert.equal(elements.get(".listing-title").textContent, "資安與存取治理");
+  assert.equal(elements.get(".result-count").textContent, "共 3 篇");
+  assert.deepEqual(context.filteredItems("topic:ai-security", "").map(item => item.id).sort(), ["material-26", "material-34"]);
+  assert.deepEqual(context.filteredItems("topic:network-access-security", "").map(item => item.id), ["material-39"]);
   const matching = approved.filter(item => item.topicId === "competitive-positioning");
   context.setDiscovery("topic:competitive-positioning", "");
   assert.equal(elements.get(".listing-title").textContent, "產品定位比較");
@@ -190,6 +197,16 @@ test("reading suggestions use approved editorial links once and disappear withou
   });
   await unapproved.context.load();
   assert.doesNotMatch(unapproved.elements.get("#app").innerHTML, /article=draft|接著想了解什麼？/);
+});
+
+test("security articles show neutral classification and related security reading", async () => {
+  const { context, elements } = createPage({ search: "?article=material-26" });
+  await context.load();
+  const html = elements.get("#app").innerHTML;
+  assert.match(html, /資安與存取治理 \/ AI 資安與治理/);
+  assert.match(html, /AI 要讀內部資料，怎麼守住存取邊界？/);
+  assert.match(html, /陌生裝置想連公司 Wi-Fi？/);
+  assert.doesNotMatch(html, /HPE SimpliVity/);
 });
 
 test("long article uses its existing section titles for headings and a linked outline", async () => {
