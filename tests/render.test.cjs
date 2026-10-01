@@ -8,7 +8,7 @@ const code = fs.readFileSync(path.join(__dirname, "../app.js"), "utf8").replace(
 const site = JSON.parse(fs.readFileSync(path.join(__dirname, "../data/site.json"), "utf8"));
 const materials = JSON.parse(fs.readFileSync(path.join(__dirname, "../data/materials.json"), "utf8"));
 
-function createPage({ search = "", hash = "", records = materials } = {}) {
+function createPage({ search = "", hash = "", records = materials, views = null } = {}) {
   const elements = new Map();
   const navigations = [];
   const filterButtons = [];
@@ -54,7 +54,7 @@ function createPage({ search = "", hash = "", records = materials } = {}) {
       },
       querySelectorAll(selector) { return selector === "[data-filter]" ? filterButtons : []; }
     },
-    fetch: async url => ({ ok: true, json: async () => url.includes("site.json") ? site : records })
+    fetch: async url => ({ ok: true, json: async () => url.includes("site.json") ? site : url.includes("article-views.json") ? views : records })
   };
   const context = vm.createContext(page);
   vm.runInContext(code, context);
@@ -75,6 +75,33 @@ test("only approved content appears and the selected article is featured", async
   assert.match(html, /class="hpe-rail-link" href="#hpe"/);
   assert.doesNotMatch(html, /未核准內容/);
   assert.equal(site.featuredMaterialId, "material-13");
+});
+
+test("right rail uses approved article page views when a recent 30-day snapshot exists", async () => {
+  const draft = { ...materials[0], id: "draft", status: "待審", title: "未核准內容" };
+  const views = { windowDays: 30, updatedAt: new Date().toISOString(), views: { "material-13": 12, "material-16": 54, "material-19": 23, draft: 999 } };
+  const { context, elements } = createPage({ records: [...materials, draft], views });
+  await context.load();
+  const rail = elements.get("#app").innerHTML.match(/<div class="rail-articles">([\s\S]*?)<\/div>/)?.[1];
+  assert.ok(rail);
+  assert.match(rail, /熱門文章/);
+  assert.match(rail, /近 30 天點閱最多/);
+  assert.ok(rail.indexOf("article=material-16") < rail.indexOf("article=material-19"));
+  assert.ok(rail.indexOf("article=material-19") < rail.indexOf("article=material-13"));
+  assert.match(rail, /54 次點閱/);
+  assert.doesNotMatch(rail, /未核准內容|article=draft/);
+  assert.doesNotMatch(rail, /精選主題|quick-path/);
+});
+
+test("right rail labels articles as starting points when page views are absent or stale", async () => {
+  for (const views of [null, { windowDays: 30, updatedAt: "2020-01-01T00:00:00Z", views: { "material-16": 54 } }]) {
+    const { context, elements } = createPage({ views });
+    await context.load();
+    const rail = elements.get("#app").innerHTML.match(/<div class="rail-articles">([\s\S]*?)<\/div>/)?.[1];
+    assert.ok(rail);
+    assert.match(rail, /從這幾篇開始/);
+    assert.doesNotMatch(rail, /熱門文章|次點閱/);
+  }
 });
 
 test("three discovery layers, HPE, and detailed topics filter approved articles", async () => {

@@ -1,4 +1,4 @@
-let content = { items: [], topics: new Map(), tracks: [], articleOutlines: {}, featuredMaterialId: "" };
+let content = { items: [], topics: new Map(), tracks: [], articleOutlines: {}, featuredMaterialId: "", articleViews: null };
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 
 function escapeHtml(value) {
@@ -92,6 +92,30 @@ function topicButtons() {
   return content.tracks.flatMap(track => track.topics).filter(topic => content.items.some(item => item.topicId === topic.id))
     .map(topic => `<button type="button" class="topic-chip" data-filter="topic:${escapeHtml(topic.id)}">${escapeHtml(topic.title)} <span>${content.items.filter(item => item.topicId === topic.id).length}</span></button>`).join("");
 }
+
+function popularArticles(snapshot) {
+  if (!snapshot || snapshot.windowDays !== 30 || !snapshot.updatedAt || !snapshot.views || typeof snapshot.views !== "object" || Array.isArray(snapshot.views)) return [];
+  const updated = Date.parse(snapshot.updatedAt);
+  if (!Number.isFinite(updated) || updated > Date.now() || Date.now() - updated > 40 * 24 * 60 * 60 * 1000) return [];
+  return content.items.map((item, index) => ({ item, index, count: snapshot.views[item.id] }))
+    .filter(entry => Number.isSafeInteger(entry.count) && entry.count > 0)
+    .sort((a, b) => b.count - a.count || a.index - b.index)
+    .slice(0, 3);
+}
+
+function railArticlesMarkup() {
+  const ranked = popularArticles(content.articleViews);
+  const startingIds = [content.featuredMaterialId, "material-38", "material-19"];
+  const entries = ranked.length ? ranked : [...new Set(startingIds)]
+    .map(id => content.items.find(item => item.id === id))
+    .filter(Boolean)
+    .concat(content.items.filter(item => !startingIds.includes(item.id)))
+    .slice(0, 3)
+    .map(item => ({ item }));
+  const popular = ranked.length > 0;
+  const tag = popular ? "ol" : "ul";
+  return `<div class="rail-articles"><h2>${popular ? "熱門文章" : "從這幾篇開始"}</h2><p class="rail-list-note">${popular ? "近 30 天點閱最多" : "從應用、方案到設備選型"}</p><${tag} class="rail-article-list">${entries.map((entry, index) => `<li><a href="${articleUrl(entry.item)}" aria-label="閱讀文章：${escapeHtml(entry.item.title)}"><span class="rail-article-index" aria-hidden="true">${popular ? String(index + 1).padStart(2, "0") : "↗"}</span><span class="rail-article-copy"><small>${escapeHtml(topicOf(entry.item).title)}${popular ? ` · ${new Intl.NumberFormat("zh-TW").format(entry.count)} 次點閱` : ""}</small><strong>${escapeHtml(entry.item.title)}</strong></span></a></li>`).join("")}</${tag}></div>`;
+}
 function renderResults(filter, query) {
   const items = filteredItems(filter, query);
   document.querySelector(".listing-title").textContent = filterTitle(filter);
@@ -131,10 +155,7 @@ function renderHome() {
       <div class="layer-label layer-infrastructure"><a href="#articles" data-layer="infrastructure">基礎架構</a><p>穩定、安全、可擴充<br>支持企業持續創新</p></div>
       <aside class="hero-rail" aria-label="快速找文章">
         <h2>搜尋文章</h2><form class="rail-search" role="search"><label class="sr-only" for="rail-query">搜尋文章</label><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.6"/><path d="m15.5 15.5 5.1 5.1"/></svg><input id="rail-query" type="search" placeholder="搜尋文章" autocomplete="off"><button type="submit" aria-label="搜尋文章"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></button></form>
-        <h2 class="rail-topics-heading">精選主題</h2>
-        <a href="#articles" class="quick-path application-path" data-layer="application"><span class="quick-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><rect x="7" y="4" width="16" height="23" rx="2"/><path d="M11 11h8M11 16h8M11 21h5M23 13l4 4-4 4"/></svg></span><span class="quick-copy"><strong>AI 應用與實務</strong><small>從場景出發，看見生成式 AI<br>在企業的多元可能</small></span><span class="quick-arrow" aria-hidden="true">›</span></a>
-        <a href="#articles" class="quick-path integration-path" data-layer="integration"><span class="quick-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="9"/><circle cx="16" cy="16" r="3"/><path d="M16 3v4m0 18v4M3 16h4m18 0h4M7 7l3 3m12 12 3 3M25 7l-3 3M10 22l-3 3"/></svg></span><span class="quick-copy"><strong>導入與系統整合</strong><small>串連資料、流程與工具<br>打造可持續的 AI 營運能力</small></span><span class="quick-arrow" aria-hidden="true">›</span></a>
-        <a href="#articles" class="quick-path infrastructure-path" data-layer="infrastructure"><span class="quick-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><rect x="5" y="5" width="22" height="6" rx="1"/><rect x="5" y="13" width="22" height="6" rx="1"/><rect x="5" y="21" width="22" height="6" rx="1"/><path d="M9 8h1m-1 8h1m-1 8h1"/></svg></span><span class="quick-copy"><strong>基礎架構與 IT 現代化</strong><small>建構穩健靈活的數位底座<br>支撐企業 AI 發展</small></span><span class="quick-arrow" aria-hidden="true">›</span></a>
+        ${railArticlesMarkup()}
         <a class="hpe-rail-link" href="#hpe"><span>HPE 贊助專區</span><strong>了解基礎架構與 AI 方案</strong><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
       </aside>
       <a class="hero-transition" href="#topics"><span class="transition-trace" aria-hidden="true"><i></i><i></i><i></i></span><strong>從你的問題開始探索</strong><span>選擇應用、導入或基礎架構，沿著系統找到需要的知識。</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v17m-6-6 6 6 6-6"/></svg></a>
@@ -256,15 +277,16 @@ function openLegacyHash() {
 
 async function load() {
   try {
-    const [siteResponse, materialsResponse] = await Promise.all([
+    const [siteResponse, materialsResponse, articleViews] = await Promise.all([
       fetch("data/site.json", { cache: "no-store" }),
-      fetch("data/materials.json", { cache: "no-store" })
+      fetch("data/materials.json", { cache: "no-store" }),
+      fetch("data/article-views.json", { cache: "no-store" }).then(response => response.ok ? response.json() : null).catch(() => null)
     ]);
     if (!siteResponse.ok || !materialsResponse.ok) throw new Error("內容資料讀取失敗");
     const [site, materials] = await Promise.all([siteResponse.json(), materialsResponse.json()]);
     const topics = new Map();
     site.tracks.forEach(track => track.topics.forEach(topic => topics.set(topic.id, { title: topic.title, track: track.title })));
-    content = { topics, tracks: site.tracks, articleOutlines: site.articleOutlines || {}, items: materials.filter(item => item.status === "已核准"), featuredMaterialId: site.featuredMaterialId || "" };
+    content = { topics, tracks: site.tracks, articleOutlines: site.articleOutlines || {}, items: materials.filter(item => item.status === "已核准"), featuredMaterialId: site.featuredMaterialId || "", articleViews };
     window.addEventListener("hashchange", openLegacyHash);
     const legacyArticleId = /^#(material-\d+)$/.exec(location.hash)?.[1];
     const articleId = new URLSearchParams(location.search).get("article") || legacyArticleId;
