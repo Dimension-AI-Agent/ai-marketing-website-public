@@ -1,4 +1,4 @@
-let content = { items: [], topics: new Map(), tracks: [], articleOutlines: {}, featuredMaterialId: "", articleViews: null };
+let content = { items: [], topics: new Map(), tracks: [], articleOutlines: {}, relatedReading: {}, featuredMaterialId: "", articleViews: null };
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 
 function escapeHtml(value) {
@@ -129,7 +129,7 @@ function renderResults(filter, query) {
 function setDiscovery(filter, query, scroll = false) {
   const safeFilter = filter === "all" || filter === "hpe" || (filter.startsWith("layer:") && layerMeta[filter.slice(6)]) || (filter.startsWith("topic:") && content.topics.has(filter.slice(6))) ? filter : "all";
   const cleanQuery = String(query || "").trim();
-  document.querySelectorAll(".top-search input,.rail-search input,.discovery-search input").forEach(input => { input.value = cleanQuery; });
+  document.querySelectorAll(".top-search input,.rail-search input,.discovery-search input,.mobile-search input").forEach(input => { input.value = cleanQuery; });
   renderResults(safeFilter, cleanQuery);
   const params = new URLSearchParams();
   if (cleanQuery) params.set("q", cleanQuery);
@@ -144,12 +144,19 @@ function renderHome() {
     document.querySelector("#app").innerHTML = '<div class="not-found"><h1>文章準備中</h1><p>已核准的內容發布後，就會出現在這裡。</p></div>';
     return;
   }
+  const featured = items.find(item => item.id === content.featuredMaterialId) || items[0];
   document.title = "訊達 AI 內容專欄";
   document.querySelector("#app").innerHTML = `<div class="home-page">
     <section class="hero-frame" aria-labelledby="home-title">
       <img class="hero-plate cutaway-plate" src="assets/visuals/ai-system-cutaway.png" alt="" aria-hidden="true">
       <div class="hero-header"><a class="hero-brand" href="./">訊達 AI 內容專欄</a><form class="top-search" role="search"><label class="sr-only" for="top-query">搜尋文章</label><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.6"/><path d="m15.5 15.5 5.1 5.1"/></svg><input id="top-query" type="search" placeholder="搜尋文章" autocomplete="off"></form></div>
       <div class="hero-copy"><p class="hero-tagline">KNOWLEDGE FOR<br>A SMARTER TOMORROW</p><h1 id="home-title">從應用到基礎<br>串連企業的<br><strong>AI 實踐力</strong></h1><span class="hero-accent" aria-hidden="true"></span><p class="hero-intro">聚焦企業 AI 應用與 IT 基礎架構，<br>以實務觀點拆解技術、串連場景，<br>提供可落地的知識與觀點，<br>陪伴企業走向更高效、更穩健的未來。</p></div>
+      <div class="mobile-find" aria-label="快速找文章">
+        <h2>你現在想解決什麼問題？</h2>
+        <form class="mobile-search" role="search"><label class="sr-only" for="mobile-query">搜尋文章</label><input id="mobile-query" type="search" placeholder="搜尋問題、產品或關鍵字" autocomplete="off"><button type="submit">找文章</button></form>
+        <nav class="mobile-paths" aria-label="依問題找文章"><a href="#articles" data-layer="application">AI 能做什麼？</a><a href="#articles" data-layer="integration">怎麼接進系統？</a><a href="#articles" data-layer="infrastructure">設備怎麼選？</a></nav>
+        <a class="mobile-feature" href="${articleUrl(featured)}"><span>從這篇開始</span><strong>${escapeHtml(featured.title)}</strong><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
+      </div>
       <div class="layer-label layer-app"><a href="#articles" data-layer="application">應用情境</a><p>貼近業務場景<br>讓 AI 真正解決<br>企業問題</p></div>
       <div class="layer-label layer-integration"><a href="#articles" data-layer="integration">導入與整合</a><p>整合資料、系統與流程<br>串聯應用與基礎架構<br>加速 AI 落地</p></div>
       <div class="layer-label layer-infrastructure"><a href="#articles" data-layer="infrastructure">基礎架構</a><p>穩定、安全、可擴充<br>支持企業持續創新</p></div>
@@ -185,7 +192,7 @@ function renderHome() {
   document.querySelectorAll("[data-filter]").forEach(button => button.addEventListener("click", () => setDiscovery(button.dataset.filter, document.querySelector(".discovery-search input").value, false)));
   document.querySelector("[data-hpe-filter]").addEventListener("click", () => setDiscovery("hpe", "", true));
   document.querySelector(".reset-filter").addEventListener("click", () => setDiscovery("all", "", false));
-  document.querySelectorAll(".top-search,.rail-search,.discovery-search").forEach(form => form.addEventListener("submit", event => {
+  document.querySelectorAll(".top-search,.rail-search,.discovery-search,.mobile-search").forEach(form => form.addEventListener("submit", event => {
     event.preventDefault();
     setDiscovery("all", form.querySelector("input").value, true);
   }));
@@ -193,7 +200,7 @@ function renderHome() {
   const requestedFilter = params.get("filter") || "all";
   const requestedQuery = params.get("q") || "";
   renderResults(requestedFilter === "all" || requestedFilter === "hpe" || (requestedFilter.startsWith("layer:") && layerMeta[requestedFilter.slice(6)]) || (requestedFilter.startsWith("topic:") && content.topics.has(requestedFilter.slice(6))) ? requestedFilter : "all", requestedQuery);
-  document.querySelectorAll(".top-search input,.rail-search input,.discovery-search input").forEach(input => { input.value = requestedQuery; });
+  document.querySelectorAll(".top-search input,.rail-search input,.discovery-search input,.mobile-search input").forEach(input => { input.value = requestedQuery; });
 }
 
 function inlineMarkup(value) {
@@ -243,9 +250,13 @@ function attachmentsMarkup(item) {
 
 function renderArticle(item) {
   const topic = topicOf(item);
-  const related = content.items.filter(other => other.id !== item.id && other.topicId === item.topicId).slice(0, 3);
-  const fallbacks = content.items.filter(other => other.id !== item.id && !related.includes(other)).slice(0, 3 - related.length);
-  const suggestions = [...related, ...fallbacks];
+  const seen = new Set();
+  const guides = (Array.isArray(content.relatedReading[item.id]) ? content.relatedReading[item.id] : [])
+    .filter(guide => guide && typeof guide.id === "string" && typeof guide.question === "string" && guide.question.trim() && typeof guide.reason === "string" && guide.reason.trim())
+    .map(guide => ({ ...guide, item: content.items.find(other => other.id === guide.id) }))
+    .filter(guide => guide.item && guide.item.id !== item.id && !seen.has(guide.item.id) && seen.add(guide.item.id))
+    .slice(0, 3);
+  const guideMarkup = guides.length ? `<aside class="read-sidebar" aria-label="延伸閱讀"><h2>接著想了解什麼？</h2><p>選一個與你現在的問題最接近的方向。</p><div class="guide-list">${guides.map(guide => `<a href="${articleUrl(guide.item)}"><span>${escapeHtml(guide.question)}</span><strong>${escapeHtml(guide.item.title)}</strong><small>${escapeHtml(guide.reason)}</small></a>`).join("")}</div></aside>` : "";
   const headings = [];
   const body = bodyMarkup(item.body, content.articleOutlines[item.id] || [], headings);
   const sections = headings.filter(heading => heading.level === 2);
@@ -254,8 +265,7 @@ function renderArticle(item) {
   document.title = `${item.title}｜訊達 AI 內容專欄`;
   document.querySelector("#app").innerHTML = `<div class="article-page">
     <div class="article-top"><div class="container"><nav class="breadcrumb" aria-label="所在位置"><a href="./">內容專欄</a><span>›</span><span>${escapeHtml(topic.title)}</span></nav><div class="article-header"><span class="eyebrow">${escapeHtml(topic.track)} / ${escapeHtml(topic.title)}</span><h1>${escapeHtml(item.title)}</h1>${item.summary ? `<p class="lead${expandableSummary ? " is-collapsible" : ""}" id="article-summary">${escapeHtml(item.summary)}</p>${expandableSummary ? '<button type="button" class="summary-toggle" aria-controls="article-summary" aria-expanded="false">展開摘要</button>' : ""}` : ""}<div class="article-byline"><b>訊達 AI 內容</b><span>·</span><span>${escapeHtml(item.format || "文章")}</span></div></div></div></div>
-    <div class="container reading-wrap"><article class="article-body">${toc}${body}${attachmentsMarkup(item)}<div class="article-end"><a class="back-link" href="./#articles">← 回到所有文章</a></div></article><aside class="read-sidebar"><div class="side-kicker">KEEP READING</div><h2>接著看</h2>${suggestions.map(other => `<a href="${articleUrl(other)}">${escapeHtml(other.title)} →</a>`).join("")}</aside></div>
-    <section class="related"><div class="container"><h2>更多內容</h2><div class="cards">${suggestions.map(cardMarkup).join("")}</div></div></section>
+    <div class="container reading-wrap"><article class="article-body">${toc}${body}${attachmentsMarkup(item)}<div class="article-end"><a class="back-link" href="./#articles">← 回到所有文章</a></div></article>${guideMarkup}</div>
   </div>`;
   const summaryToggle = document.querySelector(".summary-toggle");
   if (expandableSummary && summaryToggle?.addEventListener) summaryToggle.addEventListener("click", () => {
@@ -286,7 +296,7 @@ async function load() {
     const [site, materials] = await Promise.all([siteResponse.json(), materialsResponse.json()]);
     const topics = new Map();
     site.tracks.forEach(track => track.topics.forEach(topic => topics.set(topic.id, { title: topic.title, track: track.title })));
-    content = { topics, tracks: site.tracks, articleOutlines: site.articleOutlines || {}, items: materials.filter(item => item.status === "已核准"), featuredMaterialId: site.featuredMaterialId || "", articleViews };
+    content = { topics, tracks: site.tracks, articleOutlines: site.articleOutlines || {}, relatedReading: site.relatedReading || {}, items: materials.filter(item => item.status === "已核准"), featuredMaterialId: site.featuredMaterialId || "", articleViews };
     window.addEventListener("hashchange", openLegacyHash);
     const legacyArticleId = /^#(material-\d+)$/.exec(location.hash)?.[1];
     const articleId = new URLSearchParams(location.search).get("article") || legacyArticleId;
