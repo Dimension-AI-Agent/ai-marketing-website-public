@@ -16,7 +16,7 @@ function createPage({ search = "", hash = "", records = materials } = {}) {
     const listeners = new Map();
     const attributes = new Map();
     return {
-      innerHTML: "", textContent: "", hidden: false, dataset: {},
+      innerHTML: "", textContent: "", hidden: false, dataset: {}, value: "",
       scrollIntoView() {},
       addEventListener(type, listener) { listeners.set(type, listener); },
       setAttribute(name, value) { attributes.set(name, value); },
@@ -61,7 +61,7 @@ function createPage({ search = "", hash = "", records = materials } = {}) {
   return { context, elements, navigations, filterButtons };
 }
 
-test("only approved content appears and Mark's selected article is featured", async () => {
+test("only approved content appears and the selected article is featured", async () => {
   const draft = { ...materials[0], id: "draft", status: "待審", title: "未核准內容" };
   const { context, elements } = createPage({ records: [...materials, draft] });
   await context.load();
@@ -74,21 +74,43 @@ test("only approved content appears and Mark's selected article is featured", as
   assert.equal(site.featuredMaterialId, "material-13");
 });
 
-test("topics precede the featured story, show counts, and filtering can be cleared", async () => {
-  const { context, elements, filterButtons } = createPage();
+test("three discovery layers, HPE, and detailed topics filter approved articles", async () => {
+  const { context, elements } = createPage();
   await context.load();
   const html = elements.get("#app").innerHTML;
   const approved = materials.filter(item => item.status === "已核准");
+  assert.ok(html.indexOf('id="topics"') < html.indexOf('id="articles"'));
+  assert.match(html, /id="hpe"/);
+  for (const layer of ["application", "integration", "infrastructure"]) {
+    const found = context.filteredItems(`layer:${layer}`, "");
+    assert.ok(found.length > 0);
+    assert.ok(found.length < approved.length);
+  }
   const matching = approved.filter(item => item.topicId === "competitive-positioning");
-  assert.ok(html.indexOf('id="topics"') < html.indexOf("FEATURED STORY"));
-  assert.match(html, new RegExp(`data-filter="competitive-positioning"[^>]*>[\\s\\S]*?產品定位比較[\\s\\S]*?<span class="filter-count">${matching.length}<\\/span>`));
-  filterButtons.find(button => button.dataset.filter === "competitive-positioning").click();
+  context.setDiscovery("topic:competitive-positioning", "");
   assert.equal(elements.get(".listing-title").textContent, "產品定位比較");
   assert.equal(elements.get(".result-count").textContent, `共 ${matching.length} 篇`);
   assert.match(elements.get(".cards").innerHTML, /VMware 有哪些替代方案/);
   assert.doesNotMatch(elements.get(".cards").innerHTML, /HPE Smart Choice/);
-  elements.get(".reset-filter").click();
+  context.setDiscovery("hpe", "");
+  assert.equal(elements.get(".listing-title").textContent, "HPE 專區文章");
+  assert.ok(context.filteredItems("hpe", "").every(item => context.isHpe(item)));
+  context.setDiscovery("all", "");
   assert.equal(elements.get(".result-count").textContent, `共 ${approved.length} 篇`);
+  assert.equal(elements.get(".reset-filter").hidden, true);
+});
+
+test("search finds title, topic, summary and body; no-match state can be cleared", async () => {
+  const { context, elements, navigations } = createPage();
+  await context.load();
+  assert.equal(context.filteredItems("all", "Smart Choice")[0].id, "material-16");
+  assert.ok(context.filteredItems("all", "產品定位比較").length > 0);
+  assert.ok(context.filteredItems("all", "派工").some(item => item.id === "material-13"));
+  context.setDiscovery("all", "絕對不會出現的詞");
+  assert.equal(elements.get(".result-count").textContent, "共 0 篇");
+  assert.match(elements.get(".cards").innerHTML, /還沒有找到符合的文章/);
+  assert.match(navigations.at(-1), /q=/);
+  context.setDiscovery("all", "");
   assert.equal(elements.get(".reset-filter").hidden, true);
 });
 
