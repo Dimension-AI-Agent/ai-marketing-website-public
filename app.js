@@ -120,32 +120,24 @@ function renderHome() {
     document.querySelector("#app").innerHTML = '<div class="not-found"><h1>文章準備中</h1><p>已核准的內容發布後，就會出現在這裡。</p></div>';
     return;
   }
-  const articleById = id => items.find(item => item.id === id);
-  const hotspot = (id, className, shortTitle) => {
-    const item = articleById(id);
-    return item ? `<a class="article-hotspot ${className}" href="${articleUrl(item)}"><span class="hotspot-dot" aria-hidden="true"></span><span>${escapeHtml(shortTitle)}</span><span class="hotspot-arrow" aria-hidden="true">›</span></a>` : "";
-  };
   document.title = "訊達 AI 內容專欄";
   document.querySelector("#app").innerHTML = `<div class="home-page">
     <section class="hero-frame" aria-labelledby="home-title">
-      <img class="hero-plate campus-plate" src="assets/visuals/campus.png" alt="" aria-hidden="true">
       <img class="hero-plate cutaway-plate" src="assets/visuals/ai-system-cutaway.png" alt="" aria-hidden="true">
       <div class="hero-header"><a class="hero-brand" href="./">訊達 AI 內容專欄</a><form class="top-search" role="search"><label class="sr-only" for="top-query">搜尋文章</label><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.6"/><path d="m15.5 15.5 5.1 5.1"/></svg><input id="top-query" type="search" placeholder="搜尋文章" autocomplete="off"></form></div>
       <div class="hero-copy"><p class="hero-tagline">KNOWLEDGE FOR<br>A SMARTER TOMORROW</p><h1 id="home-title">從應用到基礎<br>串連企業的<br><strong>AI 實踐力</strong></h1><span class="hero-accent" aria-hidden="true"></span><p class="hero-intro">聚焦企業 AI 應用與 IT 基礎架構，<br>以實務觀點拆解技術、串連場景，<br>提供可落地的知識與觀點，<br>陪伴企業走向更高效、更穩健的未來。</p></div>
       <div class="layer-label layer-app"><a href="#articles" data-layer="application">應用情境</a><p>貼近業務場景<br>讓 AI 真正解決<br>企業問題</p></div>
       <div class="layer-label layer-integration"><a href="#articles" data-layer="integration">導入與整合</a><p>整合資料、系統與流程<br>串聯應用與基礎架構<br>加速 AI 落地</p></div>
       <div class="layer-label layer-infrastructure"><a href="#articles" data-layer="infrastructure">基礎架構</a><p>穩定、安全、可擴充<br>支持企業持續創新</p></div>
-      ${hotspot("material-13", "hotspot-agent", "訊達智慧維修 AI Agent")}
-      ${hotspot("material-5", "hotspot-simplivity", "HPE SimpliVity 超融合方案")}
-      ${hotspot("material-16", "hotspot-smart", "HPE Smart Choice")}
       <aside class="hero-rail" aria-label="快速找文章">
         <h2>搜尋文章</h2><form class="rail-search" role="search"><label class="sr-only" for="rail-query">搜尋文章</label><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.6"/><path d="m15.5 15.5 5.1 5.1"/></svg><input id="rail-query" type="search" placeholder="搜尋文章" autocomplete="off"><button type="submit" aria-label="搜尋文章"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></button></form>
         <h2 class="rail-topics-heading">精選主題</h2>
         <a href="#articles" class="quick-path application-path" data-layer="application"><span class="quick-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><rect x="7" y="4" width="16" height="23" rx="2"/><path d="M11 11h8M11 16h8M11 21h5M23 13l4 4-4 4"/></svg></span><span class="quick-copy"><strong>AI 應用與實務</strong><small>從場景出發，看見生成式 AI<br>在企業的多元可能</small></span><span class="quick-arrow" aria-hidden="true">›</span></a>
         <a href="#articles" class="quick-path integration-path" data-layer="integration"><span class="quick-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="9"/><circle cx="16" cy="16" r="3"/><path d="M16 3v4m0 18v4M3 16h4m18 0h4M7 7l3 3m12 12 3 3M25 7l-3 3M10 22l-3 3"/></svg></span><span class="quick-copy"><strong>導入與系統整合</strong><small>串連資料、流程與工具<br>打造可持續的 AI 營運能力</small></span><span class="quick-arrow" aria-hidden="true">›</span></a>
         <a href="#articles" class="quick-path infrastructure-path" data-layer="infrastructure"><span class="quick-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><rect x="5" y="5" width="22" height="6" rx="1"/><rect x="5" y="13" width="22" height="6" rx="1"/><rect x="5" y="21" width="22" height="6" rx="1"/><path d="M9 8h1m-1 8h1m-1 8h1"/></svg></span><span class="quick-copy"><strong>基礎架構與 IT 現代化</strong><small>建構穩健靈活的數位底座<br>支撐企業 AI 發展</small></span><span class="quick-arrow" aria-hidden="true">›</span></a>
-        <a class="hpe-entry" href="#hpe"><span class="hpe-title">HPE 專區 <span aria-hidden="true">›</span></span><span>探索 HPE 在 AI 與混合雲時代的<br>基礎架構方案與實務觀點</span><img src="assets/visuals/hpe-servers.png" alt="" aria-hidden="true"></a>
+        <a class="hpe-rail-link" href="#hpe"><span>HPE 贊助專區</span><strong>了解基礎架構與 AI 方案</strong><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
       </aside>
+      <a class="hero-transition" href="#topics"><span class="transition-trace" aria-hidden="true"><i></i><i></i><i></i></span><strong>從你的問題開始探索</strong><span>選擇應用、導入或基礎架構，沿著系統找到需要的知識。</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v17m-6-6 6 6 6-6"/></svg></a>
     </section>
     <section class="discovery-intro" id="topics" aria-labelledby="topics-heading"><div class="container">
       <div><h2 id="topics-heading">從你正在面對的問題開始</h2><p>不必先弄懂所有技術名詞。選一個方向，找到相關的實務文章。</p></div>
@@ -155,7 +147,7 @@ function renderHome() {
         <a href="#articles" class="path-card path-infrastructure" data-layer="infrastructure"><span>基礎架構</span><strong>設備與平台該怎麼選？</strong><small>釐清運算、儲存、網路與虛擬化選項</small><b aria-hidden="true">↗</b></a>
       </div>
     </div></section>
-    <section class="hpe-section" id="hpe" aria-labelledby="hpe-heading"><div class="container hpe-layout"><div class="hpe-intro"><p class="hpe-sponsored">HPE 贊助專區</p><h2 id="hpe-heading">HPE 專區</h2><p>從產品定位到實際部署條件，整理 HPE 相關的基礎架構與 AI 方案觀點。</p><button type="button" class="text-action" data-hpe-filter>瀏覽所有 HPE 文章 <span aria-hidden="true">↗</span></button></div><div class="hpe-feature-list">${items.filter(isHpe).slice(0, 3).map(item => `<a href="${articleUrl(item)}"><span>${escapeHtml(topicOf(item).title)}</span><strong>${escapeHtml(item.title)}</strong><b aria-hidden="true">↗</b></a>`).join("")}</div></div></section>
+    <section class="hpe-section" id="hpe" aria-labelledby="hpe-heading"><div class="container hpe-layout"><div class="hpe-intro"><p class="hpe-sponsored">HPE 贊助專區</p><h2 id="hpe-heading">HPE 專區</h2><p>從產品定位到實際部署條件，整理 HPE 相關的基礎架構與 AI 方案觀點。</p><button type="button" class="text-action" data-hpe-filter>瀏覽所有 HPE 文章 <span aria-hidden="true">↗</span></button><img class="hpe-illustration" src="assets/visuals/hpe-servers.png" alt="" aria-hidden="true" loading="lazy"></div><div class="hpe-feature-list">${items.filter(isHpe).slice(0, 3).map(item => `<a href="${articleUrl(item)}"><span>${escapeHtml(topicOf(item).title)}</span><strong>${escapeHtml(item.title)}</strong><b aria-hidden="true">↗</b></a>`).join("")}</div></div></section>
     <section class="discovery" id="articles" aria-labelledby="articles-heading"><div class="container">
       <div class="listing-heading"><div><h2 id="articles-heading">探索文章</h2><p>依主題找資料，也可以直接搜尋問題或產品名稱。</p></div><form class="discovery-search" role="search"><label class="sr-only" for="discovery-query">搜尋文章</label><input id="discovery-query" type="search" placeholder="例如：AI Agent、資料權限、伺服器" autocomplete="off"><button type="submit">搜尋 <span aria-hidden="true">↗</span></button></form></div>
       <div class="filter-bar" aria-label="文章篩選"><button type="button" data-filter="all" class="filter-button">全部</button><button type="button" data-filter="layer:application" class="filter-button">應用情境</button><button type="button" data-filter="layer:integration" class="filter-button">導入與整合</button><button type="button" data-filter="layer:infrastructure" class="filter-button">基礎架構</button><button type="button" data-filter="hpe" class="filter-button filter-hpe">HPE 專區</button></div>

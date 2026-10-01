@@ -70,6 +70,9 @@ test("only approved content appears and the selected article is featured", async
   assert.match(html, new RegExp(`共 ${approvedCount} 篇`));
   assert.match(html, /class="focus-label">焦點文章/);
   assert.match(html, /article=material-13/);
+  assert.doesNotMatch(html, /article-hotspot|campus\.png|hpe-entry/);
+  assert.match(html, /class="hero-transition" href="#topics"/);
+  assert.match(html, /class="hpe-rail-link" href="#hpe"/);
   assert.doesNotMatch(html, /未核准內容/);
   assert.equal(site.featuredMaterialId, "material-13");
 });
