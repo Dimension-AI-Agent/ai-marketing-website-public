@@ -54,7 +54,7 @@ function cardMarkup(item, index) {
 
 const layerMeta = {
   application: { title: "應用情境", topics: ["industry-cases", "hpe-use-cases", "faq", "benefit-assessment", "agent-other"] },
-  integration: { title: "導入與整合", topics: ["enterprise-adoption", "on-prem-integration", "open-source-tools", "integrated-solutions", "ai-security"] },
+  integration: { title: "導入與整合", topics: ["enterprise-adoption", "on-prem-integration", "open-source-tools", "integrated-solutions"] },
   infrastructure: { title: "基礎架構", topics: ["hardware", "software", "competitive-positioning", "industry-trends", "solutions-other"] }
 };
 
@@ -62,6 +62,7 @@ function isHpe(item) { return /\bHPE\b/i.test(item.title) || item.topicId === "h
 function matchesFilter(item, filter) {
   if (filter === "all") return true;
   if (filter === "hpe") return isHpe(item);
+  if (filter === "security") return content.topics.get(item.topicId)?.trackId === "security-governance";
   if (filter.startsWith("layer:")) return (layerMeta[filter.slice(6)]?.topics || []).includes(item.topicId);
   if (filter.startsWith("topic:")) return item.topicId === filter.slice(6);
   return false;
@@ -84,6 +85,7 @@ function filteredItems(filter, query) {
 }
 function filterTitle(filter) {
   if (filter === "hpe") return "HPE 專區文章";
+  if (filter === "security") return "資安與存取治理";
   if (filter.startsWith("layer:")) return layerMeta[filter.slice(6)]?.title || "所有文章";
   if (filter.startsWith("topic:")) return content.topics.get(filter.slice(6))?.title || "所有文章";
   return "所有文章";
@@ -127,7 +129,7 @@ function renderResults(filter, query) {
   document.querySelector(".empty-reset")?.addEventListener("click", () => setDiscovery("all", "", true));
 }
 function setDiscovery(filter, query, scroll = false) {
-  const safeFilter = filter === "all" || filter === "hpe" || (filter.startsWith("layer:") && layerMeta[filter.slice(6)]) || (filter.startsWith("topic:") && content.topics.has(filter.slice(6))) ? filter : "all";
+  const safeFilter = filter === "all" || filter === "hpe" || filter === "security" || (filter.startsWith("layer:") && layerMeta[filter.slice(6)]) || (filter.startsWith("topic:") && content.topics.has(filter.slice(6))) ? filter : "all";
   const cleanQuery = String(query || "").trim();
   document.querySelectorAll(".top-search input,.rail-search input,.discovery-search input").forEach(input => { input.value = cleanQuery; });
   renderResults(safeFilter, cleanQuery);
@@ -171,7 +173,7 @@ function renderHome() {
     <section class="hpe-section" id="hpe" aria-labelledby="hpe-heading"><div class="container hpe-layout"><div class="hpe-intro"><p class="hpe-sponsored">HPE 贊助專區</p><h2 id="hpe-heading">HPE 專區</h2><p>從產品定位到實際部署條件，整理 HPE 相關的基礎架構與 AI 方案觀點。</p><button type="button" class="text-action" data-hpe-filter>瀏覽所有 HPE 文章 <span aria-hidden="true">↗</span></button><img class="hpe-illustration" src="assets/visuals/hpe-servers.png" alt="" aria-hidden="true" loading="lazy"></div><div class="hpe-feature-list">${items.filter(isHpe).slice(0, 3).map(item => `<a href="${articleUrl(item)}"><span>${escapeHtml(topicOf(item).title)}</span><strong>${escapeHtml(item.title)}</strong><b aria-hidden="true">↗</b></a>`).join("")}</div></div></section>
     <section class="discovery" id="articles" aria-labelledby="articles-heading"><div class="container">
       <div class="listing-heading"><div><h2 id="articles-heading">探索文章</h2><p>依主題找資料，也可以直接搜尋問題或產品名稱。</p></div><form class="discovery-search" role="search"><label class="sr-only" for="discovery-query">搜尋文章</label><input id="discovery-query" type="search" placeholder="例如：AI Agent、資料權限、伺服器" autocomplete="off"><button type="submit">搜尋 <span aria-hidden="true">↗</span></button></form></div>
-      <div class="filter-bar" aria-label="文章篩選"><button type="button" data-filter="all" class="filter-button">全部</button><button type="button" data-filter="layer:application" class="filter-button">應用情境</button><button type="button" data-filter="layer:integration" class="filter-button">導入與整合</button><button type="button" data-filter="layer:infrastructure" class="filter-button">基礎架構</button><button type="button" data-filter="hpe" class="filter-button filter-hpe">HPE 專區</button></div>
+      <div class="filter-bar" aria-label="文章篩選"><button type="button" data-filter="all" class="filter-button">全部</button><button type="button" data-filter="layer:application" class="filter-button">應用情境</button><button type="button" data-filter="layer:integration" class="filter-button">導入與整合</button><button type="button" data-filter="layer:infrastructure" class="filter-button">基礎架構</button><button type="button" data-filter="security" class="filter-button">資安與存取治理</button><button type="button" data-filter="hpe" class="filter-button filter-hpe">HPE 專區</button></div>
       <details class="topic-details"><summary>依細部主題篩選 <span aria-hidden="true">⌄</span></summary><div class="topic-chips">${topicButtons()}</div></details>
       <div class="results-heading"><h3 class="listing-title">所有文章</h3><div><span class="result-count" role="status" aria-live="polite">共 ${items.length} 篇</span><button type="button" class="reset-filter" hidden>清除條件</button></div></div>
       <div class="cards">${items.map(cardMarkup).join("")}</div>
@@ -192,7 +194,7 @@ function renderHome() {
   const params = new URLSearchParams(location.search);
   const requestedFilter = params.get("filter") || "all";
   const requestedQuery = params.get("q") || "";
-  renderResults(requestedFilter === "all" || requestedFilter === "hpe" || (requestedFilter.startsWith("layer:") && layerMeta[requestedFilter.slice(6)]) || (requestedFilter.startsWith("topic:") && content.topics.has(requestedFilter.slice(6))) ? requestedFilter : "all", requestedQuery);
+  renderResults(requestedFilter === "all" || requestedFilter === "hpe" || requestedFilter === "security" || (requestedFilter.startsWith("layer:") && layerMeta[requestedFilter.slice(6)]) || (requestedFilter.startsWith("topic:") && content.topics.has(requestedFilter.slice(6))) ? requestedFilter : "all", requestedQuery);
   document.querySelectorAll(".top-search input,.rail-search input,.discovery-search input").forEach(input => { input.value = requestedQuery; });
 }
 
@@ -244,8 +246,8 @@ function attachmentsMarkup(item) {
 function renderArticle(item) {
   const topic = topicOf(item);
   const related = content.items.filter(other => other.id !== item.id && other.topicId === item.topicId).slice(0, 3);
-  const fallbacks = content.items.filter(other => other.id !== item.id && !related.includes(other)).slice(0, 3 - related.length);
-  const suggestions = [...related, ...fallbacks];
+  const sameTrack = content.items.filter(other => other.id !== item.id && topicOf(other).trackId === topic.trackId && !related.includes(other)).slice(0, 3 - related.length);
+  const suggestions = [...related, ...sameTrack];
   const headings = [];
   const body = bodyMarkup(item.body, content.articleOutlines[item.id] || [], headings);
   const sections = headings.filter(heading => heading.level === 2);
@@ -285,7 +287,7 @@ async function load() {
     if (!siteResponse.ok || !materialsResponse.ok) throw new Error("內容資料讀取失敗");
     const [site, materials] = await Promise.all([siteResponse.json(), materialsResponse.json()]);
     const topics = new Map();
-    site.tracks.forEach(track => track.topics.forEach(topic => topics.set(topic.id, { title: topic.title, track: track.title })));
+    site.tracks.forEach(track => track.topics.forEach(topic => topics.set(topic.id, { title: topic.title, track: track.title, trackId: track.id })));
     content = { topics, tracks: site.tracks, articleOutlines: site.articleOutlines || {}, items: materials.filter(item => item.status === "已核准"), featuredMaterialId: site.featuredMaterialId || "", articleViews };
     window.addEventListener("hashchange", openLegacyHash);
     const legacyArticleId = /^#(material-\d+)$/.exec(location.hash)?.[1];
