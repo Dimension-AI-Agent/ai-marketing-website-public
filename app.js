@@ -246,8 +246,8 @@ function attachmentsMarkup(item) {
 function renderArticle(item) {
   const topic = topicOf(item);
   const related = content.items.filter(other => other.id !== item.id && other.topicId === item.topicId).slice(0, 3);
-  const fallbacks = content.items.filter(other => other.id !== item.id && !related.includes(other)).slice(0, 3 - related.length);
-  const suggestions = [...related, ...fallbacks];
+  const sameTrack = content.items.filter(other => other.id !== item.id && topicOf(other).trackId === topic.trackId && !related.includes(other)).slice(0, 3 - related.length);
+  const suggestions = [...related, ...sameTrack];
   const headings = [];
   const body = bodyMarkup(item.body, content.articleOutlines[item.id] || [], headings);
   const sections = headings.filter(heading => heading.level === 2);

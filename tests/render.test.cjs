@@ -159,6 +159,16 @@ test("legacy material links open the separate article page", async () => {
   assert.match(elements.get("#app").innerHTML, /回到所有文章/);
 });
 
+test("security articles show neutral classification and related security reading", async () => {
+  const { context, elements } = createPage({ search: "?article=material-26" });
+  await context.load();
+  const html = elements.get("#app").innerHTML;
+  assert.match(html, /資安與存取治理 \/ AI 資安與治理/);
+  assert.match(html, /AI 要讀內部資料，怎麼守住存取邊界？/);
+  assert.match(html, /陌生裝置想連公司 Wi-Fi？/);
+  assert.doesNotMatch(html, /HPE SimpliVity/);
+});
+
 test("long article uses its existing section titles for headings and a linked outline", async () => {
   const { context, elements } = createPage({ search: "?article=material-19" });
   await context.load();
