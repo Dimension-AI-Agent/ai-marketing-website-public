@@ -32,7 +32,6 @@
         {"id": "integrated-solutions", "title": "整合方案", "description": "從基礎架構到 AI 應用的整體方案"},
         {"id": "competitive-positioning", "title": "產品定位比較", "description": "產品差異與競爭者比較"},
         {"id": "hpe-use-cases", "title": "HPE Use Case／成功案例", "description": "HPE 應用情境與成功案例"},
-        {"id": "ai-security", "title": "AI 資安", "description": "AI 架構、資料與資安議題"},
         {"id": "solutions-other", "title": "其他", "description": "其他相關行銷素材"}
       ]
     },
@@ -53,6 +52,16 @@
         {"id": "industry-trends", "title": "AI 業界動態", "description": "AI 技術、產品與市場趨勢"},
         {"id": "industry-cases", "title": "業界案例／訊達案例分享", "description": "產業應用與訊達實務經驗"},
         {"id": "agent-other", "title": "其他", "description": "其他 AI Agent 落地素材"}
+      ]
+    },
+    {
+      "id": "security-governance",
+      "number": "03",
+      "title": "資安與存取治理",
+      "subtitle": "資料、權限與網路存取",
+      "topics": [
+        {"id": "ai-security", "title": "AI 資安與治理", "description": "AI 應用的資料、權限、紀錄與風險管理"},
+        {"id": "network-access-security", "title": "網路存取管理", "description": "裝置辨識、身分驗證與網路存取政策"}
       ]
     }
   ]
