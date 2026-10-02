@@ -5,10 +5,12 @@ const vm = require("node:vm");
 const path = require("node:path");
 
 const code = fs.readFileSync(path.join(__dirname, "../app.js"), "utf8").replace(/\nload\(\);\s*$/, "\n");
+const guideCode = fs.readFileSync(path.join(__dirname, "../guide.js"), "utf8");
 const site = JSON.parse(fs.readFileSync(path.join(__dirname, "../data/site.json"), "utf8"));
 const materials = JSON.parse(fs.readFileSync(path.join(__dirname, "../data/materials.json"), "utf8"));
+const guide = JSON.parse(fs.readFileSync(path.join(__dirname, "../data/guide-recommendations.json"), "utf8"));
 
-function createPage({ search = "", hash = "", records = materials, views = null, siteConfig = site } = {}) {
+function createPage({ search = "", hash = "", records = materials, views = null, siteConfig = site, guideConfig = guide } = {}) {
   const elements = new Map();
   const navigations = [];
   const filterButtons = [];
@@ -54,9 +56,10 @@ function createPage({ search = "", hash = "", records = materials, views = null,
       },
       querySelectorAll(selector) { return selector === "[data-filter]" ? filterButtons : []; }
     },
-    fetch: async url => ({ ok: true, json: async () => url.includes("site.json") ? siteConfig : url.includes("article-views.json") ? views : records })
+    fetch: async url => ({ ok: true, json: async () => url.includes("site.json") ? siteConfig : url.includes("article-views.json") ? views : url.includes("guide-recommendations.json") ? guideConfig : records })
   };
   const context = vm.createContext(page);
+  vm.runInContext(guideCode, context);
   vm.runInContext(code, context);
   return { context, elements, navigations, filterButtons };
 }
@@ -72,10 +75,34 @@ test("only approved content appears and the selected article is featured", async
   assert.match(html, /article=material-13/);
   assert.doesNotMatch(html, /article-hotspot|campus\.png|hpe-entry/);
   assert.match(html, /class="hero-transition" href="#topics"/);
+  assert.match(html, /id="guide-content"/);
+  assert.doesNotMatch(html, /class="path-grid"/);
   assert.match(html, /class="hpe-rail-link" href="#hpe"/);
   assert.doesNotMatch(html, /未核准內容/);
   assert.equal(site.featuredMaterialId, "material-13");
 });
+
+test("guided result uses approved articles at the reviewed revision", async () => {
+  const { context, elements } = createPage();
+  await context.load();
+  assert.match(elements.get("#guide-content").innerHTML, /目前最接近哪種情況/);
+  vm.runInContext('guidedCurrent = "r2"; guidedHistory = [{from:"start",answer:"有想做的事"}]; renderGuide();', context);
+  const result = elements.get("#guide-content").innerHTML;
+  assert.match(result, /先談好，怎樣才算有幫助/);
+  assert.match(result, /article=material-31/);
+  assert.match(result, /article=material-30/);
+  assert.doesNotMatch(result, /article=material-35/);
+
+  const stale = recordsWithChangedRevision(materials, "material-31");
+  const secondPage = createPage({ records: stale });
+  await secondPage.context.load();
+  vm.runInContext('guidedCurrent = "r2"; renderGuide();', secondPage.context);
+  assert.doesNotMatch(secondPage.elements.get("#guide-content").innerHTML, /article=material-31/);
+});
+
+function recordsWithChangedRevision(records, id) {
+  return records.map(item => item.id === id ? { ...item, revision: "new-revision" } : item);
+}
 
 test("right rail uses approved article page views when a recent 30-day snapshot exists", async () => {
   const draft = { ...materials[0], id: "draft", status: "待審", title: "未核准內容" };
