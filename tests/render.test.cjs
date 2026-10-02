@@ -90,7 +90,7 @@ test("guided result uses approved articles at the reviewed revision", async () =
   const result = elements.get("#guide-content").innerHTML;
   assert.match(result, /先談好，怎樣才算有幫助/);
   assert.match(result, /article=material-31/);
-  assert.match(result, /article=material-30/);
+  assert.match(result, /article=material-44/);
   assert.doesNotMatch(result, /article=material-35/);
 
   const stale = recordsWithChangedRevision(materials, "material-31");

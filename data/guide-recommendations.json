@@ -28,9 +28,9 @@
           "revision": "a16e996aedf823f8b17ba611b1a14881e87292319f92359a623aec5821efa92d"
         },
         {
-          "id": "material-30",
-          "why": "看看測試前後各要確認哪些事",
-          "revision": "d9f0966d51318c49edc140ae85c36c09f8fdf1ba87d9f3ff234ad481776a730a"
+          "id": "material-44",
+          "why": "看看概念驗證前要先談好哪些成功條件",
+          "revision": "7dea8e97f303c0f4fb34cb65e4ba5f13c948f0fc2e13efa8bee9a19f43b5f896"
         }
       ]
     },
@@ -39,8 +39,13 @@
       "guidance": "你已經有想改善的工作，可以先選其中一段。\n\n準備幾個實際例子，約好要看什麼結果、由誰判斷，再做第一輪測試。做完後回頭看例子，決定要調整哪裡。",
       "articles": [
         {
+          "id": "material-44",
+          "why": "用一小段工作和少量資料做第一輪測試",
+          "revision": "7dea8e97f303c0f4fb34cb65e4ba5f13c948f0fc2e13efa8bee9a19f43b5f896"
+        },
+        {
           "id": "material-30",
-          "why": "用一小段流程做第一輪測試",
+          "why": "了解測試後如何決定下一步",
           "revision": "d9f0966d51318c49edc140ae85c36c09f8fdf1ba87d9f3ff234ad481776a730a"
         }
       ]
