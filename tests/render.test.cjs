@@ -153,11 +153,13 @@ test("three discovery layers, HPE, and detailed topics filter approved articles"
     assert.ok(found.length < approved.length);
   }
   const security = context.filteredItems("security", "");
-  assert.deepEqual(security.map(item => item.id).sort(), ["material-26", "material-34", "material-39"]);
+  const securityTopics = site.tracks.find(track => track.id === "security-governance").topics.map(topic => topic.id);
+  const securityIds = approved.filter(item => securityTopics.includes(item.topicId)).map(item => item.id).sort();
+  assert.deepEqual(security.map(item => item.id).sort(), securityIds);
   context.setDiscovery("security", "");
   assert.equal(elements.get(".listing-title").textContent, "資安與存取治理");
-  assert.equal(elements.get(".result-count").textContent, "共 3 篇");
-  assert.deepEqual(context.filteredItems("topic:ai-security", "").map(item => item.id).sort(), ["material-26", "material-34"]);
+  assert.equal(elements.get(".result-count").textContent, `共 ${securityIds.length} 篇`);
+  assert.deepEqual(context.filteredItems("topic:ai-security", "").map(item => item.id).sort(), approved.filter(item => item.topicId === "ai-security").map(item => item.id).sort());
   assert.deepEqual(context.filteredItems("topic:network-access-security", "").map(item => item.id), ["material-39"]);
   const matching = approved.filter(item => item.topicId === "competitive-positioning");
   context.setDiscovery("topic:competitive-positioning", "");
