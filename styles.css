@@ -70,15 +70,6 @@ input::placeholder{color:#788995;opacity:1}
 .discovery-intro{padding:76px 0 122px;background:linear-gradient(180deg,var(--paper) 0,#fff 105px)}
 .discovery-intro h2,.hpe-intro h2,.listing-heading h2{margin:0;font-size:clamp(34px,3.2vw,52px);line-height:1.25;letter-spacing:-.025em}
 .discovery-intro .container>div:first-child>p:last-child,.listing-heading p:last-child{margin:20px 0 0;color:var(--muted);font-size:17px;line-height:1.8}
-.path-grid{display:grid;grid-template-columns:1fr;margin-top:47px;border-top:1px solid #d8e0dc}
-.path-card{position:relative;display:grid;grid-template-columns:150px minmax(0,1fr) minmax(200px,.75fr) 30px;align-items:center;gap:24px;min-height:111px;padding:20px 10px;border-bottom:1px solid #d8e0dc;transition:background .2s}
-.path-card:hover,.article-card:hover{background:#f7f6f1}
-.path-card:before{content:"";position:absolute;left:0;top:50%;width:10px;height:10px;transform:translateY(-50%);border-radius:50%;background:var(--coral)}
-.path-integration:before{background:var(--violet)}.path-infrastructure:before{background:var(--ink)}
-.path-card span{padding-left:25px;color:#596f76;font-size:14px;font-weight:800}
-.path-card strong{font-size:22px;line-height:1.4}
-.path-card small{color:#667782;font-size:14px;line-height:1.7}
-.path-card b{font-size:24px;font-weight:400;text-align:right}
 .hpe-section{padding:89px 0;background:#f2faf6;border-block:1px solid #d9eee3}
 .hpe-layout{display:grid;grid-template-columns:minmax(260px,.9fr) minmax(0,1.4fr);gap:9%}
 .hpe-sponsored{margin:0 0 12px;color:#008c72;font-size:13px;font-weight:800}
@@ -204,8 +195,6 @@ input::placeholder{color:#788995;opacity:1}
   .rail-article-list a{min-height:88px}
   .hpe-rail-link{margin-top:25px}
   .discovery-intro,.discovery{padding:70px 0 85px}
-  .path-grid{margin-top:31px}.path-card{grid-template-columns:1fr 24px;gap:7px;min-height:145px;padding:20px 10px 20px 25px}
-  .path-card:before{top:27px;transform:none}.path-card span{grid-column:1;padding:0;font-size:12px}.path-card strong{grid-column:1;font-size:20px}.path-card small{grid-column:1;font-size:13px}.path-card b{grid-column:2;grid-row:1/4}
   .hpe-section{padding:65px 0}.hpe-layout{grid-template-columns:1fr;gap:30px}
   .listing-heading{display:block}.discovery-search{width:100%;margin-top:27px}
   .filter-bar{margin-top:28px;gap:7px}.filter-button{padding:9px 13px;font-size:12px}

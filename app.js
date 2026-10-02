@@ -1,4 +1,4 @@
-let content = { items: [], topics: new Map(), tracks: [], articleOutlines: {}, relatedReading: {}, featuredMaterialId: "", articleViews: null };
+let content = { items: [], topics: new Map(), tracks: [], articleOutlines: {}, relatedReading: {}, featuredMaterialId: "", articleViews: null, guideRecommendations: null };
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 
 function escapeHtml(value) {
@@ -156,7 +156,7 @@ function renderHome() {
       <div class="mobile-find" aria-label="快速找文章">
         <h2>你現在想解決什麼問題？</h2>
         <form class="mobile-search" role="search"><label class="sr-only" for="mobile-query">搜尋文章</label><input id="mobile-query" type="search" placeholder="搜尋問題、產品或關鍵字" autocomplete="off"><button type="submit">找文章</button></form>
-        <nav class="mobile-paths" aria-label="依問題找文章"><a href="#articles" data-layer="application">AI 能做什麼？</a><a href="#articles" data-layer="integration">怎麼接進系統？</a><a href="#articles" data-layer="infrastructure">設備怎麼選？</a></nav>
+        <nav class="mobile-paths" aria-label="依目前情況找文章"><a href="#topics">看看現在卡在哪裡</a></nav>
         <a class="mobile-feature" href="${articleUrl(featured)}"><span>從這篇開始</span><strong>${escapeHtml(featured.title)}</strong><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
       </div>
       <div class="layer-label layer-app"><a href="#articles" data-layer="application">應用情境</a><p>貼近業務場景<br>讓 AI 真正解決<br>企業問題</p></div>
@@ -167,15 +167,12 @@ function renderHome() {
         ${railArticlesMarkup()}
         <a class="hpe-rail-link" href="#hpe"><span>HPE 贊助專區</span><strong>了解基礎架構與 AI 方案</strong><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
       </aside>
-      <a class="hero-transition" href="#topics"><span class="transition-trace" aria-hidden="true"><i></i><i></i><i></i></span><strong>從你的問題開始探索</strong><span>選擇應用、導入或基礎架構，沿著系統找到需要的知識。</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v17m-6-6 6 6 6-6"/></svg></a>
+      <a class="hero-transition" href="#topics"><span class="transition-trace" aria-hidden="true"><i></i><i></i><i></i></span><strong>從你的問題開始探索</strong><span>選一個最接近的情況，看看可以先從哪件事著手。</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v17m-6-6 6 6 6-6"/></svg></a>
     </section>
     <section class="discovery-intro" id="topics" aria-labelledby="topics-heading"><div class="container">
-      <div><h2 id="topics-heading">從你正在面對的問題開始</h2><p>不必先弄懂所有技術名詞。選一個方向，找到相關的實務文章。</p></div>
-      <div class="path-grid">
-        <a href="#articles" class="path-card path-application" data-layer="application"><span>應用情境</span><strong>AI 能幫企業處理什麼事？</strong><small>從產業案例、工作流程與效益評估切入</small><b aria-hidden="true">↗</b></a>
-        <a href="#articles" class="path-card path-integration" data-layer="integration"><span>導入與整合</span><strong>要怎麼接進現有系統？</strong><small>理解資料、權限、工具與導入步驟</small><b aria-hidden="true">↗</b></a>
-        <a href="#articles" class="path-card path-infrastructure" data-layer="infrastructure"><span>基礎架構</span><strong>設備與平台該怎麼選？</strong><small>釐清運算、儲存、網路與虛擬化選項</small><b aria-hidden="true">↗</b></a>
-      </div>
+      <div><h2 id="topics-heading">AI 導入，現在卡在哪裡？</h2><p>選一個最接近的情況，看看可以先從哪件事著手。</p></div>
+      <div class="guided-discovery" aria-label="AI 導入互動引導"><div class="guided-heading"><span>依目前情況往下看</span><span id="guide-progress" aria-live="polite"></span></div><div class="guided-content" id="guide-content" aria-live="polite"></div></div>
+      <p class="guided-browse">想直接找資料？<a href="#articles">瀏覽所有文章 ↗</a></p>
     </div></section>
     <section class="hpe-section" id="hpe" aria-labelledby="hpe-heading"><div class="container hpe-layout"><div class="hpe-intro"><p class="hpe-sponsored">HPE 贊助專區</p><h2 id="hpe-heading">HPE 專區</h2><p>從產品定位到實際部署條件，整理 HPE 相關的基礎架構與 AI 方案觀點。</p><button type="button" class="text-action" data-hpe-filter>瀏覽所有 HPE 文章 <span aria-hidden="true">↗</span></button><img class="hpe-illustration" src="assets/visuals/hpe-servers.png" alt="" aria-hidden="true" loading="lazy"></div><div class="hpe-feature-list">${items.filter(isHpe).slice(0, 3).map(item => `<a href="${articleUrl(item)}"><span>${escapeHtml(topicOf(item).title)}</span><strong>${escapeHtml(item.title)}</strong><b aria-hidden="true">↗</b></a>`).join("")}</div></div></section>
     <section class="discovery" id="articles" aria-labelledby="articles-heading"><div class="container">
@@ -203,6 +200,10 @@ function renderHome() {
   const requestedQuery = params.get("q") || "";
   renderResults(requestedFilter === "all" || requestedFilter === "hpe" || requestedFilter === "security" || (requestedFilter.startsWith("layer:") && layerMeta[requestedFilter.slice(6)]) || (requestedFilter.startsWith("topic:") && content.topics.has(requestedFilter.slice(6))) ? requestedFilter : "all", requestedQuery);
   document.querySelectorAll(".top-search input,.rail-search input,.discovery-search input,.mobile-search input").forEach(input => { input.value = requestedQuery; });
+  document.querySelector("#guide-content").addEventListener("click", handleGuideClick);
+  guidedCurrent = "start";
+  guidedHistory = [];
+  renderGuide();
 }
 
 function inlineMarkup(value) {
@@ -289,16 +290,17 @@ function openLegacyHash() {
 
 async function load() {
   try {
-    const [siteResponse, materialsResponse, articleViews] = await Promise.all([
+    const [siteResponse, materialsResponse, articleViews, guideRecommendations] = await Promise.all([
       fetch("data/site.json", { cache: "no-store" }),
       fetch("data/materials.json", { cache: "no-store" }),
-      fetch("data/article-views.json", { cache: "no-store" }).then(response => response.ok ? response.json() : null).catch(() => null)
+      fetch("data/article-views.json", { cache: "no-store" }).then(response => response.ok ? response.json() : null).catch(() => null),
+      fetch("data/guide-recommendations.json", { cache: "no-store" }).then(response => response.ok ? response.json() : null).catch(() => null)
     ]);
     if (!siteResponse.ok || !materialsResponse.ok) throw new Error("內容資料讀取失敗");
     const [site, materials] = await Promise.all([siteResponse.json(), materialsResponse.json()]);
     const topics = new Map();
     site.tracks.forEach(track => track.topics.forEach(topic => topics.set(topic.id, { title: topic.title, track: track.title, trackId: track.id })));
-    content = { topics, tracks: site.tracks, articleOutlines: site.articleOutlines || {}, relatedReading: site.relatedReading || {}, items: materials.filter(item => item.status === "已核准"), featuredMaterialId: site.featuredMaterialId || "", articleViews };
+    content = { topics, tracks: site.tracks, articleOutlines: site.articleOutlines || {}, relatedReading: site.relatedReading || {}, items: materials.filter(item => item.status === "已核准"), featuredMaterialId: site.featuredMaterialId || "", articleViews, guideRecommendations: guideRecommendations?.version === 1 ? guideRecommendations : null };
     window.addEventListener("hashchange", openLegacyHash);
     const legacyArticleId = /^#(material-\d+)$/.exec(location.hash)?.[1];
     const articleId = new URLSearchParams(location.search).get("article") || legacyArticleId;
