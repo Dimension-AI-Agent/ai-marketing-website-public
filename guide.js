@@ -44,7 +44,7 @@ function renderGuide() {
   if (!root || !progress) return;
   if (!content.guideRecommendations?.results) {
     progress.textContent = "";
-    root.innerHTML = '<p class="guided-error">引導內容暫時無法載入。你仍可以在下方搜尋或瀏覽所有文章。</p>';
+    root.innerHTML = '<p class="guided-error">引導內容暫時無法載入。你仍可以在下方搜尋文章。</p>';
     return;
   }
   const question = guidedQuestions[guidedCurrent];
@@ -64,7 +64,7 @@ function renderGuide() {
   const [lead, ...actions] = result.guidance.split("\n\n");
   const links = (Array.isArray(result.articles) ? result.articles : []).filter(link => {
     const article = content.items.find(item => item.id === link.id);
-    return article && article.revision === link.revision;
+    return article && !isHpe(article) && article.revision === link.revision;
   }).slice(0, 2).map(link => {
     const article = content.items.find(item => item.id === link.id);
     return `<a href="${articleUrl(article)}"><strong>${escapeHtml(article.title)} ↗</strong><small>${escapeHtml(link.why)}</small></a>`;
