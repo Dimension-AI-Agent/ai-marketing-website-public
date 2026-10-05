@@ -1,4 +1,4 @@
-let content = { items: [], topics: new Map(), tracks: [], articleOutlines: {}, relatedReading: {}, featuredMaterialId: "", articleViews: null, guideRecommendations: null };
+let content = { items: [], topics: new Map(), tracks: [], articleOutlines: {}, relatedReading: {}, guideRecommendations: null };
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 
 function escapeHtml(value) {
@@ -34,24 +34,6 @@ function teaser(item, max = 115) {
 
 function articleUrl(item) { return `?article=${encodeURIComponent(item.id)}`; }
 function topicOf(item) { return content.topics.get(item.topicId) || { title: "其他", track: "內容專欄" }; }
-function artWord(item) { return item.title.includes("Agent") ? "AI Agent" : item.title.includes("VMware") ? "VMware" : item.title.includes("Smart Choice") ? "Smart Choice" : "HPE"; }
-function colorOf(index) { return ["", "orange", "blue"][index % 3]; }
-
-function mediaMarkup(item, index, featured = false) {
-  const image = imageFor(item);
-  const className = featured ? "featured-visual" : `card-media ${colorOf(index)}`;
-  const visual = image ? `<img src="${escapeHtml(image.src)}" alt="${escapeHtml(image.alt)}" loading="lazy">` : `<span class="visual-word" aria-hidden="true">${escapeHtml(artWord(item))}</span>`;
-  return `<div class="${className}">${visual}</div>`;
-}
-
-function cardMarkup(item, index) {
-  const topic = topicOf(item);
-  return `<a class="article-card" href="${articleUrl(item)}" aria-label="閱讀文章：${escapeHtml(item.title)}">
-    <div class="card-content"><div class="card-meta"><span>${escapeHtml(topic.title)}</span>${item.id === content.featuredMaterialId ? '<span class="focus-label">焦點文章</span>' : ""}</div>
-    <h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(teaser(item, 105))}</p>
-    <div class="card-bottom"><strong aria-hidden="true">↗</strong></div></div></a>`;
-}
-
 const layerMeta = {
   application: { title: "應用情境", topics: ["industry-cases", "hpe-use-cases", "faq", "benefit-assessment", "agent-other"] },
   integration: { title: "導入與整合", topics: ["enterprise-adoption", "on-prem-integration", "open-source-tools", "integrated-solutions"] },
@@ -90,122 +72,6 @@ function filterTitle(filter) {
   if (filter.startsWith("topic:")) return content.topics.get(filter.slice(6))?.title || "所有文章";
   return "所有文章";
 }
-function topicButtons() {
-  return content.tracks.flatMap(track => track.topics).filter(topic => content.items.some(item => item.topicId === topic.id))
-    .map(topic => `<button type="button" class="topic-chip" data-filter="topic:${escapeHtml(topic.id)}">${escapeHtml(topic.title)} <span>${content.items.filter(item => item.topicId === topic.id).length}</span></button>`).join("");
-}
-
-function popularArticles(snapshot) {
-  if (!snapshot || snapshot.windowDays !== 30 || !snapshot.updatedAt || !snapshot.views || typeof snapshot.views !== "object" || Array.isArray(snapshot.views)) return [];
-  const updated = Date.parse(snapshot.updatedAt);
-  if (!Number.isFinite(updated) || updated > Date.now() || Date.now() - updated > 40 * 24 * 60 * 60 * 1000) return [];
-  return content.items.map((item, index) => ({ item, index, count: snapshot.views[item.id] }))
-    .filter(entry => Number.isSafeInteger(entry.count) && entry.count > 0)
-    .sort((a, b) => b.count - a.count || a.index - b.index)
-    .slice(0, 3);
-}
-
-function railArticlesMarkup() {
-  const ranked = popularArticles(content.articleViews);
-  const startingIds = [content.featuredMaterialId, "material-38", "material-19"];
-  const entries = ranked.length ? ranked : [...new Set(startingIds)]
-    .map(id => content.items.find(item => item.id === id))
-    .filter(Boolean)
-    .concat(content.items.filter(item => !startingIds.includes(item.id)))
-    .slice(0, 3)
-    .map(item => ({ item }));
-  const popular = ranked.length > 0;
-  const tag = popular ? "ol" : "ul";
-  return `<div class="rail-articles"><h2>${popular ? "熱門文章" : "從這幾篇開始"}</h2><p class="rail-list-note">${popular ? "近 30 天點閱最多" : "從應用、方案到設備選型"}</p><${tag} class="rail-article-list">${entries.map((entry, index) => `<li><a href="${articleUrl(entry.item)}" aria-label="閱讀文章：${escapeHtml(entry.item.title)}"><span class="rail-article-index" aria-hidden="true">${popular ? String(index + 1).padStart(2, "0") : "↗"}</span><span class="rail-article-copy"><small>${escapeHtml(topicOf(entry.item).title)}${popular ? ` · ${new Intl.NumberFormat("zh-TW").format(entry.count)} 次點閱` : ""}</small><strong>${escapeHtml(entry.item.title)}</strong></span></a></li>`).join("")}</${tag}></div>`;
-}
-function renderResults(filter, query) {
-  const items = filteredItems(filter, query);
-  document.querySelector(".listing-title").textContent = filterTitle(filter);
-  document.querySelector(".result-count").textContent = `共 ${items.length} 篇`;
-  document.querySelector(".cards").innerHTML = items.length ? items.map(cardMarkup).join("") : `<div class="empty-results"><h3>還沒有找到符合的文章</h3><p>試試更短的關鍵字，或清除主題條件。</p><button type="button" class="empty-reset">顯示所有文章</button></div>`;
-  const reset = document.querySelector(".reset-filter");
-  reset.hidden = filter === "all" && !query.trim();
-  document.querySelectorAll("[data-filter]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.filter === filter)));
-  document.querySelector(".empty-reset")?.addEventListener("click", () => setDiscovery("all", "", true));
-}
-function setDiscovery(filter, query, scroll = false) {
-  const safeFilter = filter === "all" || filter === "hpe" || filter === "security" || (filter.startsWith("layer:") && layerMeta[filter.slice(6)]) || (filter.startsWith("topic:") && content.topics.has(filter.slice(6))) ? filter : "all";
-  const cleanQuery = String(query || "").trim();
-  document.querySelectorAll(".top-search input,.rail-search input,.discovery-search input,.mobile-search input").forEach(input => { input.value = cleanQuery; });
-  renderResults(safeFilter, cleanQuery);
-  const params = new URLSearchParams();
-  if (cleanQuery) params.set("q", cleanQuery);
-  if (safeFilter !== "all") params.set("filter", safeFilter);
-  history.replaceState(null, "", `./${params.toString() ? `?${params}` : ""}#articles`);
-  if (scroll) document.querySelector("#articles")?.scrollIntoView({ behavior: "smooth", block: "start" });
-}
-
-function renderHome() {
-  const items = content.items;
-  if (!items.length) {
-    document.querySelector("#app").innerHTML = '<div class="not-found"><h1>文章準備中</h1><p>已核准的內容發布後，就會出現在這裡。</p></div>';
-    return;
-  }
-  const featured = items.find(item => item.id === content.featuredMaterialId) || items[0];
-  document.title = "訊達 AI 內容專欄";
-  document.querySelector("#app").innerHTML = `<div class="home-page">
-    <section class="hero-frame" aria-labelledby="home-title">
-      <img class="hero-plate cutaway-plate" src="assets/visuals/ai-system-cutaway.png" alt="" aria-hidden="true">
-      <div class="hero-header"><a class="hero-brand" href="./">訊達 AI 內容專欄</a><form class="top-search" role="search"><label class="sr-only" for="top-query">搜尋文章</label><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.6"/><path d="m15.5 15.5 5.1 5.1"/></svg><input id="top-query" type="search" placeholder="搜尋文章" autocomplete="off"></form></div>
-      <div class="hero-copy"><p class="hero-tagline">KNOWLEDGE FOR<br>A SMARTER TOMORROW</p><h1 id="home-title">從應用到基礎<br>串連企業的<br><strong>AI 實踐力</strong></h1><span class="hero-accent" aria-hidden="true"></span><p class="hero-intro">聚焦企業 AI 應用與 IT 基礎架構，<br>以實務觀點拆解技術、串連場景，<br>提供可落地的知識與觀點，<br>陪伴企業走向更高效、更穩健的未來。</p></div>
-      <div class="mobile-find" aria-label="快速找文章">
-        <h2>你現在想解決什麼問題？</h2>
-        <form class="mobile-search" role="search"><label class="sr-only" for="mobile-query">搜尋文章</label><input id="mobile-query" type="search" placeholder="搜尋問題、產品或關鍵字" autocomplete="off"><button type="submit">找文章</button></form>
-        <nav class="mobile-paths" aria-label="依目前情況找文章"><a href="#topics">看看現在卡在哪裡</a></nav>
-        <a class="mobile-feature" href="${articleUrl(featured)}"><span>從這篇開始</span><strong>${escapeHtml(featured.title)}</strong><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
-      </div>
-      <div class="layer-label layer-app"><a href="#articles" data-layer="application">應用情境</a><p>貼近業務場景<br>讓 AI 真正解決<br>企業問題</p></div>
-      <div class="layer-label layer-integration"><a href="#articles" data-layer="integration">導入與整合</a><p>整合資料、系統與流程<br>串聯應用與基礎架構<br>加速 AI 落地</p></div>
-      <div class="layer-label layer-infrastructure"><a href="#articles" data-layer="infrastructure">基礎架構</a><p>穩定、安全、可擴充<br>支持企業持續創新</p></div>
-      <aside class="hero-rail" aria-label="快速找文章">
-        <h2>搜尋文章</h2><form class="rail-search" role="search"><label class="sr-only" for="rail-query">搜尋文章</label><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.7" cy="10.7" r="6.6"/><path d="m15.5 15.5 5.1 5.1"/></svg><input id="rail-query" type="search" placeholder="搜尋文章" autocomplete="off"><button type="submit" aria-label="搜尋文章"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></button></form>
-        ${railArticlesMarkup()}
-        <a class="hpe-rail-link" href="#hpe"><span>HPE 贊助專區</span><strong>了解基礎架構與 AI 方案</strong><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
-      </aside>
-      <a class="hero-transition" href="#topics"><span class="transition-trace" aria-hidden="true"><i></i><i></i><i></i></span><strong>從你的問題開始探索</strong><span>選一個最接近的情況，看看可以先從哪件事著手。</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v17m-6-6 6 6 6-6"/></svg></a>
-    </section>
-    <section class="discovery-intro" id="topics" aria-labelledby="topics-heading"><div class="container">
-      <div><h2 id="topics-heading">AI 導入，現在卡在哪裡？</h2><p>選一個最接近的情況，看看可以先從哪件事著手。</p></div>
-      <div class="guided-discovery" aria-label="AI 導入互動引導"><div class="guided-heading"><span>依目前情況往下看</span><span id="guide-progress" aria-live="polite"></span></div><div class="guided-content" id="guide-content" aria-live="polite"></div></div>
-      <p class="guided-browse">想直接找資料？<a href="#articles">瀏覽所有文章 ↗</a></p>
-    </div></section>
-    <section class="hpe-section" id="hpe" aria-labelledby="hpe-heading"><div class="container hpe-layout"><div class="hpe-intro"><p class="hpe-sponsored">HPE 贊助專區</p><h2 id="hpe-heading">HPE 專區</h2><p>從產品定位到實際部署條件，整理 HPE 相關的基礎架構與 AI 方案觀點。</p><button type="button" class="text-action" data-hpe-filter>瀏覽所有 HPE 文章 <span aria-hidden="true">↗</span></button><img class="hpe-illustration" src="assets/visuals/hpe-servers.png" alt="" aria-hidden="true" loading="lazy"></div><div class="hpe-feature-list">${items.filter(isHpe).slice(0, 3).map(item => `<a href="${articleUrl(item)}"><span>${escapeHtml(topicOf(item).title)}</span><strong>${escapeHtml(item.title)}</strong><b aria-hidden="true">↗</b></a>`).join("")}</div></div></section>
-    <section class="discovery" id="articles" aria-labelledby="articles-heading"><div class="container">
-      <div class="listing-heading"><div><h2 id="articles-heading">探索文章</h2><p>依主題找資料，也可以直接搜尋問題或產品名稱。</p></div><form class="discovery-search" role="search"><label class="sr-only" for="discovery-query">搜尋文章</label><input id="discovery-query" type="search" placeholder="例如：AI Agent、資料權限、伺服器" autocomplete="off"><button type="submit">搜尋 <span aria-hidden="true">↗</span></button></form></div>
-      <div class="filter-bar" aria-label="文章篩選"><button type="button" data-filter="all" class="filter-button">全部</button><button type="button" data-filter="layer:application" class="filter-button">應用情境</button><button type="button" data-filter="layer:integration" class="filter-button">導入與整合</button><button type="button" data-filter="layer:infrastructure" class="filter-button">基礎架構</button><button type="button" data-filter="security" class="filter-button">資安與存取治理</button><button type="button" data-filter="hpe" class="filter-button filter-hpe">HPE 專區</button></div>
-      <details class="topic-details"><summary>依細部主題篩選 <span aria-hidden="true">⌄</span></summary><div class="topic-chips">${topicButtons()}</div></details>
-      <div class="results-heading"><h3 class="listing-title">所有文章</h3><div><span class="result-count" role="status" aria-live="polite">共 ${items.length} 篇</span><button type="button" class="reset-filter" hidden>清除條件</button></div></div>
-      <div class="cards">${items.map(cardMarkup).join("")}</div>
-    </div></section>
-    <footer class="site-footer"><div class="container"><strong>訊達 AI 內容專欄</strong><span>分享企業 AI、基礎架構與導入實務觀點。</span><a href="#home-title">回到頁首 ↑</a></div></footer>
-  </div>`;
-  document.querySelectorAll("[data-layer]").forEach(link => link.addEventListener("click", event => {
-    event.preventDefault();
-    setDiscovery(`layer:${link.dataset.layer}`, "", true);
-  }));
-  document.querySelectorAll("[data-filter]").forEach(button => button.addEventListener("click", () => setDiscovery(button.dataset.filter, document.querySelector(".discovery-search input").value, false)));
-  document.querySelector("[data-hpe-filter]").addEventListener("click", () => setDiscovery("hpe", "", true));
-  document.querySelector(".reset-filter").addEventListener("click", () => setDiscovery("all", "", false));
-  document.querySelectorAll(".top-search,.rail-search,.discovery-search,.mobile-search").forEach(form => form.addEventListener("submit", event => {
-    event.preventDefault();
-    setDiscovery("all", form.querySelector("input").value, true);
-  }));
-  const params = new URLSearchParams(location.search);
-  const requestedFilter = params.get("filter") || "all";
-  const requestedQuery = params.get("q") || "";
-  renderResults(requestedFilter === "all" || requestedFilter === "hpe" || requestedFilter === "security" || (requestedFilter.startsWith("layer:") && layerMeta[requestedFilter.slice(6)]) || (requestedFilter.startsWith("topic:") && content.topics.has(requestedFilter.slice(6))) ? requestedFilter : "all", requestedQuery);
-  document.querySelectorAll(".top-search input,.rail-search input,.discovery-search input,.mobile-search input").forEach(input => { input.value = requestedQuery; });
-  document.querySelector("#guide-content").addEventListener("click", handleGuideClick);
-  guidedCurrent = "start";
-  guidedHistory = [];
-  renderGuide();
-}
-
 function inlineMarkup(value) {
   return escapeHtml(value).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
 }
@@ -251,6 +117,22 @@ function attachmentsMarkup(item) {
   return fileHtml || linkHtml ? `<h2 class="attachment-title">相關圖片與附件</h2>${fileHtml}${linkHtml}` : "";
 }
 
+function nextActionFor(item) {
+  const actions = {
+    "enterprise-adoption": ["寫下第一輪要驗證的工作", "先界定問題、可用資料與判斷方式，再決定要不要進入測試。", ["要改善哪一段具體工作？", "有哪些可用的真實資料或案例？", "什麼結果值得繼續？"]],
+    "benefit-assessment": ["決定要怎麼衡量結果", "把期待的改善轉成可比較的紀錄與指標。", ["現在的處理方式有留下哪些紀錄？", "希望改善速度、品質，還是成本？", "要用什麼期間與條件比較？"]],
+    "on-prem-integration": ["盤點需要連接的系統與資料", "先釐清既有環境與權限，才能評估整合範圍。", ["目前有哪些系統和資料來源？", "哪些資料不能離開現有環境？", "哪些動作需要人員審核？"]],
+    "ai-security": ["盤點資料與存取邊界", "把可讀資料、使用者權限與紀錄方式列清楚。", ["誰可以使用這項功能？", "每個角色可以讀取哪些資料？", "如何檢查答案與操作紀錄？"]],
+    "network-access-security": ["盤點裝置與網路存取條件", "先列出裝置類型、使用者身分與需要保護的網路範圍。", ["哪些裝置需要連入？", "如何確認使用者或裝置身分？", "不同角色可進入哪些網段？"]],
+    "industry-cases": ["比對自己的流程條件", "先確認文章中的情境與你的工作流程有多少相似處。", ["你想改善的是哪一段流程？", "目前有哪些系統和交接點？", "哪些結果需要另外驗證？"]],
+    "industry-trends": ["記下需要追蹤的變化", "把趨勢轉成與自己業務或技術環境有關的待確認問題。", ["哪項變化與目前工作有關？", "需要補查哪些原始資料？", "何時再檢視這項判斷？"]]
+  };
+  const solution = ["hardware", "software", "integrated-solutions", "competitive-positioning", "hpe-use-cases"].includes(item.topicId)
+    ? ["整理選型前提", "先把工作負載、既有環境與限制寫清楚，再比較方案。", ["要支援哪些工作與使用人數？", "現有設備、資料與系統是什麼？", "容量、維運或移轉有哪些限制？"]] : null;
+  const [title, why, checks] = actions[item.topicId] || solution || ["列出還需要確認的問題", "把文章中的資訊對照自己的情境，標出尚未確認的條件。", ["哪一段內容與目前問題最相關？", "有哪些前提與你的環境不同？", "下一步需要向誰確認？"]];
+  return { title, why, checks };
+}
+
 function renderArticle(item) {
   const topic = topicOf(item);
   const seen = new Set();
@@ -265,10 +147,13 @@ function renderArticle(item) {
   const sections = headings.filter(heading => heading.level === 2);
   const toc = sections.length >= 3 ? `<nav class="article-toc" aria-label="本文段落"><strong>本文段落</strong><ol>${sections.map(heading => `<li><a href="#${heading.id}">${escapeHtml(heading.title)}</a></li>`).join("")}</ol></nav>` : "";
   const expandableSummary = item.summary && item.summary.length > 220;
+  const next = nextActionFor(item);
+  const returnHref = isHpe(item) ? "./#hpe" : "./#home-search";
+  const returnLabel = isHpe(item) ? "← 返回 HPE 專區" : "← 返回搜尋文章";
   document.title = `${item.title}｜訊達 AI 內容專欄`;
   document.querySelector("#app").innerHTML = `<div class="article-page">
     <div class="article-top"><div class="container"><nav class="breadcrumb" aria-label="所在位置"><a href="./">內容專欄</a><span>›</span><span>${escapeHtml(topic.title)}</span></nav><div class="article-header"><span class="eyebrow">${escapeHtml(topic.track)} / ${escapeHtml(topic.title)}</span><h1>${escapeHtml(item.title)}</h1>${item.summary ? `<p class="lead${expandableSummary ? " is-collapsible" : ""}" id="article-summary">${escapeHtml(item.summary)}</p>${expandableSummary ? '<button type="button" class="summary-toggle" aria-controls="article-summary" aria-expanded="false">展開摘要</button>' : ""}` : ""}<div class="article-byline"><b>訊達 AI 內容</b><span>·</span><span>${escapeHtml(item.format || "文章")}</span></div></div></div></div>
-    <div class="container reading-wrap"><article class="article-body">${toc}${body}${attachmentsMarkup(item)}<div class="article-end"><a class="back-link" href="./#articles">← 回到所有文章</a></div></article>${guideMarkup}</div>
+    <div class="container reading-wrap"><article class="article-body">${toc}${body}${attachmentsMarkup(item)}<section class="article-next-action" aria-labelledby="article-next-title"><span>讀完可以做什麼</span><h2 id="article-next-title">${escapeHtml(next.title)}</h2><p>${escapeHtml(next.why)}</p><button type="button" class="article-next-toggle" aria-controls="article-next-checks" aria-expanded="false">查看要確認的事項 ↗</button><ul id="article-next-checks" hidden>${next.checks.map(check => `<li>${escapeHtml(check)}</li>`).join("")}</ul></section><div class="article-end"><a class="back-link" href="${returnHref}">${returnLabel}</a></div></article>${guideMarkup}</div>
   </div>`;
   const summaryToggle = document.querySelector(".summary-toggle");
   if (expandableSummary && summaryToggle?.addEventListener) summaryToggle.addEventListener("click", () => {
@@ -276,6 +161,12 @@ function renderArticle(item) {
     document.querySelector("#article-summary").classList.toggle("is-expanded", expanded);
     summaryToggle.setAttribute("aria-expanded", String(expanded));
     summaryToggle.textContent = expanded ? "收合摘要" : "展開摘要";
+  });
+  document.querySelector(".article-next-toggle")?.addEventListener("click", event => {
+    const expanded = event.currentTarget.getAttribute("aria-expanded") !== "true";
+    event.currentTarget.setAttribute("aria-expanded", String(expanded));
+    event.currentTarget.textContent = expanded ? "收合要確認的事項 ↑" : "查看要確認的事項 ↗";
+    document.querySelector("#article-next-checks").hidden = !expanded;
   });
   window.scrollTo(0, 0);
 }
@@ -290,17 +181,16 @@ function openLegacyHash() {
 
 async function load() {
   try {
-    const [siteResponse, materialsResponse, articleViews, guideRecommendations] = await Promise.all([
+    const [siteResponse, materialsResponse, guideRecommendations] = await Promise.all([
       fetch("data/site.json", { cache: "no-store" }),
       fetch("data/materials.json", { cache: "no-store" }),
-      fetch("data/article-views.json", { cache: "no-store" }).then(response => response.ok ? response.json() : null).catch(() => null),
       fetch("data/guide-recommendations.json", { cache: "no-store" }).then(response => response.ok ? response.json() : null).catch(() => null)
     ]);
     if (!siteResponse.ok || !materialsResponse.ok) throw new Error("內容資料讀取失敗");
     const [site, materials] = await Promise.all([siteResponse.json(), materialsResponse.json()]);
     const topics = new Map();
     site.tracks.forEach(track => track.topics.forEach(topic => topics.set(topic.id, { title: topic.title, track: track.title, trackId: track.id })));
-    content = { topics, tracks: site.tracks, articleOutlines: site.articleOutlines || {}, relatedReading: site.relatedReading || {}, items: materials.filter(item => item.status === "已核准"), featuredMaterialId: site.featuredMaterialId || "", articleViews, guideRecommendations: guideRecommendations?.version === 1 ? guideRecommendations : null };
+    content = { topics, tracks: site.tracks, articleOutlines: site.articleOutlines || {}, relatedReading: site.relatedReading || {}, items: materials.filter(item => item.status === "已核准"), guideRecommendations: guideRecommendations?.version === 1 ? guideRecommendations : null };
     window.addEventListener("hashchange", openLegacyHash);
     const legacyArticleId = /^#(material-\d+)$/.exec(location.hash)?.[1];
     const articleId = new URLSearchParams(location.search).get("article") || legacyArticleId;
@@ -311,8 +201,7 @@ async function load() {
         renderArticle(item);
       }
       else document.querySelector("#app").innerHTML = `<div class="container not-found"><h1>找不到這篇文章</h1><p>這篇內容可能尚未發布。</p><a class="back-link" href="./">← 返回內容專欄</a></div>`;
-    } else renderHome();
-    if (["#topics", "#hpe", "#articles"].includes(location.hash) && !articleId) requestAnimationFrame(() => document.querySelector(location.hash)?.scrollIntoView());
+    } else renderSiteViews();
   } catch (error) {
     document.querySelector("#app").innerHTML = `<div class="container not-found"><h1>資料目前無法載入</h1><p>${escapeHtml(error.message)}</p></div>`;
   }
