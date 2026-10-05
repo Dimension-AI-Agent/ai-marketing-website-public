@@ -11,9 +11,10 @@ const site = JSON.parse(fs.readFileSync(path.join(__dirname, "../data/site.json"
 const materials = JSON.parse(fs.readFileSync(path.join(__dirname, "../data/materials.json"), "utf8"));
 const guide = JSON.parse(fs.readFileSync(path.join(__dirname, "../data/guide-recommendations.json"), "utf8"));
 
-function createPage({ search = "", hash = "", records = materials, siteConfig = site, guideConfig = guide } = {}) {
+function createPage({ search = "", hash = "", records = materials, siteConfig = site, guideConfig = guide, reducedMotion = false } = {}) {
   const elements = new Map();
   const navigations = [];
+  const timers = new Map();
   const views = [];
   const navLinks = [];
   const topicButtons = [];
@@ -21,10 +22,13 @@ function createPage({ search = "", hash = "", records = materials, siteConfig = 
   function makeElement() {
     const listeners = new Map();
     const attributes = new Map();
+    const classes = new Set();
     return {
       innerHTML: "", textContent: "", hidden: false, dataset: {}, value: "", id: "",
-      scrollIntoView() {}, closest() { return null; },
+      classList: { add: name => classes.add(name), remove: name => classes.delete(name), contains: name => classes.has(name) },
+      scrollIntoView() {}, focus() {}, closest() { return null; },
       addEventListener(type, listener) { listeners.set(type, listener); },
+      dispatch(type, event) { listeners.get(type)?.(event); },
       setAttribute(name, value) { attributes.set(name, value); },
       removeAttribute(name) { attributes.delete(name); },
       getAttribute(name) { return attributes.get(name); },
@@ -70,7 +74,12 @@ function createPage({ search = "", hash = "", records = materials, siteConfig = 
     URL, URLSearchParams,
     location: { search, hash },
     history: { scrollRestoration: "auto", replaceState: (_state, _title, url) => navigations.push(url), pushState: (_state, _title, url) => navigations.push(url) },
-    window: { scrollTo() {}, addEventListener() {} },
+    window: {
+      scrollTo() {}, addEventListener() {},
+      matchMedia: () => ({ matches: reducedMotion }),
+      setTimeout(callback) { const id = timers.size + 1; timers.set(id, callback); return id; },
+      clearTimeout(id) { timers.delete(id); }
+    },
     requestAnimationFrame: callback => callback(),
     document: {
       title: "",
@@ -86,7 +95,7 @@ function createPage({ search = "", hash = "", records = materials, siteConfig = 
   vm.runInContext(guideCode, context);
   vm.runInContext(viewsCode, context);
   vm.runInContext(code, context);
-  return { context, elements, navigations, views };
+  return { context, elements, navigations, views, timers };
 }
 
 test("home, HPE, and Xunda cases are separate views with only approved content", async () => {
@@ -115,6 +124,39 @@ test("homepage layer recommendations stay outside HPE and never fill with unrela
   assert.match(html, /企業 AI Agent 地端架構/);
   assert.doesNotMatch(html, /HPE 專區|Private Cloud AI|VMware 有哪些替代方案/);
   assert.equal((html.match(/class="site-article-row"/g) || []).length, 1);
+});
+
+test("illustration labels zoom to their own topics, while reduced motion opens the topic immediately", async () => {
+  const page = createPage();
+  await page.context.load();
+  const html = page.elements.get("#app").innerHTML;
+  for (const key of ["application", "integration", "infrastructure"]) {
+    assert.match(html, new RegExp(`<button[^>]*class="site-visual-tag[^>]*data-layer-key="${key}"`));
+  }
+  assert.doesNotMatch(html, /class="site-hero-visual" aria-hidden="true"/);
+  const visual = page.context.document.querySelector(".site-hero-visual");
+  const result = page.context.document.querySelector("#site-layer-result");
+  result.hidden = true;
+  const layer = page.elements.get("#app");
+  const headings = { application: "先看 AI 可以放進哪一段工作", integration: "把資料、權限與既有系統接起來", infrastructure: "用工作負載與現有環境判斷架構" };
+  for (const key of ["application", "integration", "infrastructure"]) {
+    const button = { dataset: { layerKey: key }, classList: { contains: name => name === "site-visual-tag" } };
+    layer.dispatch("click", { target: { closest: selector => selector === "[data-layer-key]" ? button : null } });
+    assert.equal(visual.dataset.zoomLayer, key);
+    assert.equal(visual.classList.contains("is-zooming"), true);
+    assert.equal(result.hidden, true);
+    for (const callback of page.timers.values()) callback();
+    page.timers.clear();
+    assert.equal(result.hidden, false);
+    assert.match(result.innerHTML, new RegExp(headings[key]));
+    assert.equal(visual.classList.contains("is-zooming"), false);
+    result.hidden = true;
+  }
+  const still = createPage({ reducedMotion: true });
+  await still.context.load();
+  still.context.zoomToSiteLayer("integration");
+  assert.equal(still.elements.get("#site-layer-result").hidden, false);
+  assert.equal(still.timers.size, 0);
 });
 
 test("search includes all approved articles, limits results, and has an honest empty state", async () => {
