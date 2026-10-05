@@ -560,5 +560,20 @@
     "status": "已核准",
     "revision": "e973a89a4f949b1a05869527237770eb523614a0b9fb5e3763abbbaee47f7188",
     "updatedAt": "2026-10-02T08:39:26.528646+00:00"
+  },
+  {
+    "id": "material-50",
+    "title": "RACI-O：AI Agent 導入後，企業如何重新定義權責？",
+    "topicId": "enterprise-adoption",
+    "format": "文字／文章",
+    "summary": "AI Agent 進入企業流程後，傳統 RACI 不足以處理「誰能推翻 AI」的問題，因此 Deloitte 提出 **RACI-O**，新增 **O（Override Authority）**。\n\n核心原則：\n\n- **R、C** 可以由人類或 AI Agent 擔任。\n- **A、I、O** 仍由人類承擔，其中 **A** 負責最終成果，**I** 接收進度與結果資訊，**O** 保有覆核／推翻 AI 的權力。\n\nRACI-O 的重點不是限制 AI，而是確保：\n\n> **AI 可以執行與提供建議，但人類仍保有最終責任、知情權與最後決定權。**",
+    "body": "當 AI Agent 開始參與企業工作流程，傳統 **RACI** 已不足以完整描述人與 AI 的責任關係。\n\nDeloitte 因此提出加入 **O（Override Authority，覆核／推翻權）**，形成 **RACI-O**。\n\n| 角色 | 定義 | 人類 | AI Agent |\n|---|---|---:|---:|\n| **R — Responsible** | 實際執行工作 | ✓ | ✓ |\n| **A — Accountable** | 對最終成果負責 | ✓ | ✗ |\n| **C — Consulted** | 提供資訊或專業意見 | ✓ | ✓ |\n| **I — Informed** | 接收進度與結果資訊 | ✓ | ✗ |\n| **O — Override** | 有權否決、修改或例外核准 AI Output | ✓ | ✗ |\n\n核心原則是：\n\n> **AI 可以執行工作，但最終責任與最後決定權仍應保留在人類手中。**\n\n---\n\n## 為什麼需要 Override Authority？\n\n當 Agent 開始能夠：\n\n- 做出 Recommendation\n- 呼叫 Tools\n- 修改資料\n- 執行交易\n- 自主完成 Workflow\n\n企業就不能只定義「誰負責執行」，還必須回答：\n\n> **如果 AI 的判斷不適合當下情境，誰有權阻止或修改它？**\n\n這就是 `O` 的作用。\n\nOverride Authority 應由明確指定的人類角色持有，並具備：\n\n- Approve\n- Reject\n- Modify\n- Escalate\n\n等正式決策權。\n\n因此 Human-in-the-loop 不應只是「有人看一下結果」，而是要清楚定義：\n\n> **誰可以在必要時對 AI 說不。**\n\n---\n\n## Accountability 不能交給 AI\n\nAgent 可以成為 **Responsible**，負責執行實際工作，但 **Accountable** 仍需由人類承擔。\n\n例如 Invoice Review Agent 可以自動：\n\n- 讀取發票\n- 比對採購單\n- 找出異常\n- 建議 Approve / Reject\n\n但主管仍需對：\n\n- 審查品質\n- 錯誤\n- Business Outcome\n- Agent 的持續改善\n\n負責。\n\n換句話說：\n\n> **執行可以自動化，但 Accountability 不能被自動化。**\n\n---\n\n## A 與 O 不一定是同一個人\n\n一般低風險流程中：\n\n> **A + O = Department Manager**\n\n但在高風險或受到監管的流程中，可以拆開：\n\n> **A = Business Owner**  \n> **O = Risk / Legal / Compliance**\n\n如此可以把「業務成果責任」與「風險控制權」分開。\n\n---\n\n## 導入 Agent 時，可以直接用五個問題檢查\n\n1. **R：誰實際執行工作？**\n2. **A：誰對結果負責？**\n3. **C：Agent 需要向誰或什麼取得資訊？**\n4. **I：誰需要知道執行結果？**\n5. **O：如果 Agent 判斷錯誤，誰可以阻止或推翻它？**\n\nRACI-O 的價值不在於限制 AI，而是在 Agent 自主性提高後，仍保留清楚的：\n\n**Accountability、Decision Rights、Human Oversight 與 Escalation Path。**\n\n> **AI Agent 可以是 Responsible，也可以是 Consulted；但 Accountable 與 Override Authority 應保留在人類手中。**",
+    "links": [
+      "https://www.deloitte.com/ca/en/services/consulting/perspectives/designing-organizations-for-ai.html"
+    ],
+    "files": [],
+    "status": "已核准",
+    "revision": "992d528929c3e681abfe2924a04f58caad41aaa82e254a152190b87b813776fe",
+    "updatedAt": "2026-10-05T06:16:49.131396+00:00"
   }
 ]
