@@ -163,7 +163,7 @@ test("HPE application cases appear in HPE even beyond the featured articles", as
 });
 
 test("empty Xunda view never adopts legacy industry or HPE cases as customer successes", async () => {
-  const page = createPage();
+  const page = createPage({ records: materials.filter(item => item.topicId !== "xunda-customer-cases") });
   await page.context.load();
   const cases = page.elements.get("#app").innerHTML.split('id="cases-view"')[1];
   assert.match(cases, /案例公開準備中/);
