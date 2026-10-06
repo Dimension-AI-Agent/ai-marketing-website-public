@@ -45,7 +45,7 @@ function createPage({ search = "", hash = "", records = materials, siteConfig = 
       navLinks.length = 0;
       topicButtons.length = 0;
       layerButtons.length = 0;
-      for (const match of value.matchAll(/<section id="(home|hpe|cases)-view"[^>]*>/g)) {
+      for (const match of value.matchAll(/<section id="(home|hpe|cases|layer-application|layer-integration|layer-infrastructure)-view"[^>]*>/g)) {
         const section = makeElement();
         section.id = `${match[1]}-view`;
         section.hidden = match[1] !== "home";
@@ -116,47 +116,53 @@ test("home, HPE, and Xunda cases are separate views with only approved content",
   assert.deepEqual(views.filter(view => !view.hidden).map(view => view.id), ["cases-view"]);
 });
 
-test("homepage layer recommendations stay outside HPE and never fill with unrelated articles", async () => {
-  const { context, elements } = createPage();
+test("layer pages keep their own approved articles outside HPE", async () => {
+  const { context, elements, views } = createPage();
   await context.load();
   context.renderSiteLayer("infrastructure");
-  const html = elements.get("#site-layer-result").innerHTML;
+  assert.deepEqual(views.filter(view => !view.hidden).map(view => view.id), ["layer-infrastructure-view"]);
+  const all = elements.get("#app").innerHTML;
+  const html = all.slice(all.indexOf('id="layer-infrastructure-view"'), all.indexOf('id="hpe-view"'));
   assert.match(html, /企業 AI Agent 地端架構/);
-  assert.doesNotMatch(html, /HPE 專區|Private Cloud AI|VMware 有哪些替代方案/);
+  assert.doesNotMatch(html, /Private Cloud AI|VMware 有哪些替代方案/);
   assert.equal((html.match(/class="site-article-row"/g) || []).length, 1);
+  assert.doesNotMatch(all, /id="site-layer-result"/);
 });
 
-test("illustration labels zoom to their own topics, while reduced motion opens the topic immediately", async () => {
+test("map links enter dedicated layer routes rather than an inline panel", async () => {
   const page = createPage();
   await page.context.load();
   const html = page.elements.get("#app").innerHTML;
   for (const key of ["application", "integration", "infrastructure"]) {
-    assert.match(html, new RegExp(`<button[^>]*class="site-visual-tag[^>]*data-layer-key="${key}"`));
-  }
-  assert.doesNotMatch(html, /class="site-hero-visual" aria-hidden="true"/);
-  const visual = page.context.document.querySelector(".site-hero-visual");
-  const result = page.context.document.querySelector("#site-layer-result");
-  result.hidden = true;
-  const layer = page.elements.get("#app");
-  const headings = { application: "先看 AI 可以放進哪一段工作", integration: "把資料、權限與既有系統接起來", infrastructure: "用工作負載與現有環境判斷架構" };
-  for (const key of ["application", "integration", "infrastructure"]) {
-    const button = { dataset: { layerKey: key }, classList: { contains: name => name === "site-visual-tag" } };
-    layer.dispatch("click", { target: { closest: selector => selector === "[data-layer-key]" ? button : null } });
-    assert.equal(visual.dataset.zoomLayer, key);
-    assert.equal(visual.classList.contains("is-zooming"), true);
-    assert.equal(result.hidden, true);
-    for (const callback of page.timers.values()) callback();
-    page.timers.clear();
-    assert.equal(result.hidden, false);
-    assert.match(result.innerHTML, new RegExp(headings[key]));
-    assert.equal(visual.classList.contains("is-zooming"), false);
-    result.hidden = true;
+    assert.match(html, new RegExp(`<a href="\\./#layer-${key}" class="site-visual-tag[^>]*data-layer-key="${key}"`));
+    const link = { dataset: { layerKey: key } };
+    let prevented = false;
+    page.elements.get("#app").dispatch("click", { preventDefault() { prevented = true; }, target: { closest: selector => selector === "[data-layer-key]" ? link : null } });
+    assert.equal(prevented, true);
+    assert.deepEqual(page.views.filter(view => !view.hidden).map(view => view.id), [`layer-${key}-view`]);
+    assert.equal(page.navigations.at(-1), `./#layer-${key}`);
   }
   const still = createPage({ reducedMotion: true });
   await still.context.load();
-  still.context.zoomToSiteLayer("integration");
-  assert.equal(still.elements.get("#site-layer-result").hidden, false);
+  still.context.document.querySelector(".site-hero-visual img").animate = () => { throw new Error("Reduced motion must skip the camera move"); };
+  await still.context.zoomToSiteLayer("integration");
+  assert.deepEqual(still.views.filter(view => !view.hidden).map(view => view.id), ["layer-integration-view"]);
   assert.equal(still.timers.size, 0);
+});
+
+test("layer deep links survive reload and returning to the map restores the homepage", async () => {
+  for (const key of ["application", "integration", "infrastructure"]) {
+    const page = createPage({ hash: `#layer-${key}` });
+    await page.context.load();
+    assert.deepEqual(page.views.filter(view => !view.hidden).map(view => view.id), [`layer-${key}-view`]);
+    assert.match(page.context.document.title, /應用情境|導入整合|基礎架構/);
+    page.context.showSiteView("home", "", true);
+    assert.deepEqual(page.views.filter(view => !view.hidden).map(view => view.id), ["home-view"]);
+    assert.equal(page.navigations.at(-1), "./#home");
+    const articles = createPage({ hash: `#layer-${key}-articles` });
+    await articles.context.load();
+    assert.deepEqual(articles.views.filter(view => !view.hidden).map(view => view.id), [`layer-${key}-view`]);
+  }
 });
 
 test("search includes all approved articles, limits results, and has an honest empty state", async () => {
