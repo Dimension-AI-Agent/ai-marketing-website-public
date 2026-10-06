@@ -44,7 +44,7 @@ function renderGuide() {
   if (!root || !progress) return;
   if (!content.guideRecommendations?.results) {
     progress.textContent = "";
-    root.innerHTML = '<p class="guided-error">引導內容暫時無法載入。你仍可以在下方搜尋文章。</p>';
+    root.innerHTML = '<p class="guided-error">引導內容暫時無法載入。你仍可以到「所有文章」搜尋內容。</p>';
     return;
   }
   const question = guidedQuestions[guidedCurrent];

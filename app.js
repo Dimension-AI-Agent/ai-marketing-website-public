@@ -150,8 +150,12 @@ function renderArticle(item) {
   const toc = sections.length >= 3 ? `<nav class="article-toc" aria-label="本文段落"><strong>本文段落</strong><ol>${sections.map(heading => `<li><a href="#${heading.id}">${escapeHtml(heading.title)}</a></li>`).join("")}</ol></nav>` : "";
   const expandableSummary = item.summary && item.summary.length > 220;
   const next = nextActionFor(item);
-  const returnHref = isXundaCase(item) ? "./#cases" : isHpe(item) ? "./#hpe" : "./#home-search";
-  const returnLabel = isXundaCase(item) ? "← 返回訊達成功案例" : isHpe(item) ? "← 返回 HPE 專區" : "← 返回搜尋文章";
+  const fromLibrary = new URLSearchParams(location.search).get("from") === "all-articles";
+  const backParams = new URLSearchParams(location.search);
+  backParams.delete("article"); backParams.delete("from");
+  const libraryBack = `./${backParams.size ? '?' + backParams : ''}#all-articles`;
+  const returnHref = fromLibrary ? libraryBack : isXundaCase(item) ? "./#cases" : isHpe(item) ? "./#hpe" : "./#all-articles";
+  const returnLabel = fromLibrary ? "← 返回所有文章" : isXundaCase(item) ? "← 返回訊達成功案例" : isHpe(item) ? "← 返回 HPE 專區" : "← 返回所有文章";
   document.title = `${item.title}｜訊達 AI 內容專欄`;
   document.querySelector("#app").innerHTML = `<div class="article-page">
     <div class="article-top"><div class="container"><nav class="breadcrumb" aria-label="所在位置"><a href="./">內容專欄</a><span>›</span><span>${escapeHtml(topic.title)}</span></nav><div class="article-header"><span class="eyebrow">${escapeHtml(topic.track)} / ${escapeHtml(topic.title)}</span><h1>${escapeHtml(item.title)}</h1>${item.summary ? `<p class="lead${expandableSummary ? " is-collapsible" : ""}" id="article-summary">${escapeHtml(item.summary)}</p>${expandableSummary ? '<button type="button" class="summary-toggle" aria-controls="article-summary" aria-expanded="false">展開摘要</button>' : ""}` : ""}<div class="article-byline"><b>訊達 AI 內容</b><span>·</span><span>${escapeHtml(item.format || "文章")}</span></div></div></div></div>
