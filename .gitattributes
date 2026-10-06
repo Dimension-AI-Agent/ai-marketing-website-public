@@ -1,0 +1,2 @@
+# Generated GLSL strings retain upstream whitespace; keep build bytes stable.
+assets/scene-runtime.mjs text eol=lf linguist-generated=true -whitespace

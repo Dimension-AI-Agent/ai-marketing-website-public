@@ -5,9 +5,13 @@
   "scripts": {
     "test": "node --test tests/*.test.cjs",
     "preview": "node scripts/preview.cjs",
+    "build:scene": "node scripts/build-scene.cjs",
     "vendor:three": "node scripts/vendor-three.cjs"
   },
   "dependencies": {
     "three": "0.186.1"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
   }
 }

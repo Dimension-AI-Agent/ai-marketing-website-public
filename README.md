@@ -32,4 +32,6 @@
 
 在 repository 目錄執行 `npm run preview`，開啟 `http://localhost:8745/`。伺服器只綁定本機；可使用 `PORT` 環境變數指定其他連接埠。原型與維護方式見 [3D 原型說明](docs/3d-prototype.md)。
 
-驗證命令：`npm test`。Three.js 固定為 `0.186.1`，瀏覽器讀取已納入版本控制的 `vendor/three/`，不依賴執行建置或外部 CDN。更新套件時執行 `npm ci --ignore-scripts` 與 `npm run vendor:three`，再檢查差異及測試；不要手動改寫 vendor 檔案。僅進入樓層時才載入 Three.js。
+Three.js 固定為 `0.186.1`。瀏覽器讀取已納入版本控制、約 590 kB 的 `assets/scene-runtime.mjs`，不依賴外部 CDN 或上線時執行建置。指向、聚焦或點選樓層入口時預載程式，進入樓層後才建立場景。
+
+開發驗證：`npm ci --ignore-scripts` 後執行 `npm test`。修改 `scene-renderer.mjs` 或 `scene-model.mjs` 後，執行 `npm run build:scene` 更新生成檔；測試會核對生成檔與來源一致。esbuild 僅作為開發依賴。更新 Three.js 時另執行 `npm run vendor:three` 再打包；不要手動改寫 vendor 或生成檔。打包內容更新時同步調整 `scene-explorer.js` 的載入版本，以及 `index.html` 的相關腳本版本。
