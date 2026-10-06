@@ -6,6 +6,7 @@ const path = require("node:path");
 
 const code = fs.readFileSync(path.join(__dirname, "../app.js"), "utf8").replace(/\nload\(\);\s*$/, "\n");
 const guideCode = fs.readFileSync(path.join(__dirname, "../guide.js"), "utf8");
+const libraryCode = fs.readFileSync(path.join(__dirname, "../library.js"), "utf8");
 const viewsCode = fs.readFileSync(path.join(__dirname, "../site-views.js"), "utf8");
 const site = JSON.parse(fs.readFileSync(path.join(__dirname, "../data/site.json"), "utf8"));
 const materials = JSON.parse(fs.readFileSync(path.join(__dirname, "../data/materials.json"), "utf8"));
@@ -45,13 +46,13 @@ function createPage({ search = "", hash = "", records = materials, siteConfig = 
       navLinks.length = 0;
       topicButtons.length = 0;
       layerButtons.length = 0;
-      for (const match of value.matchAll(/<section id="(home|hpe|cases|layer-application|layer-integration|layer-infrastructure)-view"[^>]*>/g)) {
+      for (const match of value.matchAll(/<section id="(home|hpe|cases|all-articles|layer-application|layer-integration|layer-infrastructure)-view"[^>]*>/g)) {
         const section = makeElement();
         section.id = `${match[1]}-view`;
         section.hidden = match[1] !== "home";
         views.push(section);
       }
-      for (const match of value.matchAll(/<a[^>]*data-site-view="(home|hpe|cases)"[^>]*>/g)) {
+      for (const match of value.matchAll(/<a[^>]*data-site-view="(home|hpe|cases|all-articles)"[^>]*>/g)) {
         const link = makeElement();
         link.dataset.siteView = match[1];
         if (match[0].includes("data-scroll-to=")) link.dataset.scrollTo = "home-search";
@@ -70,10 +71,16 @@ function createPage({ search = "", hash = "", records = materials, siteConfig = 
     }
   });
   elements.set("#app", app);
+  const location = { search, hash };
+  function navigate(url) {
+    navigations.push(url);
+    const next = new URL(url, "https://example.test/");
+    location.search = next.search; location.hash = next.hash;
+  }
   const page = {
     URL, URLSearchParams,
-    location: { search, hash },
-    history: { scrollRestoration: "auto", replaceState: (_state, _title, url) => navigations.push(url), pushState: (_state, _title, url) => navigations.push(url) },
+    location,
+    history: { scrollRestoration: "auto", replaceState: (_state, _title, url) => navigate(url), pushState: (_state, _title, url) => navigate(url) },
     window: {
       scrollTo() {}, addEventListener() {},
       matchMedia: () => ({ matches: reducedMotion }),
@@ -94,6 +101,7 @@ function createPage({ search = "", hash = "", records = materials, siteConfig = 
   const context = vm.createContext(page);
   vm.runInContext(guideCode, context);
   vm.runInContext(viewsCode, context);
+  vm.runInContext(libraryCode, context);
   vm.runInContext(code, context);
   return { context, elements, navigations, views, timers };
 }
@@ -103,9 +111,10 @@ test("home, HPE, and Xunda cases are separate views with only approved content",
   const { context, elements, views } = createPage({ records: [...materials, draft] });
   await context.load();
   const html = elements.get("#app").innerHTML;
-  const home = html.slice(html.indexOf('id="home-view"'), html.indexOf('id="hpe-view"'));
+  const home = html.slice(html.indexOf('id="home-view"'), html.indexOf('id="all-articles-view"'));
   assert.match(home, /你現在最想解決什麼？|id="guide-content"/);
-  assert.match(home, /id="home-search"/);
+  assert.doesNotMatch(home, /id="home-search"|site-search-form/);
+  assert.match(html, /href="\.\/#all-articles" data-site-view="all-articles">所有文章/);
   assert.doesNotMatch(home, /HPE 贊助專區|案例公開準備中|未核准內容/);
   assert.match(html, /id="hpe-view"[^>]*hidden/);
   assert.match(html, /id="cases-view"[^>]*hidden/);
@@ -130,9 +139,9 @@ test("customer case intake IDs reach only the approved Xunda view and remain sea
   assert.doesNotMatch(cases, /案例公開準備中|article=material-13|article=material-37|test-draft|<script>/);
   assert.doesNotMatch(hpe, /article=test-case/);
   assert.deepEqual(page.views.filter(view => !view.hidden).map(view => view.id), ["cases-view"]);
-  page.context.renderSiteSearch("", "xunda-customer-cases");
-  assert.match(page.elements.get("#site-search-results").innerHTML, /客戶導入實績|article=test-case/);
-  assert.doesNotMatch(page.elements.get("#site-search-results").innerHTML, /test-draft/);
+  page.context.updateLibrary("xunda-customer-cases", "");
+  assert.match(page.elements.get("#library-results").innerHTML, /客戶導入實績|article=test-case/);
+  assert.doesNotMatch(page.elements.get("#library-results").innerHTML, /test-draft/);
   const article = createPage({ records: [approved], search: "?article=test-case" });
   await article.context.load();
   assert.match(article.elements.get("#app").innerHTML, /href="\.\/#cases">← 返回訊達成功案例/);
@@ -207,34 +216,65 @@ test("layer deep links survive reload and returning to the map restores the home
   }
 });
 
-test("search includes all approved articles, limits results, and has an honest empty state", async () => {
+test("library lists all approved articles and supports category search and empty results", async () => {
   const draft = { ...materials[0], id: "draft", status: "待審", title: "HPE 未核准內容" };
-  const { context, elements } = createPage({ records: [...materials, draft] });
+  const { context, elements, views } = createPage({ records: [...materials, draft], hash: "#all-articles" });
   await context.load();
-  const result = elements.get("#site-search-results");
-  assert.equal(result.hidden, true);
-  context.renderSiteSearch("HPE");
-  assert.equal(result.hidden, false);
-  assert.match(result.innerHTML, /HPE SimpliVity/);
-  assert.equal((result.innerHTML.match(/class="site-article-row"/g) || []).length, 3);
+  const result = elements.get("#library-results");
+  assert.equal((result.innerHTML.match(/class="library-article"/g) || []).length, materials.filter(item => item.status === "已核准").length);
   assert.doesNotMatch(result.innerHTML, /未核准內容/);
-  context.renderSiteSearch("", "enterprise-adoption");
-  assert.match(result.innerHTML, /企業導入方法/);
-  assert.ok((result.innerHTML.match(/class="site-article-row"/g) || []).length <= 3);
-  context.renderSiteSearch("絕對不會出現的詞");
-  assert.match(result.innerHTML, /找不到與/);
-  assert.doesNotMatch(result.innerHTML, /class="site-article-row"/);
+  assert.deepEqual(views.filter(view => !view.hidden).map(view => view.id), ["all-articles-view"]);
+  context.updateLibrary("enterprise-adoption", "");
+  const categoryCount = materials.filter(item => item.status === "已核准" && item.topicId === "enterprise-adoption").length;
+  assert.equal(elements.get("#library-count").textContent, `${categoryCount} 篇文章`);
+  assert.ok(categoryCount > 3);
+  context.updateLibrary("enterprise-adoption", "PoC");
+  assert.match(result.innerHTML, /PoC/);
+  assert.doesNotMatch(result.innerHTML, /SimpliVity/);
+  context.updateLibrary("", "絕對不會出現的詞");
+  assert.match(result.innerHTML, /沒有找到相符的文章/);
+  assert.doesNotMatch(result.innerHTML, /class="library-article"/);
+  context.updateLibrary("software", "");
+  assert.match(result.innerHTML, /這個分類還沒有文章/);
 });
 
-test("existing category and HPE filter links open bounded search results", async () => {
-  const hpe = createPage({ search: "?filter=hpe", hash: "#articles" });
-  await hpe.context.load();
-  assert.match(hpe.elements.get("#site-search-results").innerHTML, /HPE 專區文章/);
-  assert.ok((hpe.elements.get("#site-search-results").innerHTML.match(/class="site-article-row"/g) || []).length <= 3);
-  const category = createPage({ search: "?filter=topic:ai-security", hash: "#articles" });
-  await category.context.load();
-  assert.match(category.elements.get("#site-search-results").innerHTML, /AI 資安與治理/);
-  assert.match(category.elements.get("#site-search-results").innerHTML, /怎麼守住存取邊界/);
+test("library taxonomy follows current site configuration, including duplicate other titles", async () => {
+  const page = createPage();
+  await page.context.load();
+  const html = page.elements.get("#app").innerHTML;
+  for (const track of site.tracks) for (const topic of track.topics) {
+    assert.match(html, new RegExp(`data-library-topic="${topic.id}"`));
+    assert.match(html, new RegExp(`<option value="${topic.id}">`));
+  }
+  assert.match(html, /data-library-topic="solutions-other"/);
+  assert.match(html, /data-library-topic="agent-other"/);
+});
+
+test("legacy search and filters migrate to the complete library without losing the selection", async () => {
+  for (const filter of ["hpe", "security", "layer:integration", "topic:ai-security"]) {
+    const page = createPage({ search: `?filter=${filter}`, hash: "#articles" });
+    await page.context.load();
+    const expected = page.context.filteredItems(filter, "").length;
+    assert.equal(page.elements.get("#library-count").textContent, `${expected} 篇文章`);
+    assert.deepEqual(page.views.filter(view => !view.hidden).map(view => view.id), ["all-articles-view"]);
+    assert.match(page.navigations.at(-1), /#all-articles$/);
+  }
+  const query = createPage({ search: "?q=PoC", hash: "#home-search" });
+  await query.context.load();
+  assert.equal(query.elements.get("#library-search").value, "PoC");
+  assert.match(query.navigations.at(-1), /keyword=PoC#all-articles/);
+});
+
+test("library deep links and article return retain category and keyword", async () => {
+  const page = createPage({ search: "?topic=enterprise-adoption&keyword=PoC", hash: "#all-articles" });
+  await page.context.load();
+  assert.equal(page.elements.get("#library-search").value, "PoC");
+  assert.equal(page.elements.get("#library-results-title").textContent, "企業導入方法");
+  assert.match(page.elements.get("#library-results").innerHTML, /from=all-articles&amp;topic=enterprise-adoption&amp;keyword=PoC/);
+  const article = createPage({ search: "?article=material-30&from=all-articles&topic=enterprise-adoption&keyword=PoC" });
+  await article.context.load();
+  assert.match(article.elements.get("#app").innerHTML, /#all-articles">← 返回所有文章/);
+  assert.match(article.elements.get("#app").innerHTML, /topic=enterprise-adoption/);
 });
 
 test("guided recommendations retain approved articles at reviewed revisions", async () => {
