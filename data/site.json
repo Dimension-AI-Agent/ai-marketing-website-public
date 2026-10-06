@@ -61,7 +61,7 @@
         {"id": "software", "title": "軟體", "description": "AI 平台、工具與軟體"},
         {"id": "integrated-solutions", "title": "整合方案", "description": "從基礎架構到 AI 應用的整體方案"},
         {"id": "competitive-positioning", "title": "產品定位比較", "description": "產品差異與競爭者比較"},
-        {"id": "hpe-use-cases", "title": "HPE Use Case／成功案例", "description": "HPE 應用情境與成功案例"},
+        {"id": "hpe-use-cases", "title": "HPE 應用情境與案例", "description": "HPE 官方案例與應用情境"},
         {"id": "solutions-other", "title": "其他", "description": "其他相關行銷素材"}
       ]
     },
@@ -80,7 +80,7 @@
         {"id": "open-source-tools", "title": "開源工具導入", "description": "開源 AI 工具與導入情境"},
         {"id": "faq", "title": "常見問題", "description": "客戶常見問題與解答"},
         {"id": "industry-trends", "title": "AI 業界動態", "description": "AI 技術、產品與市場趨勢"},
-        {"id": "industry-cases", "title": "業界案例／訊達案例分享", "description": "產業應用與訊達實務經驗"},
+        {"id": "industry-cases", "title": "業界案例", "description": "外部企業的 AI 應用經驗與產業案例"},
         {"id": "agent-other", "title": "其他", "description": "其他 AI Agent 落地素材"}
       ]
     },
@@ -92,6 +92,15 @@
       "topics": [
         {"id": "ai-security", "title": "AI 資安與治理", "description": "AI 應用的資料、權限、紀錄與風險管理"},
         {"id": "network-access-security", "title": "網路存取管理", "description": "裝置辨識、身分驗證與網路存取政策"}
+      ]
+    },
+    {
+      "id": "xunda-success-cases",
+      "number": "04",
+      "title": "訊達成功案例",
+      "subtitle": "客戶導入實績",
+      "topics": [
+        {"id": "xunda-customer-cases", "title": "客戶導入實績", "description": "訊達實際參與、具成果依據且取得公開授權的客戶專案"}
       ]
     }
   ]

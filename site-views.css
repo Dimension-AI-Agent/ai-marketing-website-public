@@ -81,6 +81,16 @@
 .site-cases-empty{max-width:760px;padding:32px 35px;border:1px solid #d6dfd9;border-radius:7px;background:#fff}
 .site-cases-empty h2{margin:0 0 15px;font-size:25px}
 .site-cases-empty p{margin:10px 0 0;color:#50646a;font-size:14px;line-height:1.85}
+.site-case-list{max-width:980px;margin:0;padding:0;list-style:none}
+.site-case-list .site-article-row{padding:24px 52px 24px 0;border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent;overflow-wrap:anywhere}
+.site-case-list .site-article-row span{color:var(--ink);font-size:14px}
+.site-case-list .site-article-row strong{font-size:clamp(18px,2vw,22px)}
+.site-case-list .site-article-row small{max-width:75ch;font-size:16px;line-height:1.85}
+.site-case-list .site-article-row b{top:32px}
+.site-case-list .site-article-row:hover strong{text-decoration:underline;text-underline-offset:5px}
+.site-hpe-cases{margin-top:48px}
+.site-hpe-cases h2{margin:0 0 16px;font-size:28px}
+.site-hpe-cases .site-article-row span{color:#086747}
 .site-footer .site-container{display:flex;align-items:center;gap:24px}
 .site-footer .site-container span{color:#c8d7da;font-size:13px}
 .site-footer .site-container a{margin-left:auto;color:#d3dfe0;font-size:13px}
