@@ -35,7 +35,7 @@ function sceneObjectDetail(floor, id) {
   const object = sceneFloorObjects[floor]?.find(item => item.id === id);
   if (!object) return '';
   const articles = object.articles.map(articleId => content.items.find(item => item.id === articleId && item.status === '已核准')).filter(Boolean);
-  return `<span class="scene-detail-label">${escapeHtml(object.title)}</span><h3>${escapeHtml(object.question)}</h3><p>${escapeHtml(object.detail)}</p><div class="scene-detail-reading"><span>相關文章</span>${articles.length ? articles.map(item => `<a href="${escapeHtml(articleUrl(item) + '&from=scene-' + floor)}">${escapeHtml(item.title)} <span aria-hidden="true">↗</span></a>`).join('') : '<p>目前沒有相關的已核准文章，可到所有文章搜尋。</p>'}</div>`;
+  return `<h3 class="scene-object-title">${escapeHtml(object.title)}</h3><p class="scene-object-question">${escapeHtml(object.question)}</p><p class="scene-object-description">${escapeHtml(object.detail)}</p><div class="scene-detail-reading"><span>相關文章</span>${articles.length ? articles.map(item => `<a href="${escapeHtml(articleUrl(item) + '&from=scene-' + floor)}">${escapeHtml(item.title)} <span aria-hidden="true">↗</span></a>`).join('') : '<p>目前沒有相關的已核准文章，可到所有文章搜尋。</p>'}</div>`;
 }
 
 function renderSceneExplorer(floor) {
@@ -47,7 +47,7 @@ function renderSceneExplorer(floor) {
       <div class="scene-toolbar" role="group" aria-label="3D 視角控制"><button type="button" data-scene-control="zoom-in" aria-label="放大場景" disabled>＋</button><button type="button" data-scene-control="zoom-out" aria-label="縮小場景" disabled>−</button><button type="button" data-scene-control="left" aria-label="向左旋轉場景" disabled>↶</button><button type="button" data-scene-control="right" aria-label="向右旋轉場景" disabled>↷</button><button type="button" data-scene-control="reset" disabled>重設視角</button><button type="button" data-scene-control="drag" aria-pressed="false" disabled>啟用拖曳</button></div>
       <p class="scene-status" data-scene-status role="status">正在準備 3D 場景，仍可使用下方物件清單。</p>
       <div class="scene-object-list" role="group" aria-label="選擇探索物件">${objects.map((item, index) => `<button type="button" data-scene-object="${item.id}" aria-pressed="${sceneSelection.get(floor) === item.id}" aria-controls="scene-detail-${floor}"><span aria-hidden="true">${index + 1}</span>${escapeHtml(item.title)}</button>`).join('')}</div>
-    </div><div class="scene-detail" id="scene-detail-${floor}" tabindex="-1" aria-label="物件簡介">${sceneSelection.has(floor) ? sceneObjectDetail(floor, sceneSelection.get(floor)) : '<span class="scene-detail-label">從一個物件開始</span><h3>這一層，和你的問題有什麼關係？</h3><p>選擇場景中的標記或下方物件，查看它的用途與相關文章。</p><div class="scene-detail-note"><span>操作提示</span><p>用 ＋／− 調整遠近，↶／↷ 改變角度。啟用拖曳後，可拖動場景；手機使用雙指縮放。</p></div>'}</div></div>
+    </div><div class="scene-detail" id="scene-detail-${floor}" tabindex="-1" aria-label="物件簡介">${sceneSelection.has(floor) ? sceneObjectDetail(floor, sceneSelection.get(floor)) : '<h3 class="scene-object-title">選擇一個物件</h3><p class="scene-object-question">這一層，和你的問題有什麼關係？</p><p class="scene-object-description">選擇場景中的標記或下方物件，查看它的用途與相關文章。</p><div class="scene-detail-note"><span>操作提示</span><p>用 ＋／− 調整遠近，↶／↷ 改變角度。啟用拖曳後，可拖動場景；手機使用雙指縮放。</p></div>'}</div></div>
     <p class="scene-disclaimer">場景為示意，不代表實際設備型號、客戶環境或必備建置規模。</p>
     <details class="scene-reading-fallback"><summary>以文字瀏覽本層物件與相關文章</summary><div>${objects.map(item => `<section>${sceneObjectDetail(floor, item.id)}</section>`).join('')}</div></details>
   </section>`;

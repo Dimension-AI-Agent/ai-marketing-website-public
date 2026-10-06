@@ -40,6 +40,21 @@ test('scene article links carry a validated return destination', () => {
   const html=page().sceneObjectDetail('integration','permissions');
   assert.match(html,/from=scene-integration/);
 });
+test('object names are headings and their questions are secondary text in every floor',()=>{
+  const context=page();
+  const floors=vm.runInContext('sceneFloorObjects',context);
+  for(const [floor,objects] of Object.entries(floors)) for(const object of objects) {
+    const html=context.sceneObjectDetail(floor,object.id);
+    assert.ok(html.includes(`<h3 class="scene-object-title">${object.title}</h3>`));
+    assert.ok(html.includes(`<p class="scene-object-question">${object.question}</p>`));
+    assert.doesNotMatch(html,/<h3[^>]*>[^<]*？<\/h3>/);
+  }
+});
+test('the initial prompt follows the same title and question hierarchy as selected objects',()=>{
+  const html=page().renderSceneExplorer('application');
+  assert.match(html,/<h3 class="scene-object-title">選擇一個物件<\/h3>/);
+  assert.match(html,/<p class="scene-object-question">這一層，和你的問題有什麼關係？<\/p>/);
+});
 test('object reading links exclude draft and withdrawn articles and escape their titles', () => {
   const approved = { id:'material-34', status:'已核准', title:'權限 <script>' };
   const context = page([approved, {id:'material-27', status:'待審', title:'私人原稿'}]);
