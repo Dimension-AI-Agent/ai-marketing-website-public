@@ -8,6 +8,7 @@ const code = fs.readFileSync(path.join(__dirname, "../app.js"), "utf8").replace(
 const guideCode = fs.readFileSync(path.join(__dirname, "../guide.js"), "utf8");
 const libraryCode = fs.readFileSync(path.join(__dirname, "../library.js"), "utf8");
 const viewsCode = fs.readFileSync(path.join(__dirname, "../site-views.js"), "utf8");
+const sceneCode = fs.readFileSync(path.join(__dirname, "../scene-explorer.js"), "utf8");
 const site = JSON.parse(fs.readFileSync(path.join(__dirname, "../data/site.json"), "utf8"));
 const materials = JSON.parse(fs.readFileSync(path.join(__dirname, "../data/materials.json"), "utf8"));
 const guide = JSON.parse(fs.readFileSync(path.join(__dirname, "../data/guide-recommendations.json"), "utf8"));
@@ -28,12 +29,12 @@ function createPage({ search = "", hash = "", records = materials, siteConfig = 
       innerHTML: "", textContent: "", hidden: false, dataset: {}, value: "", id: "",
       classList: { add: name => classes.add(name), remove: name => classes.delete(name), contains: name => classes.has(name) },
       scrollIntoView() {}, focus() {}, closest() { return null; },
-      addEventListener(type, listener) { listeners.set(type, listener); },
-      dispatch(type, event) { listeners.get(type)?.(event); },
+      addEventListener(type, listener) { if (!listeners.has(type)) listeners.set(type, []); listeners.get(type).push(listener); },
+      dispatch(type, event) { listeners.get(type)?.forEach(listener => listener(event)); },
       setAttribute(name, value) { attributes.set(name, value); },
       removeAttribute(name) { attributes.delete(name); },
       getAttribute(name) { return attributes.get(name); },
-      click() { listeners.get("click")?.({ currentTarget: this }); }
+      click() { listeners.get("click")?.forEach(listener => listener({ currentTarget: this })); }
     };
   }
   const app = makeElement();
@@ -90,7 +91,8 @@ function createPage({ search = "", hash = "", records = materials, siteConfig = 
     requestAnimationFrame: callback => callback(),
     document: {
       title: "",
-      querySelector(selector) { if (!elements.has(selector)) elements.set(selector, makeElement()); return elements.get(selector); },
+      // This fixture models routing and article markup, not a WebGL canvas.
+      querySelector(selector) { if (selector.startsWith('[data-scene-floor=')) return null; if (!elements.has(selector)) elements.set(selector, makeElement()); return elements.get(selector); },
       getElementById(id) { return this.querySelector(`#${id}`); },
       querySelectorAll(selector) {
         return selector === ".site-view" ? views : selector === ".site-nav a" ? navLinks : selector === "[data-search-topic]" ? topicButtons : selector === "[data-layer-key]" ? layerButtons : [];
@@ -101,6 +103,7 @@ function createPage({ search = "", hash = "", records = materials, siteConfig = 
   const context = vm.createContext(page);
   vm.runInContext(guideCode, context);
   vm.runInContext(viewsCode, context);
+  vm.runInContext(sceneCode, context);
   vm.runInContext(libraryCode, context);
   vm.runInContext(code, context);
   return { context, elements, navigations, views, timers };
@@ -160,7 +163,7 @@ test("HPE application cases appear in HPE even beyond the featured articles", as
 });
 
 test("empty Xunda view never adopts legacy industry or HPE cases as customer successes", async () => {
-  const page = createPage();
+  const page = createPage({ records: materials.filter(item => item.topicId !== "xunda-customer-cases") });
   await page.context.load();
   const cases = page.elements.get("#app").innerHTML.split('id="cases-view"')[1];
   assert.match(cases, /案例公開準備中/);
@@ -323,6 +326,17 @@ test("legacy article links and existing reading structure still work", async () 
   assert.match(html, /<nav class="article-toc" aria-label="本文段落">/);
   assert.match(html, /<h2 id="section-1">VMware 替代，不只是換掉 ESXi<\/h2>/);
   assert.match(html, /查看要確認的事項/);
+});
+
+test("scene reading returns to its own floor and ignores unrelated or unsafe destinations", async () => {
+  const page=createPage({search:'?article=material-34&from=scene-integration'});
+  await page.context.load();
+  assert.match(page.elements.get('#app').innerHTML,/href="\.\/#layer-integration">← 返回導入整合場景/);
+  for (const from of ['scene-infrastructure','scene-javascript:evil']) {
+    const other=createPage({search:'?article=material-34&from='+encodeURIComponent(from)});
+    await other.context.load();
+    assert.doesNotMatch(other.elements.get('#app').innerHTML,/返回.*場景|href="javascript:/);
+  }
 });
 
 test("text, attachment paths, and public links reject unsafe values", () => {
