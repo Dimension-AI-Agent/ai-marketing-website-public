@@ -116,6 +116,48 @@ test("home, HPE, and Xunda cases are separate views with only approved content",
   assert.deepEqual(views.filter(view => !view.hidden).map(view => view.id), ["cases-view"]);
 });
 
+test("customer case intake IDs reach only the approved Xunda view and remain searchable", async () => {
+  // Test fixtures are never added to the published material catalog.
+  const approved = { id: "test-case", topicId: "xunda-customer-cases", status: "已核准", title: "測試用 HPE 客戶實績 <script>", summary: "測試用摘要", body: "測試用正文" };
+  const draft = { ...approved, id: "test-draft", status: "待審", title: "未核准客戶實績" };
+  const page = createPage({ records: [...materials, approved, draft], hash: "#cases" });
+  await page.context.load();
+  const html = page.elements.get("#app").innerHTML;
+  const cases = html.slice(html.indexOf('id="cases-view"'));
+  const hpe = html.slice(html.indexOf('id="hpe-view"'), html.indexOf('id="cases-view"'));
+  assert.match(cases, /article=test-case/);
+  assert.match(cases, /&lt;script&gt;/);
+  assert.doesNotMatch(cases, /案例公開準備中|article=material-13|article=material-37|test-draft|<script>/);
+  assert.doesNotMatch(hpe, /article=test-case/);
+  assert.deepEqual(page.views.filter(view => !view.hidden).map(view => view.id), ["cases-view"]);
+  page.context.renderSiteSearch("", "xunda-customer-cases");
+  assert.match(page.elements.get("#site-search-results").innerHTML, /客戶導入實績|article=test-case/);
+  assert.doesNotMatch(page.elements.get("#site-search-results").innerHTML, /test-draft/);
+  const article = createPage({ records: [approved], search: "?article=test-case" });
+  await article.context.load();
+  assert.match(article.elements.get("#app").innerHTML, /href="\.\/#cases">← 返回訊達成功案例/);
+  assert.doesNotMatch(article.elements.get("#app").innerHTML, /返回 HPE 專區/);
+});
+
+test("HPE application cases appear in HPE even beyond the featured articles", async () => {
+  const item = { id: "test-hpe-case", topicId: "hpe-use-cases", status: "已核准", title: "測試用官方案例", summary: "測試用摘要" };
+  const page = createPage({ records: [...materials, item], hash: "#hpe" });
+  await page.context.load();
+  const html = page.elements.get("#app").innerHTML;
+  const hpe = html.slice(html.indexOf('id="hpe-view"'), html.indexOf('id="cases-view"'));
+  assert.match(hpe, /HPE 應用情境與案例|article=test-hpe-case/);
+  assert.match(hpe, /article=test-hpe-case/);
+  assert.doesNotMatch(html.slice(html.indexOf('id="cases-view"')), /article=test-hpe-case/);
+});
+
+test("empty Xunda view never adopts legacy industry or HPE cases as customer successes", async () => {
+  const page = createPage();
+  await page.context.load();
+  const cases = page.elements.get("#app").innerHTML.split('id="cases-view"')[1];
+  assert.match(cases, /案例公開準備中/);
+  assert.doesNotMatch(cases, /article=material-/);
+});
+
 test("layer pages keep their own approved articles outside HPE", async () => {
   const { context, elements, views } = createPage();
   await context.load();

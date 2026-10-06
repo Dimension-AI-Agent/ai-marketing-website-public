@@ -40,7 +40,8 @@ const layerMeta = {
   infrastructure: { title: "基礎架構", topics: ["hardware", "software", "competitive-positioning", "industry-trends", "solutions-other"] }
 };
 
-function isHpe(item) { return /\bHPE\b/i.test(item.title) || item.topicId === "hpe-use-cases"; }
+function isXundaCase(item) { return item.topicId === "xunda-customer-cases"; }
+function isHpe(item) { return !isXundaCase(item) && (/\bHPE\b/i.test(item.title) || item.topicId === "hpe-use-cases"); }
 function matchesFilter(item, filter) {
   if (filter === "all") return true;
   if (filter === "hpe") return isHpe(item);
@@ -125,6 +126,7 @@ function nextActionFor(item) {
     "ai-security": ["盤點資料與存取邊界", "把可讀資料、使用者權限與紀錄方式列清楚。", ["誰可以使用這項功能？", "每個角色可以讀取哪些資料？", "如何檢查答案與操作紀錄？"]],
     "network-access-security": ["盤點裝置與網路存取條件", "先列出裝置類型、使用者身分與需要保護的網路範圍。", ["哪些裝置需要連入？", "如何確認使用者或裝置身分？", "不同角色可進入哪些網段？"]],
     "industry-cases": ["比對自己的流程條件", "先確認文章中的情境與你的工作流程有多少相似處。", ["你想改善的是哪一段流程？", "目前有哪些系統和交接點？", "哪些結果需要另外驗證？"]],
+    "xunda-customer-cases": ["對照案例的導入條件", "把案例中的問題、訊達參與範圍與結果，對照自己的環境。", ["目前遇到的問題與案例有哪些相似處？", "資料、系統與參與人員有哪些差異？", "哪些成果仍需要在自己的環境驗證？"]],
     "industry-trends": ["記下需要追蹤的變化", "把趨勢轉成與自己業務或技術環境有關的待確認問題。", ["哪項變化與目前工作有關？", "需要補查哪些原始資料？", "何時再檢視這項判斷？"]]
   };
   const solution = ["hardware", "software", "integrated-solutions", "competitive-positioning", "hpe-use-cases"].includes(item.topicId)
@@ -148,8 +150,8 @@ function renderArticle(item) {
   const toc = sections.length >= 3 ? `<nav class="article-toc" aria-label="本文段落"><strong>本文段落</strong><ol>${sections.map(heading => `<li><a href="#${heading.id}">${escapeHtml(heading.title)}</a></li>`).join("")}</ol></nav>` : "";
   const expandableSummary = item.summary && item.summary.length > 220;
   const next = nextActionFor(item);
-  const returnHref = isHpe(item) ? "./#hpe" : "./#home-search";
-  const returnLabel = isHpe(item) ? "← 返回 HPE 專區" : "← 返回搜尋文章";
+  const returnHref = isXundaCase(item) ? "./#cases" : isHpe(item) ? "./#hpe" : "./#home-search";
+  const returnLabel = isXundaCase(item) ? "← 返回訊達成功案例" : isHpe(item) ? "← 返回 HPE 專區" : "← 返回搜尋文章";
   document.title = `${item.title}｜訊達 AI 內容專欄`;
   document.querySelector("#app").innerHTML = `<div class="article-page">
     <div class="article-top"><div class="container"><nav class="breadcrumb" aria-label="所在位置"><a href="./">內容專欄</a><span>›</span><span>${escapeHtml(topic.title)}</span></nav><div class="article-header"><span class="eyebrow">${escapeHtml(topic.track)} / ${escapeHtml(topic.title)}</span><h1>${escapeHtml(item.title)}</h1>${item.summary ? `<p class="lead${expandableSummary ? " is-collapsible" : ""}" id="article-summary">${escapeHtml(item.summary)}</p>${expandableSummary ? '<button type="button" class="summary-toggle" aria-controls="article-summary" aria-expanded="false">展開摘要</button>' : ""}` : ""}<div class="article-byline"><b>訊達 AI 內容</b><span>·</span><span>${escapeHtml(item.format || "文章")}</span></div></div></div></div>
