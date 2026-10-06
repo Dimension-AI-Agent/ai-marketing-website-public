@@ -69,6 +69,7 @@ function cancelSiteLayerZoom() {
 
 async function zoomToSiteLayer(key) {
   if (!siteLayerChoices[key]) return;
+  preloadSceneExplorer().catch(() => {});
   cancelSiteLayerZoom();
   const source = document.querySelector(".site-hero-visual img");
   const target = document.getElementById(`layer-${key}-view`);
@@ -98,7 +99,7 @@ async function zoomToSiteLayer(key) {
   overlay.append(imageWindow);
   document.body.append(overlay);
   source.style.visibility = "hidden";
-  const timing = { duration: 760, easing: "cubic-bezier(.65,0,.2,1)", fill: "forwards" };
+  const timing = { duration: 420, easing: "cubic-bezier(.65,0,.2,1)", fill: "forwards" };
   const transition = { source, overlay, animations: [] };
   siteLayerTransition = transition;
   try {
@@ -108,7 +109,7 @@ async function zoomToSiteLayer(key) {
     await Promise.all(transition.animations.map(animation => animation.finished));
     if (siteLayerTransition !== transition) return;
     renderSiteLayer(key);
-    const reveal = overlay.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, fill: "forwards" });
+    const reveal = overlay.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 100, fill: "forwards" });
     transition.animations.push(reveal);
     await reveal.finished;
   } catch {

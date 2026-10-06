@@ -26,6 +26,11 @@ let sceneRuntime = null;
 let sceneModulePromise = null;
 let sceneRequest = 0;
 
+function preloadSceneExplorer() {
+  if (!sceneModulePromise) sceneModulePromise = import('./assets/scene-runtime.mjs?v=2').catch(error => { sceneModulePromise = null; throw error; });
+  return sceneModulePromise;
+}
+
 function sceneObjectDetail(floor, id) {
   const object = sceneFloorObjects[floor]?.find(item => item.id === id);
   if (!object) return '';
@@ -84,8 +89,7 @@ async function showSceneExplorer(floor) {
   explorer.querySelector('[data-scene-status]').textContent = '正在準備 3D 場景，仍可使用下方物件清單。';
   explorer.querySelectorAll('[data-scene-control]').forEach(button => { button.disabled = true; });
   try {
-    if (!sceneModulePromise) sceneModulePromise = import('./scene-renderer.mjs?v=1').catch(error => { sceneModulePromise = null; throw error; });
-    const module = await sceneModulePromise;
+    const module = await preloadSceneExplorer();
     if (request !== sceneRequest || explorer.closest('[hidden]')) return;
     sceneRuntime = module.createSceneRenderer(explorer, floor, id => selectSceneObject(floor, id, true), () => {
       if (sceneRuntime?.floor === floor) { sceneRuntime.dispose(); sceneRuntime = null; }
@@ -102,6 +106,10 @@ async function showSceneExplorer(floor) {
 }
 
 function bindSceneExplorer() {
+  const prepare = event => {
+    if (event.target.closest('[data-layer-key], [data-site-view^="layer-"]')) preloadSceneExplorer().catch(() => {});
+  };
+  for (const event of ['pointerover', 'focusin', 'pointerdown']) document.querySelector('#app').addEventListener(event, prepare);
   document.querySelector('#app').addEventListener('click', event => {
     const explorer = event.target.closest('[data-scene-floor]');
     if (!explorer) return;

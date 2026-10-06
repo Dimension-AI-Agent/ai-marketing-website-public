@@ -10,10 +10,12 @@ export function createSceneRenderer(explorer, floor, onSelect, onFailure) {
     sharedRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
     sharedRenderer.shadowMap.enabled = true;
     sharedRenderer.shadowMap.type = THREE.PCFShadowMap;
+    sharedRenderer.shadowMap.autoUpdate = false;
     sharedRenderer.toneMapping = THREE.ACESFilmicToneMapping;
     sharedRenderer.toneMappingExposure = 1.25;
   }
   const renderer = sharedRenderer;
+  renderer.shadowMap.needsUpdate = true;
   const canvas = renderer.domElement;
   const slot = explorer.querySelector('[data-scene-canvas]');
   const stage = explorer.querySelector('[data-scene-stage]');
@@ -44,6 +46,9 @@ export function createSceneRenderer(explorer, floor, onSelect, onFailure) {
   const pointer = new THREE.Vector2();
   let disposed = false;
   let frame = 0;
+  let renderFrame = 0;
+  let viewWidth = 0;
+  let viewHeight = 0;
   let pointerStart = null;
   let selectionBox = null;
   let selected = '';
@@ -71,10 +76,16 @@ export function createSceneRenderer(explorer, floor, onSelect, onFailure) {
       button.setAttribute('aria-pressed',String(selected===id));
     });
   }
+  function requestDraw() {
+    if(disposed || renderFrame || document.hidden) return;
+    renderFrame=requestAnimationFrame(()=>{renderFrame=0;draw();});
+  }
   function resize() {
     if(disposed) return;
     const {width,height} = stage.getBoundingClientRect();
     if(!width || !height)return;
+    if(width===viewWidth && height===viewHeight)return;
+    viewWidth=width; viewHeight=height;
     const aspect=width/height;
     const halfHeight=Math.max(5.5,8/aspect);
     camera.left=-halfHeight*aspect; camera.right=halfHeight*aspect; camera.top=halfHeight; camera.bottom=-halfHeight;
@@ -91,7 +102,7 @@ export function createSceneRenderer(explorer, floor, onSelect, onFailure) {
       const t=reducedMotion.matches ? 1 : Math.min(1,(now-start)/450);
       const progress=1-Math.pow(1-t,3);
       controls.target.lerpVectors(startTarget,target,progress); camera.position.lerpVectors(startPosition,endPosition,progress);
-      camera.zoom=startZoom+(zoom-startZoom)*progress; camera.updateProjectionMatrix(); controls.update(); draw();
+      camera.zoom=startZoom+(zoom-startZoom)*progress; camera.updateProjectionMatrix(); controls.update(); requestDraw();
       frame=t<1 ? requestAnimationFrame(update) : 0;
     }
     update(start);
@@ -107,7 +118,7 @@ export function createSceneRenderer(explorer, floor, onSelect, onFailure) {
   }
   function reset() {
     stopMove(); camera.position.set(13,11,16); controls.target.set(0,.8,0); camera.zoom=1;
-    camera.updateProjectionMatrix(); controls.update(); draw();
+    camera.updateProjectionMatrix(); controls.update(); requestDraw();
   }
   function control(action) {
     stopMove();
@@ -118,7 +129,7 @@ export function createSceneRenderer(explorer, floor, onSelect, onFailure) {
       spherical.theta=THREE.MathUtils.clamp(spherical.theta+(action==='left' ? -.18 : .18),controls.minAzimuthAngle,controls.maxAzimuthAngle);
       camera.position.copy(controls.target).add(new THREE.Vector3().setFromSpherical(spherical));
     }
-    camera.updateProjectionMatrix(); controls.update(); draw();
+    camera.updateProjectionMatrix(); controls.update(); requestDraw();
   }
   function setDrag(active) {
     stopMove(); controls.enabled=active; canvas.style.touchAction=active?'none':'pan-y'; stage.dataset.drag=String(active);
@@ -134,18 +145,20 @@ export function createSceneRenderer(explorer, floor, onSelect, onFailure) {
   function contextLost(event) {
     event.preventDefault(); sharedRenderer=null; renderer.dispose(); onFailure();
   }
-  function visibilityChanged() { if(document.hidden)stopMove(); else draw(); }
+  function visibilityChanged() { if(document.hidden)stopMove(); else requestDraw(); }
   function dispose() {
     disposed=true; stopMove(); observer.disconnect(); controls.dispose(); disposeFloorScene(model); light.shadow.dispose();
+    if(renderFrame)cancelAnimationFrame(renderFrame);
     if(selectionBox) { selectionBox.geometry.dispose(); selectionBox.material.dispose(); }
     canvas.removeEventListener('pointerdown',pointerDown); canvas.removeEventListener('pointerup',pointerUp); canvas.removeEventListener('webglcontextlost',contextLost);
     document.removeEventListener('visibilitychange',visibilityChanged); renderer.renderLists.dispose(); canvas.remove(); markerContainer.replaceChildren();
     explorer.dataset.sceneState='idle';
   }
-  controls.addEventListener('change',draw);
   canvas.addEventListener('pointerdown',pointerDown); canvas.addEventListener('pointerup',pointerUp); canvas.addEventListener('webglcontextlost',contextLost);
   document.addEventListener('visibilitychange',visibilityChanged);
-  const observer=new ResizeObserver(resize); observer.observe(stage);
-  reset(); resize();
+  const observer=new ResizeObserver(resize);
+  camera.position.set(13,11,16); controls.target.set(0,.8,0); controls.update();
+  resize();
+  controls.addEventListener('change',requestDraw); observer.observe(stage);
   return {floor,resize,select,control,setDrag,dispose};
 }
