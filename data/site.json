@@ -2,105 +2,257 @@
   "featuredMaterialId": "material-13",
   "relatedReading": {
     "material-13": [
-      {"id": "material-30", "question": "想規劃導入", "reason": "先釐清需求、驗證與上線步驟"},
-      {"id": "material-27", "question": "想連接內部系統", "reason": "接著看 AI Agent 的地端整合架構"},
-      {"id": "material-35", "question": "想衡量成果", "reason": "從完成率、穩定性與成本評估效果"}
+      {
+        "id": "material-30",
+        "question": "想規劃導入",
+        "reason": "先釐清需求、驗證與上線步驟"
+      },
+      {
+        "id": "material-27",
+        "question": "想連接內部系統",
+        "reason": "接著看 AI Agent 的地端整合架構"
+      },
+      {
+        "id": "material-35",
+        "question": "想衡量成果",
+        "reason": "從完成率、穩定性與成本評估效果"
+      }
     ],
     "material-5": [
-      {"id": "material-18", "question": "想比較其他架構", "reason": "對照 SimpliVity、Nutanix 與傳統架構"}
+      {
+        "id": "material-18",
+        "question": "想比較其他架構",
+        "reason": "對照 SimpliVity、Nutanix 與傳統架構"
+      }
     ],
     "material-18": [
-      {"id": "material-5", "question": "想深入了解 SimpliVity", "reason": "從架構比較進入單一方案的部署條件"},
-      {"id": "material-19", "question": "想看虛擬化替代選項", "reason": "延伸了解不同 VM 平台與移轉方向"}
+      {
+        "id": "material-5",
+        "question": "想深入了解 SimpliVity",
+        "reason": "從架構比較進入單一方案的部署條件"
+      },
+      {
+        "id": "material-19",
+        "question": "想看虛擬化替代選項",
+        "reason": "延伸了解不同 VM 平台與移轉方向"
+      }
     ],
     "material-19": [
-      {"id": "material-18", "question": "想比較 HCI 架構", "reason": "回看超融合與傳統架構的差異"}
+      {
+        "id": "material-18",
+        "question": "想比較 HCI 架構",
+        "reason": "回看超融合與傳統架構的差異"
+      }
     ],
     "material-26": [
-      {"id": "material-34", "question": "想釐清資料存取", "reason": "接著看 AI 讀取內部資料時的權限邊界"},
-      {"id": "material-39", "question": "想管理裝置連線", "reason": "延伸了解陌生設備連入網路時如何判斷權限"}
+      {
+        "id": "material-34",
+        "question": "想釐清資料存取",
+        "reason": "接著看 AI 讀取內部資料時的權限邊界"
+      },
+      {
+        "id": "material-39",
+        "question": "想管理裝置連線",
+        "reason": "延伸了解陌生設備連入網路時如何判斷權限"
+      }
     ],
     "material-34": [
-      {"id": "material-26", "question": "想掌握整體資安檢查點", "reason": "回到企業導入 AI 的資安重點"}
+      {
+        "id": "material-26",
+        "question": "想掌握整體資安檢查點",
+        "reason": "回到企業導入 AI 的資安重點"
+      }
     ],
     "material-31": [
-      {"id": "material-35", "question": "想衡量成效", "reason": "用完成率、穩定性與成本檢視成果"}
+      {
+        "id": "material-35",
+        "question": "想衡量成效",
+        "reason": "用完成率、穩定性與成本檢視成果"
+      }
     ],
     "material-35": [
-      {"id": "material-31", "question": "想看效益面向", "reason": "延伸了解 AI Agent 可改善哪些工作"}
+      {
+        "id": "material-31",
+        "question": "想看效益面向",
+        "reason": "延伸了解 AI Agent 可改善哪些工作"
+      }
     ]
   },
   "articleOutlines": {
     "material-19": [
-      {"text": "VMware 替代，不只是換掉 ESXi", "level": 2},
-      {"text": "HPE Morpheus VM Essentials：先共存，再逐步離開 VMware", "level": 2},
-      {"text": "Nutanix AHV：直接轉向完整 HCI 平台", "level": 2},
-      {"text": "Azure Local：把地端 VM 納入 Azure 管理模式", "level": 2},
-      {"text": "Windows Server Hyper-V：保留傳統虛擬化架構的方向", "level": 2},
-      {"text": "OpenShift Virtualization：不是只換 Hypervisor，而是 VM 與 Container 整合", "level": 2},
-      {"text": "VMware 替代真正要先確認的 4 件事", "level": 2},
-      {"text": "適合評估的情境", "level": 3},
-      {"text": "① 你是真的要「換 Hypervisor」，還是「換整套架構」？", "level": 3},
-      {"text": "② 所有 VM 都真的可以搬嗎？", "level": 3},
-      {"text": "③ Backup、DR、Monitoring 能不能繼續用？", "level": 3},
-      {"text": "④ 不一定需要一次離開 VMware", "level": 3}
+      {
+        "text": "VMware 替代，不只是換掉 ESXi",
+        "level": 2
+      },
+      {
+        "text": "HPE Morpheus VM Essentials：先共存，再逐步離開 VMware",
+        "level": 2
+      },
+      {
+        "text": "Nutanix AHV：直接轉向完整 HCI 平台",
+        "level": 2
+      },
+      {
+        "text": "Azure Local：把地端 VM 納入 Azure 管理模式",
+        "level": 2
+      },
+      {
+        "text": "Windows Server Hyper-V：保留傳統虛擬化架構的方向",
+        "level": 2
+      },
+      {
+        "text": "OpenShift Virtualization：不是只換 Hypervisor，而是 VM 與 Container 整合",
+        "level": 2
+      },
+      {
+        "text": "VMware 替代真正要先確認的 4 件事",
+        "level": 2
+      },
+      {
+        "text": "適合評估的情境",
+        "level": 3
+      },
+      {
+        "text": "① 你是真的要「換 Hypervisor」，還是「換整套架構」？",
+        "level": 3
+      },
+      {
+        "text": "② 所有 VM 都真的可以搬嗎？",
+        "level": 3
+      },
+      {
+        "text": "③ Backup、DR、Monitoring 能不能繼續用？",
+        "level": 3
+      },
+      {
+        "text": "④ 不一定需要一次離開 VMware",
+        "level": 3
+      }
     ]
   },
-  "formats": ["圖片", "影片", "Podcast", "Blog", "互動遊戲", "Agent UI 互動", "問卷", "電子報"],
+  "formats": [
+    "圖片",
+    "影片",
+    "Podcast",
+    "Blog",
+    "互動遊戲",
+    "Agent UI 互動",
+    "問卷",
+    "電子報"
+  ],
   "tracks": [
     {
       "id": "hpe-ai-solutions",
       "number": "01",
-      "title": "HPE & 訊達 AI Solutions",
-      "subtitle": "解決方案與產品內容",
-      "lead": "Gab",
-      "members": ["Gab", "Mark", "Eric"],
+      "title": "IT 基礎架構與選型",
+      "subtitle": "了解硬體、管理平台與整合方案，比較適合的建置路徑。",
       "accent": "orange",
       "topics": [
-        {"id": "hardware", "title": "硬體", "description": "AI 基礎架構與硬體產品"},
-        {"id": "software", "title": "軟體", "description": "AI 平台、工具與軟體"},
-        {"id": "integrated-solutions", "title": "整合方案", "description": "從基礎架構到 AI 應用的整體方案"},
-        {"id": "competitive-positioning", "title": "產品定位比較", "description": "產品差異與競爭者比較"},
-        {"id": "hpe-use-cases", "title": "HPE 應用情境與案例", "description": "HPE 官方案例與應用情境"},
-        {"id": "solutions-other", "title": "其他", "description": "其他相關行銷素材"}
+        {
+          "id": "hardware",
+          "title": "硬體選用與部署",
+          "description": "伺服器、GPU、超級運算、儲存、網路設備的能力、用途、配置、採購與部署準備。合併原硬體與基礎架構、設備採購與部署；運算／儲存／網路／採購用標籤細分。已組成一套產品方案時選整合方案；實質比較多種建置路徑時選架構比較與選型。"
+        },
+        {
+          "id": "software",
+          "title": "軟體與管理平台",
+          "description": "單一企業基礎架構軟體、虛擬化或資源管理平台的介紹與操作。AI 開發框架另歸 AI 工具與開發框架；復原方法另歸備份與災難復原。保留定義，待有文章再顯示篩選選項。"
+        },
+        {
+          "id": "integrated-solutions",
+          "title": "整合方案",
+          "description": "已設計成一套產品方案的硬體、軟體、部署與管理組合，例如 SimpliVity、PCAI。不是僅因文章提到多種設備就歸入。"
+        },
+        {
+          "id": "competitive-positioning",
+          "title": "架構比較與選型",
+          "description": "實質比較多種產品、架構或建置路徑，幫助讀者選擇；包含自建、私有平台與雲端的比較。單一方案介紹不收為比較。"
+        }
       ]
     },
     {
       "id": "ai-agent-adoption",
       "number": "02",
-      "title": "訊達 AI Agent 落地議題",
-      "subtitle": "導入方法與應用內容",
-      "lead": "Derrick",
-      "members": ["Derrick", "Peter", "Ken", "David"],
+      "title": "企業 AI 與 Agent 實務",
+      "subtitle": "從 AI 概念、導入與系統串接，到工具開發、成效評估與外部經驗。",
       "accent": "green",
       "topics": [
-        {"id": "enterprise-adoption", "title": "企業導入方法", "description": "企業導入流程、評估方式與 POC"},
-        {"id": "benefit-assessment", "title": "導入效益評估", "description": "效益、成本與成果衡量"},
-        {"id": "on-prem-integration", "title": "地端系統整合方案", "description": "地端 AI 架構與既有系統整合"},
-        {"id": "open-source-tools", "title": "開源工具導入", "description": "開源 AI 工具與導入情境"},
-        {"id": "faq", "title": "常見問題", "description": "客戶常見問題與解答"},
-        {"id": "industry-trends", "title": "AI 業界動態", "description": "AI 技術、產品與市場趨勢"},
-        {"id": "industry-cases", "title": "業界案例", "description": "外部企業的 AI 應用經驗與產業案例"},
-        {"id": "agent-other", "title": "其他", "description": "其他 AI Agent 落地素材"}
+        {
+          "id": "ai-fundamentals",
+          "title": "AI 入門與概念",
+          "description": "解釋 AI／Agent／模型概念、名詞與能力差異，含概念測驗。具體工具安裝、API 或開發操作選工具與框架。"
+        },
+        {
+          "id": "enterprise-adoption",
+          "title": "AI 導入與運作實務",
+          "description": "需求盤點、導入階段、PoC／Pilot、SOP 與例外流程、人工接手、權責分工，以及上線後版本、發布、交接與回復。合併原導入規劃、流程協作與維運；以標籤保留階段及細節。深入驗證方法或成本計算選成效與成本評估；系統組成與串接選 AI 架構與系統整合。"
+        },
+        {
+          "id": "on-prem-integration",
+          "title": "AI 架構與系統整合",
+          "description": "Agent 與資料庫、CRM、ERP、知識庫等的架構與串接，涵蓋地端、雲端與混合部署。Demo 可收錄，但須標示 Demo；不當成已交付實績。"
+        },
+        {
+          "id": "ai-tools-frameworks",
+          "title": "AI 工具與開發框架",
+          "description": "特定 AI 工具、框架的安裝、程式設計、執行與使用限制。開源身分是有依據的標籤，不是收錄前提。主要說明系統整體串接時選 AI 架構與系統整合。"
+        },
+        {
+          "id": "benefit-assessment",
+          "title": "成效與成本評估",
+          "description": "任務完成率、可靠性、Evals、回歸測試、驗收、TCO、Cost per Task、節省工時、商業價值與 ROI。合併原品質評估與商業效益入口；用標籤區分品質、成本與價值。品質測試通過不代表已證實商業效益，示例不能當成實際成果。"
+        },
+        {
+          "id": "industry-cases",
+          "title": "外部 AI 應用案例",
+          "description": "外部企業有可核對來源的真實 AI 應用經驗與成果，保留來源及數據限制。Demo、假想情境不收為實際案例；訊達參與的客戶成果另歸訊達成功案例。"
+        },
+        {
+          "id": "industry-trends",
+          "title": "AI 發展動態",
+          "description": "AI 技術、產品、市場更新及企業影響；單一工具的長期教學或概念介紹按內容分類。#32 目前是趨勢系列規劃，不代表已完成某月份新聞整理。"
+        }
       ]
     },
     {
       "id": "security-governance",
       "number": "03",
-      "title": "資安與存取治理",
-      "subtitle": "資料、權限與網路存取",
+      "title": "資安與營運韌性",
+      "subtitle": "釐清 AI 資料風險、網路存取、事件應變與服務復原。",
       "topics": [
-        {"id": "ai-security", "title": "AI 資安與治理", "description": "AI 應用的資料、權限、紀錄與風險管理"},
-        {"id": "network-access-security", "title": "網路存取管理", "description": "裝置辨識、身分驗證與網路存取政策"}
+        {
+          "id": "ai-security",
+          "title": "AI 資料安全與風險控管",
+          "description": "AI 輸入、檢索、輸出與工具動作中的資料保護、提示注入、權限邊界及操作風險。泛用防毒與勒索復原不因提到 AI 就放這裡。"
+        },
+        {
+          "id": "network-access-security",
+          "title": "網路身分與存取",
+          "description": "設備辨識、身分驗證、NAC、Wi-Fi 與網路連線資格。AI 知識庫文件閱讀權限歸 AI 資料安全與風險控管。"
+        },
+        {
+          "id": "enterprise-security",
+          "title": "企業資安與事件應變",
+          "description": "一般威脅防護、偵測、調查、隔離與通報；主要問題是發現或控制攻擊。資料與服務恢復選備份與災難復原。保留定義，待有文章再顯示篩選選項。"
+        },
+        {
+          "id": "backup-disaster-recovery",
+          "title": "備份與災難復原",
+          "description": "備份、CDP、RPO／RTO、復原點、復原演練與營運恢復。勒索可作事故情境；主軸是恢復服務，產品另用標籤。"
+        }
       ]
     },
     {
       "id": "xunda-success-cases",
       "number": "04",
       "title": "訊達成功案例",
-      "subtitle": "客戶導入實績",
+      "subtitle": "了解訊達參與的客戶專案、導入範圍與已驗證成果。",
       "topics": [
-        {"id": "xunda-customer-cases", "title": "客戶導入實績", "description": "訊達實際參與、具成果依據且取得公開授權的客戶專案"}
+        {
+          "id": "xunda-customer-cases",
+          "title": "客戶導入實績",
+          "description": "訊達實際參與的客戶專案，以客戶問題、參與範圍與已驗證結果為主，須有可核對依據；公開授權另作發布必要條件。缺少參與或成果依據時列為待補資料，不把 Demo 當實績。保留專區，待有文章再顯示子題篩選選項。"
+        }
       ]
     }
   ]

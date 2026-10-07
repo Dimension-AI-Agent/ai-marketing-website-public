@@ -106,6 +106,7 @@ function createPage({ search = "", hash = "", records = materials, siteConfig = 
   vm.runInContext(sceneCode, context);
   vm.runInContext(libraryCode, context);
   vm.runInContext(code, context);
+  vm.runInContext(fs.readFileSync(path.join(__dirname,'../classification.js'),'utf8'),context);
   return { context, elements, navigations, views, timers };
 }
 
@@ -241,16 +242,20 @@ test("library lists all approved articles and supports category search and empty
   assert.match(result.innerHTML, /這個分類還沒有文章/);
 });
 
-test("library taxonomy follows current site configuration, including duplicate other titles", async () => {
+test("library keeps all topic definitions but hides empty desktop and mobile filters", async () => {
   const page = createPage();
   await page.context.load();
   const html = page.elements.get("#app").innerHTML;
   for (const track of site.tracks) for (const topic of track.topics) {
-    assert.match(html, new RegExp(`data-library-topic="${topic.id}"`));
-    assert.match(html, new RegExp(`<option value="${topic.id}">`));
+    if (materials.some(item => item.topicId === topic.id && item.status === '已核准')) {
+      assert.match(html, new RegExp(`data-library-topic="${topic.id}"`));
+      assert.match(html, new RegExp(`<option value="${topic.id}">`));
+    } else {
+      assert.doesNotMatch(html, new RegExp(`data-library-topic="${topic.id}"`));
+      assert.doesNotMatch(html, new RegExp(`<option value="${topic.id}">`));
+    }
   }
-  assert.match(html, /data-library-topic="solutions-other"/);
-  assert.match(html, /data-library-topic="agent-other"/);
+  assert.equal(site.tracks.flatMap(track=>track.topics).length,16);
 });
 
 test("legacy search and filters migrate to the complete library without losing the selection", async () => {
@@ -272,7 +277,7 @@ test("library deep links and article return retain category and keyword", async 
   const page = createPage({ search: "?topic=enterprise-adoption&keyword=PoC", hash: "#all-articles" });
   await page.context.load();
   assert.equal(page.elements.get("#library-search").value, "PoC");
-  assert.equal(page.elements.get("#library-results-title").textContent, "企業導入方法");
+  assert.equal(page.elements.get("#library-results-title").textContent, "AI 導入與運作實務");
   assert.match(page.elements.get("#library-results").innerHTML, /from=all-articles&amp;topic=enterprise-adoption&amp;keyword=PoC/);
   const article = createPage({ search: "?article=material-30&from=all-articles&topic=enterprise-adoption&keyword=PoC" });
   await article.context.load();
@@ -298,6 +303,40 @@ test("guided recommendations retain approved articles at reviewed revisions", as
   await isolated.context.load();
   vm.runInContext('guidedCurrent = "r2"; renderGuide();', isolated.context);
   assert.doesNotMatch(isolated.elements.get("#guide-content").innerHTML, /article=material-5/);
+});
+
+test('tag links use exact tags across categories and preserve filters on article return',async()=>{
+  const page=createPage({search:'?tag=PoC',hash:'#all-articles'});
+  await page.context.load();
+  const expected=materials.filter(item=>item.status==='已核准'&&item.tags?.includes('PoC'));
+  assert.equal(page.elements.get('#library-count').textContent,`${expected.length} 篇文章`);
+  assert.match(page.elements.get('#library-results').innerHTML,/from=all-articles&amp;tag=PoC/);
+  const unknown=createPage({search:'?tag=不存在的標籤',hash:'#all-articles'});
+  await unknown.context.load();
+  assert.equal(unknown.elements.get('#library-count').textContent,'0 篇文章');
+  const combined=createPage({search:'?tag=PoC&topic=enterprise-adoption',hash:'#all-articles'});
+  await combined.context.load();
+  assert.equal(combined.elements.get('#library-count').textContent,`${expected.filter(x=>x.topicId==='enterprise-adoption').length} 篇文章`);
+  const article=createPage({search:'?article=material-30&from=all-articles&tag=PoC&track=ai-agent-adoption'});
+  await article.context.load();
+  assert.match(article.elements.get('#app').innerHTML,/tag=PoC&amp;track=ai-agent-adoption#all-articles/);
+});
+
+test('main theme filters include only their own approved articles',async()=>{
+  const page=createPage({search:'?track=security-governance',hash:'#all-articles'});
+  await page.context.load();
+  const topics=site.tracks.find(x=>x.id==='security-governance').topics.map(x=>x.id);
+  assert.equal(page.elements.get('#library-count').textContent,`${materials.filter(x=>x.status==='已核准'&&topics.includes(x.topicId)).length} 篇文章`);
+});
+
+test('an expanded theme can collapse without losing the selected article filter',async()=>{
+  const page=createPage({search:'?track=ai-agent-adoption',hash:'#all-articles'});
+  await page.context.load();
+  const group={open:true,dataset:{libraryGroup:'ai-agent-adoption'}};
+  const summary={dataset:{libraryTrack:'ai-agent-adoption'},closest:()=>group};
+  page.elements.get('#all-articles-view').dispatch('click',{preventDefault(){},target:{closest:selector=>selector==='[data-library-track]'?summary:null}});
+  assert.equal(group.open,false);
+  assert.equal(page.elements.get('#library-results-title').textContent,'企業 AI 與 Agent 實務');
 });
 
 test("every approved article has one next action; editorial related links remain optional", async () => {
