@@ -372,26 +372,6 @@
     ]
   },
   {
-    "id": "material-35",
-    "title": "企業如何評估 AI Agent：從任務完成率、穩定性到執行成本",
-    "topicId": "benefit-assessment",
-    "format": "文字／文章",
-    "summary": "Anthropic 說明 AI Agent 的評估方法，強調驗收應確認任務是否實際完成，並透過重複測試觀察結果的一致性。企業可結合程式檢查、模型評分與人工審查，追蹤任務成功率、延遲、錯誤率與每次任務成本，作為 PoC 驗收及上線後持續改善的依據。此素材適合說明企業如何建立可衡量的導入標準；若要進一步計算投資報酬，仍需補充人工處理基準、建置成本與業務收益。",
-    "body": "Anthropic｜Demystifying evals for AI agents（已翻譯成中文）\n\n# 揭開 AI Agent 評估（Evals）的神秘面紗\n\n發布日期：2026 年 1 月 9 日\n\nAI Agent 的自主性、智慧與彈性讓它們非常有用，但也使評估變得更加困難。有效的 Agent 評估通常需要結合多種方法，才能對應系統本身的複雜程度。\n\n## Introduction｜引言\n\nEvals 能讓團隊在問題影響使用者之前，就發現 Agent 的失敗模式與行為變化，避免只能在正式環境中被動除錯。\n\n## The structure of an evaluation｜評估的結構\n\nAnthropic 將 Agent Eval 拆成幾個核心元素：\n\n- **Task**：單一測試案例\n- **Trial**：某個 Task 的一次實際執行\n- **Grader**：判斷 Agent 表現的評分機制\n- **Transcript / Trace / Trajectory**：完整執行紀錄\n- **Outcome**：執行結束後環境真正產生的結果\n- **Evaluation Harness**：負責執行與管理整套 Eval 的基礎設施\n- **Agent Harness / Scaffold**：讓模型能以 Agent 形式運作的系統\n- **Evaluation Suite**：針對特定能力建立的一組測試案例\n\n## Why build evaluations?｜為什麼要建立 Evals？\n\n早期開發可以依靠人工測試、Dogfooding 與直覺，但 Agent 規模擴大後，缺乏 Evals 會讓團隊難以：\n\n- 判斷是真正 Regression 還是隨機波動\n- 在發布前大量測試情境\n- 衡量改進是否真的有效\n- 快速評估新模型是否適合升級\n\n## How to evaluate AI agents｜如何評估 AI Agent\n\n### Types of graders｜Grader 類型\n\n主要分成三類：\n\n1. **Code-based graders**\n   - 快速、便宜、客觀、可重現\n   - 適合測試明確且可程式化驗證的結果\n\n2. **Model-based graders**\n   - 使用 LLM 評估\n   - 適合開放式、自然語言或主觀品質問題\n   - 需要與人工評分進行校準\n\n3. **Human graders**\n   - 品質最高\n   - 適合專家判斷與主觀問題\n   - 但成本與時間較高\n\n### Capability vs. Regression Evals\n\n**Capability Eval**\n檢驗「Agent 現在能做到多難的事情」。\n\n**Regression Eval**\n檢驗「Agent 原本會做的事情，現在是否仍然可靠」。\n\n成熟的 Capability Eval 最後可以轉變成持續執行的 Regression Suite。\n\n### Evaluating coding agents｜Coding Agent\n\nCoding Agent 適合大量使用確定性測試，例如：\n\n- Unit Tests\n- Static Analysis\n- 執行結果\n- 程式碼品質 Rubric\n\n### Evaluating conversational agents｜對話型 Agent\n\n除了最終任務是否完成，也必須評估：\n\n- 對話品質\n- 是否正確使用工具\n- 是否完成目標\n- 對話輪數\n- 語氣與回覆品質\n\n有時還需要第二個 LLM 模擬使用者。\n\n### Evaluating research agents｜Research Agent\n\nResearch Agent 的品質較難用單一答案衡量，因此可以組合：\n\n- Groundedness\n- Coverage\n- Source Quality\n- Exact Match\n- LLM Rubric\n\n並定期與領域專家的人工判斷校準。\n\n### Computer use agents｜Computer-use Agent\n\n需要讓 Agent 真正在 GUI 或 Sandbox 環境中操作，再確認：\n\n- UI 狀態\n- 檔案狀態\n- 資料庫狀態\n- Application Configuration\n- 最終操作結果\n\n### Non-determinism｜非確定性\n\nAgent 每次執行結果可能不同，因此單次 Pass / Fail 不一定能代表真實能力。\n\n常用：\n\n- **pass@k**：k 次嘗試中至少成功一次的機率\n- **pass^k**：k 次嘗試全部成功的機率\n\n前者偏向衡量「是否有能力找到解法」，後者偏向衡量「是否能穩定成功」。\n\n## Going from zero to one｜從零建立 Agent Eval\n\nAnthropic 建議：\n\n### Step 0：越早開始越好\n\n初期甚至只需要約 20–50 個來自真實失敗案例的 Task。\n\n### Step 1：從現有人工測試開始\n\n將：\n\n- Release 前人工檢查\n- Bug\n- Support Ticket\n- 使用者失敗案例\n\n轉成 Eval Tasks。\n\n### Step 2：建立明確 Task 與 Reference Solution\n\nTask 不應存在模糊條件。\n\n理想情況下，不同領域專家應能獨立得出相同的 Pass / Fail 判斷。\n\n### Step 3：保持測試資料平衡\n\n同時測試：\n\n- 某個行為「應該發生」的案例\n- 某個行為「不應該發生」的案例\n\n避免 Agent 為了提高 Eval 分數而過度觸發某種行為。\n\n### Step 4：建立穩定的 Eval Harness\n\n每個 Trial 應盡量：\n\n- 從乾淨環境開始\n- 彼此隔離\n- 避免共享狀態\n- 接近 Production Agent 的實際環境\n\n### Step 5：設計合適的 Graders\n\n原則：\n\n- 能用 Deterministic Grader 就優先使用\n- 必要時使用 LLM Grader\n- 人工評估作為校準\n\n應優先評估 Agent 最終完成了什麼，而不是強迫 Agent 按固定路徑完成任務。\n\n### Step 6：閱讀 Transcript\n\n不能只看分數。\n\n需要閱讀 Agent 的執行軌跡，判斷失敗究竟來自：\n\n- Agent\n- Grader\n- Task Specification\n- Eval Harness\n\n### Step 7：注意 Eval Saturation\n\n當 Capability Eval 接近 100%，它就無法再有效衡量模型進步。\n\n此時需要增加更困難的 Task。\n\n### Step 8：長期維護 Eval Suite\n\nEval Suite 應視為持續維護的工程資產，就像 Unit Tests 一樣。\n\nAnthropic 建議採用 **Eval-driven Development**：\n\n> 先用 Eval 定義預期能力，再逐步讓 Agent 達到要求。\n\n## Evals 與其他 Agent 評估方法\n\n完整的 Agent 品質評估不應只依靠 Automated Evals，還應搭配：\n\n- Automated Evals\n- Production Monitoring\n- A/B Testing\n- User Feedback\n- Manual Transcript Review\n- Systematic Human Studies\n\n不同方法就像多層防護機制，各自補足其他方法無法發現的問題。\n\n## Conclusion｜結論\n\nAgent Eval 的核心不是建立一個完美的 Benchmark，而是建立持續改進循環：\n\n**真實失敗 → Eval Task → 找出問題 → 改善 Agent → 防止 Regression**\n\n關鍵原則包括：\n\n- 儘早開始\n- 使用真實 Task\n- 明確定義成功條件\n- 結合多種 Grader\n- 維持足夠難度\n- 持續改善 Eval 的訊噪比\n- 實際閱讀 Agent Transcript\n\n## Appendix: Eval frameworks｜Eval 框架\n\n文章另外介紹數種可使用的 Eval 工具：\n\n- **Harbor**\n- **Braintrust**\n- **LangSmith**\n- **Langfuse**\n- **Arize Phoenix / AX**\n\nAnthropic 的重點是：框架本身並不是最重要的，真正決定 Eval 品質的是 **Task 與 Grader 的設計品質**。",
-    "links": [
-      "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents"
-    ],
-    "files": [],
-    "status": "已核准",
-    "revision": "5d919a163647ea9f39c25bc9b4017288766479d0ce6da9a89f262a7d9fd03b9a",
-    "updatedAt": "2026-09-30T02:58:05.821718+00:00",
-    "tags": [
-      "Evals",
-      "品質評估",
-      "驗收"
-    ]
-  },
-  {
     "id": "material-39",
     "title": "陌生裝置想連公司 Wi-Fi？從確認身分到決定權限",
     "topicId": "network-access-security",
@@ -812,5 +792,27 @@
     "status": "已核准",
     "revision": "f67e229818ab5261307793b4bf11485392242f922c1f7cee2dd4680689933a01",
     "updatedAt": "2026-10-07T08:05:28.971054+00:00"
+  },
+  {
+    "id": "material-35",
+    "title": "企業如何評估 AI Agent：從任務完成率、穩定性到執行成本",
+    "topicId": "benefit-assessment",
+    "format": "文字／文章",
+    "tags": [
+      "品質評估",
+      "驗收",
+      "成本評估",
+      "Evals",
+      "PoC"
+    ],
+    "summary": "Anthropic 說明 AI Agent 的評估方法，強調驗收應確認任務是否實際完成，並透過重複測試觀察結果的一致性。企業可結合程式檢查、模型評分與人工審查，追蹤任務成功率、延遲、錯誤率與每次任務成本，作為 PoC 驗收及上線後持續改善的依據。此素材適合說明企業如何建立可衡量的導入標準；若要進一步計算投資報酬，仍需補充人工處理基準、建置成本與業務收益。",
+    "body": "Anthropic｜Demystifying evals for AI agents（已翻譯成中文）\n\n# 揭開 AI Agent 評估（Evals）的神秘面紗\n\n發布日期：2026 年 1 月 9 日\n\nAI Agent 的自主性、智慧與彈性讓它們非常有用，但也使評估變得更加困難。有效的 Agent 評估通常需要結合多種方法，才能對應系統本身的複雜程度。\n\n## Introduction｜引言\n\nEvals 能讓團隊在問題影響使用者之前，就發現 Agent 的失敗模式與行為變化，避免只能在正式環境中被動除錯。\n\n## The structure of an evaluation｜評估的結構\n\nAnthropic 將 Agent Eval 拆成幾個核心元素：\n\n- **Task**：單一測試案例\n- **Trial**：某個 Task 的一次實際執行\n- **Grader**：判斷 Agent 表現的評分機制\n- **Transcript / Trace / Trajectory**：完整執行紀錄\n- **Outcome**：執行結束後環境真正產生的結果\n- **Evaluation Harness**：負責執行與管理整套 Eval 的基礎設施\n- **Agent Harness / Scaffold**：讓模型能以 Agent 形式運作的系統\n- **Evaluation Suite**：針對特定能力建立的一組測試案例\n\n## Why build evaluations?｜為什麼要建立 Evals？\n\n早期開發可以依靠人工測試、Dogfooding 與直覺，但 Agent 規模擴大後，缺乏 Evals 會讓團隊難以：\n\n- 判斷是真正 Regression 還是隨機波動\n- 在發布前大量測試情境\n- 衡量改進是否真的有效\n- 快速評估新模型是否適合升級\n\n## How to evaluate AI agents｜如何評估 AI Agent\n\n### Types of graders｜Grader 類型\n\n主要分成三類：\n\n1. **Code-based graders**\n   - 快速、便宜、客觀、可重現\n   - 適合測試明確且可程式化驗證的結果\n\n2. **Model-based graders**\n   - 使用 LLM 評估\n   - 適合開放式、自然語言或主觀品質問題\n   - 需要與人工評分進行校準\n\n3. **Human graders**\n   - 品質最高\n   - 適合專家判斷與主觀問題\n   - 但成本與時間較高\n\n### Capability vs. Regression Evals\n\n**Capability Eval**\n檢驗「Agent 現在能做到多難的事情」。\n\n**Regression Eval**\n檢驗「Agent 原本會做的事情，現在是否仍然可靠」。\n\n成熟的 Capability Eval 最後可以轉變成持續執行的 Regression Suite。\n\n### Evaluating coding agents｜Coding Agent\n\nCoding Agent 適合大量使用確定性測試，例如：\n\n- Unit Tests\n- Static Analysis\n- 執行結果\n- 程式碼品質 Rubric\n\n### Evaluating conversational agents｜對話型 Agent\n\n除了最終任務是否完成，也必須評估：\n\n- 對話品質\n- 是否正確使用工具\n- 是否完成目標\n- 對話輪數\n- 語氣與回覆品質\n\n有時還需要第二個 LLM 模擬使用者。\n\n### Evaluating research agents｜Research Agent\n\nResearch Agent 的品質較難用單一答案衡量，因此可以組合：\n\n- Groundedness\n- Coverage\n- Source Quality\n- Exact Match\n- LLM Rubric\n\n並定期與領域專家的人工判斷校準。\n\n### Computer use agents｜Computer-use Agent\n\n需要讓 Agent 真正在 GUI 或 Sandbox 環境中操作，再確認：\n\n- UI 狀態\n- 檔案狀態\n- 資料庫狀態\n- Application Configuration\n- 最終操作結果\n\n### Non-determinism｜非確定性\n\nAgent 每次執行結果可能不同，因此單次 Pass / Fail 不一定能代表真實能力。\n\n常用：\n\n- **pass@k**：k 次嘗試中至少成功一次的機率\n- **pass^k**：k 次嘗試全部成功的機率\n\n前者偏向衡量「是否有能力找到解法」，後者偏向衡量「是否能穩定成功」。\n\n## Going from zero to one｜從零建立 Agent Eval\n\nAnthropic 建議：\n\n### Step 0：越早開始越好\n\n初期甚至只需要約 20–50 個來自真實失敗案例的 Task。\n\n### Step 1：從現有人工測試開始\n\n將：\n\n- Release 前人工檢查\n- Bug\n- Support Ticket\n- 使用者失敗案例\n\n轉成 Eval Tasks。\n\n### Step 2：建立明確 Task 與 Reference Solution\n\nTask 不應存在模糊條件。\n\n理想情況下，不同領域專家應能獨立得出相同的 Pass / Fail 判斷。\n\n### Step 3：保持測試資料平衡\n\n同時測試：\n\n- 某個行為「應該發生」的案例\n- 某個行為「不應該發生」的案例\n\n避免 Agent 為了提高 Eval 分數而過度觸發某種行為。\n\n### Step 4：建立穩定的 Eval Harness\n\n每個 Trial 應盡量：\n\n- 從乾淨環境開始\n- 彼此隔離\n- 避免共享狀態\n- 接近 Production Agent 的實際環境\n\n### Step 5：設計合適的 Graders\n\n原則：\n\n- 能用 Deterministic Grader 就優先使用\n- 必要時使用 LLM Grader\n- 人工評估作為校準\n\n應優先評估 Agent 最終完成了什麼，而不是強迫 Agent 按固定路徑完成任務。\n\n### Step 6：閱讀 Transcript\n\n不能只看分數。\n\n需要閱讀 Agent 的執行軌跡，判斷失敗究竟來自：\n\n- Agent\n- Grader\n- Task Specification\n- Eval Harness\n\n### Step 7：注意 Eval Saturation\n\n當 Capability Eval 接近 100%，它就無法再有效衡量模型進步。\n\n此時需要增加更困難的 Task。\n\n### Step 8：長期維護 Eval Suite\n\nEval Suite 應視為持續維護的工程資產，就像 Unit Tests 一樣。\n\nAnthropic 建議採用 **Eval-driven Development**：\n\n> 先用 Eval 定義預期能力，再逐步讓 Agent 達到要求。\n\n## Evals 與其他 Agent 評估方法\n\n完整的 Agent 品質評估不應只依靠 Automated Evals，還應搭配：\n\n- Automated Evals\n- Production Monitoring\n- A/B Testing\n- User Feedback\n- Manual Transcript Review\n- Systematic Human Studies\n\n不同方法就像多層防護機制，各自補足其他方法無法發現的問題。\n\n## Conclusion｜結論\n\nAgent Eval 的核心不是建立一個完美的 Benchmark，而是建立持續改進循環：\n\n**真實失敗 → Eval Task → 找出問題 → 改善 Agent → 防止 Regression**\n\n關鍵原則包括：\n\n- 儘早開始\n- 使用真實 Task\n- 明確定義成功條件\n- 結合多種 Grader\n- 維持足夠難度\n- 持續改善 Eval 的訊噪比\n- 實際閱讀 Agent Transcript\n\n## Appendix: Eval frameworks｜Eval 框架\n\n文章另外介紹數種可使用的 Eval 工具：\n\n- **Harbor**\n- **Braintrust**\n- **LangSmith**\n- **Langfuse**\n- **Arize Phoenix / AX**\n\nAnthropic 的重點是：框架本身並不是最重要的，真正決定 Eval 品質的是 **Task 與 Grader 的設計品質**。",
+    "links": [
+      "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents"
+    ],
+    "files": [],
+    "status": "已核准",
+    "revision": "64bec11fa969b0316348c5eae2b2163b70007fc0e1a8c293524a4f0bd3f00fa3",
+    "updatedAt": "2026-10-07T08:05:39.492758+00:00"
   }
 ]
