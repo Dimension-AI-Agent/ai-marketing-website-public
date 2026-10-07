@@ -785,5 +785,30 @@
     "status": "已核准",
     "revision": "0ba64f81b0e4a478df95293e8e1aa283fbbea48ef151ceee02008610d7c1a228",
     "updatedAt": "2026-10-07T08:05:31.740153+00:00"
+  },
+  {
+    "id": "material-25",
+    "title": "Software",
+    "topicId": "software",
+    "format": "文字／文章",
+    "tags": [
+      "HPE",
+      "NVIDIA AI Enterprise",
+      "NVIDIA Run:ai",
+      "HPE Data Fabric Software",
+      "HPE OpsRamp Software"
+    ],
+    "summary": "HPE AI Factory 軟體組合涵蓋模型開發與部署、GPU 資源調度、企業資料管理及 IT 營運。NVIDIA AI Enterprise 提供企業級 AI 軟體套件；NVIDIA Run:ai 透過資源池化與協調提升 GPU 使用效率；HPE Data Fabric Software 建立跨儲存的 AI-ready 資料層；HPE OpsRamp Software 則以可視性、AI 洞察與自動化簡化混合雲營運。",
+    "body": "除了運算、儲存與網路基礎架構，企業還需要軟體來部署 AI、管理 GPU 資源、整合資料並維持環境的可視性。HPE AI Factory with NVIDIA 將下列軟體列為完整 AI 架構的重要組成。\n\n## NVIDIA AI Enterprise\n\n**產品狀態：目前產品（Current）**\n\nNVIDIA AI Enterprise 是用於正式環境的企業級 AI 軟體套件，提供 AI 微服務、開發框架及 GPU 管理相關能力，協助企業建立、部署與擴充 AI 應用。\n\n[查看 HPE 官方產品資料](https://www.hpe.com/psnow/doc/a00156026enw)\n\n## NVIDIA Run:ai\n\n**產品狀態：目前產品（Current）**\n\nNVIDIA Run:ai 透過動態 GPU 資源池化及工作負載協調，協助不同團隊共享運算資源並提升 GPU 使用效率。它可支援雲端、混合環境及地端部署中的 AI 與機器學習工作負載。\n\n[查看 HPE AI Factory 官方介紹](https://www.hpe.com/tw/en/solutions/artificial-intelligence/nvidia-collaboration.html)\n\n## HPE Data Fabric Software\n\n**產品狀態：目前產品（Current）**\n\nHPE Data Fabric Software 提供跨企業儲存環境的智慧資料層，協助組織管理、控制及治理供分析與 AI 應用使用的資料。企業可透過一致的資料存取方式，降低資料分散對 AI 專案造成的複雜度。\n\n[查看 HPE 官方產品頁](https://www.hpe.com/tw/en/products/software/data-fabric-software.html)\n\n## HPE OpsRamp Software\n\n**產品狀態：目前產品（Current）**\n\nHPE OpsRamp Software 提供混合雲環境的可視性、AI 驅動洞察及智慧自動化。它可協助 IT 團隊集中觀察不同供應商、雲端、地端及 AI-native 環境，並簡化事件分析與日常營運處理。\n\n[查看 HPE 官方產品頁](https://www.hpe.com/tw/en/products/software/opsramp-software.html)",
+    "links": [
+      "https://www.hpe.com/tw/en/solutions/artificial-intelligence/nvidia-collaboration.html",
+      "https://www.hpe.com/psnow/doc/a00156026enw",
+      "https://www.hpe.com/tw/en/products/software/data-fabric-software.html",
+      "https://www.hpe.com/tw/en/products/software/opsramp-software.html"
+    ],
+    "files": [],
+    "status": "已核准",
+    "revision": "643d1b413f3d00d6ea4613ab62b45e79a8da345f4c4ad7b58f215c94f8f5a8d5",
+    "updatedAt": "2026-10-07T08:05:32.015594+00:00"
   }
 ]
