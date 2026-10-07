@@ -122,29 +122,6 @@
     ]
   },
   {
-    "id": "material-28",
-    "title": "Jev 是什麼？｜AI Agent 為什麼不一定每一步都需要大型語言模型",
-    "topicId": "ai-fundamentals",
-    "format": "文字／文章",
-    "summary": "一般生成式 AI 很擅長聊天、寫文章與整理內容，但企業系統中也有很多工作其實只是要快速做出一個清楚決定，例如「這張工單要送哪個部門」、「這個案件風險高不高」或「需不需要人工審核」。Jev 是近期受到關注的一種決策型 AI，重點不是產生大量文字，而是針對明確選項快速做出結構化判斷。",
-    "body": "Jev 跟 ChatGPT 類型的 AI 有什麼不同？\n\n我們現在熟悉的 ChatGPT、Claude 等大型語言模型，很擅長：\n\n* 寫文章\n* 摘要\n* 對話\n* 解釋問題\n* 產生程式碼\n\n但企業系統中，有很多工作其實不需要 AI 寫一大段文字。\n\n有時候系統只需要 AI 做一個決定。\n\n例如：\n\n這張報修單要送去哪一個部門？\n\n選項可能只有：\n\n* Network\n* Server\n* Storage\n* Software\n\n這種工作重點不是「寫得漂亮」，而是：\n\n快速選出最適合的答案。\n\nJev 的概念就是「Decision」\n\nJev 是 TypeSafe AI 推出的 System One Model。\n\n使用者可以提供目前狀態與明確問題，Jev 回傳結構化的決策結果與機率，而不是產生一整段自由文字。 \n\n例如：\n\n客戶說：\n\n「Server 一直重新開機，而且出現 Memory Alert。」\n\n系統可以問：\n\n「這個案件應該分到哪個部門？」\n\n結果可能是：\n\nServer Team：85%\nNetwork Team：8%\nStorage Team：7%\n\n系統接著就可以依照結果：\n\n→ 指派部門\n→ 或當信心不足時要求人工確認。\n\nJev 不需要取代 LLM\n\n更合理的方式可能是讓不同 AI 做不同工作。\n\nLLM：\n\n負責理解客戶說了什麼、整理文字、閱讀文件。\n\nDecision Model：\n\n負責做分類、評分、Routing 等明確決策。\n\n企業系統：\n\n負責真正執行建立工單、查庫存或派工。\n\n因此未來的 AI Agent 不一定是「所有工作都丟給一個大型模型」，而可能由不同模型與工具合作完成。\n\n需要注意\n\nJev 目前並不是開源模型，也不是可以直接下載到企業地端部署的 Open Source LLM。若企業需要完全地端的類似功能，可以另外研究 OpenJev 類社群實作，但這些並不是官方 Jev。",
-    "links": [],
-    "files": [
-      {
-        "name": "JEV_介紹_1080p.mp4",
-        "file": "assets/materials/28/c9afec884a64b1e8a9c6-1.mp4",
-        "kind": "video"
-      }
-    ],
-    "status": "已核准",
-    "revision": "17e67dc2c636c2acf0da488b5a46b261b10e2c099abe05db3a3b25d16fee8247",
-    "updatedAt": "2026-10-06T09:28:06.529589+00:00",
-    "tags": [
-      "Jev",
-      "LLM"
-    ]
-  },
-  {
     "id": "material-46",
     "title": "Agent 何時應停止並轉交人工",
     "topicId": "enterprise-adoption",
@@ -837,5 +814,28 @@
     "status": "已核准",
     "revision": "a5a988657014b888c3e72942777c36a16e37610a3d9f0db87b719b6ffda0b032",
     "updatedAt": "2026-10-07T08:29:27.636276+00:00"
+  },
+  {
+    "id": "material-28",
+    "title": "Jev 是什麼？｜AI Agent 為什麼不一定每一步都需要大型語言模型",
+    "topicId": "ai-fundamentals",
+    "format": "文字／文章",
+    "tags": [
+      "Jev",
+      "LLM"
+    ],
+    "summary": "一般生成式 AI 很擅長聊天、寫文章與整理內容，但企業系統中也有很多工作其實只是要快速做出一個清楚決定，例如「這張工單要送哪個部門」、「這個案件風險高不高」或「需不需要人工審核」。Jev 是近期受到關注的一種決策型 AI，重點不是產生大量文字，而是針對明確選項快速做出結構化判斷。",
+    "body": "Jev 跟 ChatGPT 類型的 AI 有什麼不同？\n\n我們現在熟悉的 ChatGPT、Claude 等大型語言模型，很擅長：\n\n* 寫文章\n* 摘要\n* 對話\n* 解釋問題\n* 產生程式碼\n\n但企業系統中，有很多工作其實不需要 AI 寫一大段文字。\n\n有時候系統只需要 AI 做一個決定。\n\n例如：\n\n這張報修單要送去哪一個部門？\n\n選項可能只有：\n\n* Network\n* Server\n* Storage\n* Software\n\n這種工作重點不是「寫得漂亮」，而是：\n\n快速選出最適合的答案。\n\nJev 的概念就是「Decision」\n\nJev 是 TypeSafe AI 推出的 System One Model。\n\n使用者可以提供目前狀態與明確問題，Jev 回傳結構化的決策結果與機率，而不是產生一整段自由文字。 \n\n例如：\n\n客戶說：\n\n「Server 一直重新開機，而且出現 Memory Alert。」\n\n系統可以問：\n\n「這個案件應該分到哪個部門？」\n\n結果可能是：\n\nServer Team：85%\nNetwork Team：8%\nStorage Team：7%\n\n系統接著就可以依照結果：\n\n→ 指派部門\n→ 或當信心不足時要求人工確認。\n\nJev 不需要取代 LLM\n\n更合理的方式可能是讓不同 AI 做不同工作。\n\nLLM：\n\n負責理解客戶說了什麼、整理文字、閱讀文件。\n\nDecision Model：\n\n負責做分類、評分、Routing 等明確決策。\n\n企業系統：\n\n負責真正執行建立工單、查庫存或派工。\n\n因此未來的 AI Agent 不一定是「所有工作都丟給一個大型模型」，而可能由不同模型與工具合作完成。\n\n需要注意\n\nJev 目前並不是開源模型，也不是可以直接下載到企業地端部署的 Open Source LLM。若企業需要完全地端的類似功能，可以另外研究 OpenJev 類社群實作，但這些並不是官方 Jev。",
+    "links": [],
+    "files": [
+      {
+        "name": "JEV_介紹_1080p.mp4",
+        "file": "assets/materials/28/c9afec884a64b1e8a9c6-1.mp4",
+        "kind": "video"
+      }
+    ],
+    "status": "已核准",
+    "revision": "fc19affcfb24688de68b8f4f79f642265c39e5138bb30fc5afe5bb00b518226c",
+    "updatedAt": "2026-10-07T08:30:26.611953+00:00"
   }
 ]
