@@ -18,33 +18,6 @@
     ]
   },
   {
-    "id": "material-19",
-    "title": "VMware 有哪些替代方案？HPE VM Essentials、Nutanix AHV、Azure Local 等",
-    "topicId": "competitive-positioning",
-    "format": "文字／文章",
-    "summary": "企業重新評估 VMware 時，第一個想到的通常是：\n\n「還有哪些 Hypervisor 可以用？」\n\n但實際上，VMware 環境通常不只有 ESXi，還包含 vCenter、HA、Live Migration、Storage、Backup、Network，以及多年累積下來的維運流程。\n\n因此 VMware 替代不是單純把 ESXi 換掉，而是重新決定：\n\nVM 要跑在哪裡、誰負責管理、Storage 怎麼提供、HA 怎麼做，以及既有 VM 怎麼搬過去。\n\n目前企業常見的評估方向包括：\n\nHPE Morpheus VM Essentials、Nutanix AHV、Microsoft Azure Local／Hyper-V，以及 Red Hat OpenShift Virtualization。\n\n不同方案並不是單純的「誰最像 VMware」，而是代表不同的基礎架構方向。",
-    "body": "VMware 替代，不只是換掉 ESXi\n\n一套典型 VMware 環境可能包含：\n\nESXi → Hypervisor\nvCenter → 集中管理\nvMotion → VM 線上移轉\nHA → Host 故障後重新啟動 VM\nStorage → SAN / NAS / vSAN\nBackup → Veeam 或其他備份方案\n\n因此評估替代方案時，不能只確認：\n\n「這套有沒有 Hypervisor？」\n\n更重要的是確認原本 VMware 提供的能力，要由哪些元件接手。\n\n這也是不同 VMware 替代方案最大的差別。\n\nHPE Morpheus VM Essentials：先共存，再逐步離開 VMware\n\nHPE Morpheus VM Essentials Software 的核心，是 HPE VM Essentials Manager + HVM Hypervisor。\n\nHVM 是以 KVM 為基礎的 Hypervisor，提供企業虛擬化需要的 HA、Live Migration、Storage Live Migration、Workload Placement 等功能。\n\n它比較特殊的地方，是 VM Essentials Manager 不只管理 HVM，也能連接既有的 VMware vCenter。\n\n因此企業可以先形成：\n\n既有 VMware Cluster + 新 HVM Cluster\n↓\nVM Essentials Manager 統一管理\n\n而不是要求企業第一天就把所有 VMware VM 全部搬走。\n\n這使 VM Essentials 比較適合採用「分階段遷移」：\n\n第一階段：管理既有 VMware\n\n第二階段：新的 VM 開始部署到 HVM\n\n第三階段：逐步將適合的 VMware VM 搬到 HVM\n\nHPE 目前也提供 Rapid Migration Tool（RMT），支援 VMware 到 VM Essentials 的 Warm Migration 與 Offline Migration，協助降低大量 VM 搬遷時的人工操作。\n\n在 Storage 方面，HVM 不一定只能搭配 HCI，本身也可以使用 iSCSI、Fibre Channel、NFS 等外部 Storage，因此企業既有的 SAN 投資不一定需要一起汰換。\n\n另一個規格面的差異是授權方式。\n\n目前 HPE Morpheus VM Essentials 採 Physical CPU Socket 為授權單位，而不是依 CPU Core 計算；同時可以作為 Standalone Software 部署在 HPE 或支援的第三方硬體上。\n\n適合評估的情境\n\n已有 VMware，希望分階段遷移\n\n希望保留既有 Server / SAN 架構\n\n不希望一次全面更換虛擬化環境\n\n希望 VMware 與新平台可以暫時共存\n\n已經大量採用 HPE Server、Storage 或 SimpliVity\n\nNutanix AHV：直接轉向完整 HCI 平台\n\nNutanix AHV 同樣是以 KVM 技術為基礎的企業 Hypervisor，但它與 Nutanix AOS、Prism 深度整合。\n\n簡單來說：\n\nAHV → Hypervisor\n\nAOS → Distributed Storage\n\nPrism → 集中管理\n\n所以 Nutanix 的 VMware 替代策略通常不是只把 ESXi 換成 AHV，而是把 Compute、Storage 與 Hypervisor 一起轉成 Nutanix 架構。\n\nAHV 本身包含在 Nutanix Cloud Infrastructure（NCI）架構內，不需要另外採購一套獨立 Hypervisor。\n\n對 VMware 遷移，Nutanix 提供 Nutanix Move。\n\nMove 可協助將 VMware ESXi VM 遷移至 AHV，並處理 VM Conversion、VirtIO Driver、Network 等遷移工作。2026 年的版本也持續增加 In-place ESXi-to-AHV Conversion 等能力。\n\n因此 Nutanix 比較適合：\n\n「不只是離開 VMware，而是順便重新建立整套虛擬化基礎架構。」\n\n適合評估的情境\n\nVMware + SAN 環境準備整批汰換\n\n希望改成 HCI 架構\n\nVM 數量較多，希望標準化管理\n\n希望 Compute、Storage、Virtualization 整合成同一平台\n\n未來有 Private Cloud / Hybrid Cloud 發展需求\n\nAzure Local：把地端 VM 納入 Azure 管理模式\n\nAzure Local 與單純的 Hyper-V 不完全相同。\n\nAzure Local 本身建立在幾項 Microsoft 技術上：\n\nHyper-V + Failover Clustering + Storage Spaces Direct + Azure Management\n\n並透過 Azure Arc 與 Azure Portal 管理地端資源。\n\n也就是說：\n\nVM 實際仍然跑在企業 Data Center\n\n但管理、治理與部分 Azure Service 可以透過 Azure Control Plane 延伸到地端。\n\nAzure Local 的 HCI 架構目前可以從 1 台到最多 16 台 Physical Machine 建立，Storage 主要可以使用 Storage Spaces Direct；目前也已經開始支援符合條件的 External SAN 架構。\n\nVMware 遷移方面，Azure Local 2503 之後可以使用 Azure Migrate 將 VMware VM 遷移到 Azure Local。\n\n其流程大致為：\n\nDiscover VMware VM\n→ Replicate\n→ Migrate\n→ Verify\n\n而 VM Data 的實際傳輸可以維持在 On-premises VMware 與 Azure Local 之間。\n\n適合評估的情境\n\n已大量使用 Microsoft 生態系\n\nWindows Server Workload 比例高\n\n未來希望導入 Azure Arc\n\n希望地端基礎架構與 Azure 使用相似管理方式\n\n有 Hybrid Cloud 規劃\n\nWindows Server Hyper-V：保留傳統虛擬化架構的方向\n\nHyper-V 本身是 Microsoft 內建在 Windows Server 的 Type-1 Hypervisor。\n\nWindows Server 2025 仍然包含 Hyper-V，並提供 Live Migration、High Availability、Failover Clustering 等企業虛擬化能力。\n\n與 Azure Local 最大的差別是：\n\nHyper-V 是虛擬化技術。\n\nAzure Local 則是把 Hyper-V、Storage、Cluster 與 Azure Management 整合成一套平台。\n\n如果企業只是希望：\n\nServer + SAN + Hypervisor\n\n繼續維持比較傳統的架構模式，Windows Server Hyper-V 仍然是一個方向。\n\n而且 Hyper-V 的 Storage 選擇相對彈性，可以搭配 Local Disk、SAN、NAS、Fibre Channel、iSCSI、SMB 或 Storage Spaces Direct。\n\n適合評估的情境\n\nWindows Server 環境比例高\n\n已經有 SAN / NAS\n\n希望保留傳統三層式架構\n\n不一定需要完整 Private Cloud 平台\n\n團隊本身熟悉 Microsoft Infrastructure\n\nOpenShift Virtualization：不是只換 Hypervisor，而是 VM 與 Container 整合\n\nRed Hat OpenShift Virtualization 與前面幾個方案的出發點又不太一樣。\n\n它以 KVM + KubeVirt 為基礎，讓 Virtual Machine 可以與 Container 一起運行在 OpenShift 平台上。\n\n因此企業可以同時管理：\n\n傳統 VM + Kubernetes Container\n\n這代表 OpenShift Virtualization 比較適合的問題不是：\n\n「我要找一套便宜一點的 ESXi。」\n\n而是：\n\n「未來 VM 與 Container 是否要走向同一套 Application Platform？」\n\nRed Hat 也提供 Migration Toolkit for Virtualization（MTV），可以從 VMware vSphere 將 VM 移轉到 OpenShift Virtualization，目前支援 Cold Migration 與 VMware Warm Migration。\n\n所以如果企業正在推 Application Modernization、DevOps 或 Kubernetes，OpenShift Virtualization 的定位就會比單純 Hypervisor 替換更有意義。\n\n適合評估的情境\n\n已經使用 OpenShift / Kubernetes\n\n同時存在大量 VM 與 Container\n\n有 Application Modernization 計畫\n\n開發與 Infrastructure 團隊希望使用共同平台\n\nVMware 替代真正要先確認的 4 件事\n\n① 你是真的要「換 Hypervisor」，還是「換整套架構」？\n\n如果企業現有 Server、SAN、Network 都還很新，只是想更換 VMware：\n\nVM Essentials 或 Hyper-V 這類可以沿用既有架構的方案，就值得優先評估。\n\n但如果 Server、Storage 也剛好準備汰換：\n\n就可以同時評估 Nutanix 或 Azure Local 等平台型方案。\n\n② 所有 VM 都真的可以搬嗎？\n\n這往往比 Hypervisor 規格更重要。\n\n例如：\n\nDatabase\n\nBackup Appliance\n\nFirewall / Network Appliance\n\nVDI\n\nGPU Workload\n\n特殊 Driver\n\nISV 認證系統\n\n都應該確認目標 Hypervisor 是否受到原廠支援。\n\n所以 VMware Migration 不應該直接變成：\n\n100 台 VMware VM → 全部搬走\n\n比較安全的做法通常是先進行：\n\nInventory → Compatibility → Dependency → Migration Wave\n\n再決定哪些 VM 先搬。\n\n③ Backup、DR、Monitoring 能不能繼續用？\n\n企業原本可能使用：\n\nVeeam + VMware\n\nPRTG + VMware\n\nZerto + VMware\n\n更換 Hypervisor 後，需要重新確認原本工具是否支援新平台，以及功能是否一致。\n\n所以替代 VMware 的成本不能只算 Hypervisor License。\n\n真正要算的是：\n\nHypervisor + Migration + Backup + DR + Monitoring + 人力 + Training\n\n也就是完整 TCO。\n\n④ 不一定需要一次離開 VMware\n\n這可能反而是 VMware 替代專案最重要的一點。\n\n企業通常不需要把選擇限制成：\n\n繼續 VMware\n\n或\n\n全部離開 VMware\n\n第三種方式是：\n\n保留部分 VMware + 新 Workload 使用新 Hypervisor + 舊 VM 分階段遷移。\n\n特別是 HPE VM Essentials 可以同時連接 VMware vCenter 與 HVM Cluster，因此企業可以先建立新的虛擬化環境，再逐步判斷哪些 Workload 適合遷移。\n\n這會把「VMware 替換專案」從一次性的 Big Bang Migration，改成較容易控制風險的 Virtualization Modernization Roadmap。",
-    "links": [],
-    "files": [
-      {
-        "name": "VME納管VMware.png",
-        "file": "assets/materials/19/d723eef2c696b7616a93-1.png",
-        "kind": "image"
-      },
-      {
-        "name": "VM ware替代方案.png",
-        "file": "assets/materials/19/072866369e70349af7f1-2.png",
-        "kind": "image"
-      }
-    ],
-    "status": "已核准",
-    "revision": "c82234fcc5669146ea6c630c8ab66fb8e39b326bf5c705e1603ce5d46e2ca4e1",
-    "updatedAt": "2026-09-29T08:19:54.426998+00:00",
-    "tags": [
-      "VMware"
-    ]
-  },
-  {
     "id": "material-21",
     "title": "企業想自己做 AI，第一步該怎麼開始？",
     "topicId": "competitive-positioning",
@@ -825,5 +798,36 @@
     "status": "已核准",
     "revision": "e2fdfbab63bb744d7bab332dbf4e8bcfe7c00b5f3320d8beedf9b6bd8b747ad8",
     "updatedAt": "2026-10-07T08:24:49.432113+00:00"
+  },
+  {
+    "id": "material-19",
+    "title": "VMware 有哪些替代方案？HPE VM Essentials、Nutanix AHV、Azure Local 等",
+    "topicId": "competitive-positioning",
+    "format": "文字／文章",
+    "tags": [
+      "HPE Morpheus VM Essentials",
+      "Nutanix AHV",
+      "Azure Local",
+      "Hyper-V",
+      "OpenShift Virtualization"
+    ],
+    "summary": "企業重新評估 VMware 時，第一個想到的通常是：\n\n「還有哪些 Hypervisor 可以用？」\n\n但實際上，VMware 環境通常不只有 ESXi，還包含 vCenter、HA、Live Migration、Storage、Backup、Network，以及多年累積下來的維運流程。\n\n因此 VMware 替代不是單純把 ESXi 換掉，而是重新決定：\n\nVM 要跑在哪裡、誰負責管理、Storage 怎麼提供、HA 怎麼做，以及既有 VM 怎麼搬過去。\n\n目前企業常見的評估方向包括：\n\nHPE Morpheus VM Essentials、Nutanix AHV、Microsoft Azure Local／Hyper-V，以及 Red Hat OpenShift Virtualization。\n\n不同方案並不是單純的「誰最像 VMware」，而是代表不同的基礎架構方向。",
+    "body": "VMware 替代，不只是換掉 ESXi\n\n一套典型 VMware 環境可能包含：\n\nESXi → Hypervisor\nvCenter → 集中管理\nvMotion → VM 線上移轉\nHA → Host 故障後重新啟動 VM\nStorage → SAN / NAS / vSAN\nBackup → Veeam 或其他備份方案\n\n因此評估替代方案時，不能只確認：\n\n「這套有沒有 Hypervisor？」\n\n更重要的是確認原本 VMware 提供的能力，要由哪些元件接手。\n\n這也是不同 VMware 替代方案最大的差別。\n\nHPE Morpheus VM Essentials：先共存，再逐步離開 VMware\n\nHPE Morpheus VM Essentials Software 的核心，是 HPE VM Essentials Manager + HVM Hypervisor。\n\nHVM 是以 KVM 為基礎的 Hypervisor，提供企業虛擬化需要的 HA、Live Migration、Storage Live Migration、Workload Placement 等功能。\n\n它比較特殊的地方，是 VM Essentials Manager 不只管理 HVM，也能連接既有的 VMware vCenter。\n\n因此企業可以先形成：\n\n既有 VMware Cluster + 新 HVM Cluster\n↓\nVM Essentials Manager 統一管理\n\n而不是要求企業第一天就把所有 VMware VM 全部搬走。\n\n這使 VM Essentials 比較適合採用「分階段遷移」：\n\n第一階段：管理既有 VMware\n\n第二階段：新的 VM 開始部署到 HVM\n\n第三階段：逐步將適合的 VMware VM 搬到 HVM\n\nHPE 目前也提供 Rapid Migration Tool（RMT），支援 VMware 到 VM Essentials 的 Warm Migration 與 Offline Migration，協助降低大量 VM 搬遷時的人工操作。\n\n在 Storage 方面，HVM 不一定只能搭配 HCI，本身也可以使用 iSCSI、Fibre Channel、NFS 等外部 Storage，因此企業既有的 SAN 投資不一定需要一起汰換。\n\n另一個規格面的差異是授權方式。\n\n目前 HPE Morpheus VM Essentials 採 Physical CPU Socket 為授權單位，而不是依 CPU Core 計算；同時可以作為 Standalone Software 部署在 HPE 或支援的第三方硬體上。\n\n適合評估的情境\n\n已有 VMware，希望分階段遷移\n\n希望保留既有 Server / SAN 架構\n\n不希望一次全面更換虛擬化環境\n\n希望 VMware 與新平台可以暫時共存\n\n已經大量採用 HPE Server、Storage 或 SimpliVity\n\nNutanix AHV：直接轉向完整 HCI 平台\n\nNutanix AHV 同樣是以 KVM 技術為基礎的企業 Hypervisor，但它與 Nutanix AOS、Prism 深度整合。\n\n簡單來說：\n\nAHV → Hypervisor\n\nAOS → Distributed Storage\n\nPrism → 集中管理\n\n所以 Nutanix 的 VMware 替代策略通常不是只把 ESXi 換成 AHV，而是把 Compute、Storage 與 Hypervisor 一起轉成 Nutanix 架構。\n\nAHV 本身包含在 Nutanix Cloud Infrastructure（NCI）架構內，不需要另外採購一套獨立 Hypervisor。\n\n對 VMware 遷移，Nutanix 提供 Nutanix Move。\n\nMove 可協助將 VMware ESXi VM 遷移至 AHV，並處理 VM Conversion、VirtIO Driver、Network 等遷移工作。2026 年的版本也持續增加 In-place ESXi-to-AHV Conversion 等能力。\n\n因此 Nutanix 比較適合：\n\n「不只是離開 VMware，而是順便重新建立整套虛擬化基礎架構。」\n\n適合評估的情境\n\nVMware + SAN 環境準備整批汰換\n\n希望改成 HCI 架構\n\nVM 數量較多，希望標準化管理\n\n希望 Compute、Storage、Virtualization 整合成同一平台\n\n未來有 Private Cloud / Hybrid Cloud 發展需求\n\nAzure Local：把地端 VM 納入 Azure 管理模式\n\nAzure Local 與單純的 Hyper-V 不完全相同。\n\nAzure Local 本身建立在幾項 Microsoft 技術上：\n\nHyper-V + Failover Clustering + Storage Spaces Direct + Azure Management\n\n並透過 Azure Arc 與 Azure Portal 管理地端資源。\n\n也就是說：\n\nVM 實際仍然跑在企業 Data Center\n\n但管理、治理與部分 Azure Service 可以透過 Azure Control Plane 延伸到地端。\n\nAzure Local 的 HCI 架構目前可以從 1 台到最多 16 台 Physical Machine 建立，Storage 主要可以使用 Storage Spaces Direct；目前也已經開始支援符合條件的 External SAN 架構。\n\nVMware 遷移方面，Azure Local 2503 之後可以使用 Azure Migrate 將 VMware VM 遷移到 Azure Local。\n\n其流程大致為：\n\nDiscover VMware VM\n→ Replicate\n→ Migrate\n→ Verify\n\n而 VM Data 的實際傳輸可以維持在 On-premises VMware 與 Azure Local 之間。\n\n適合評估的情境\n\n已大量使用 Microsoft 生態系\n\nWindows Server Workload 比例高\n\n未來希望導入 Azure Arc\n\n希望地端基礎架構與 Azure 使用相似管理方式\n\n有 Hybrid Cloud 規劃\n\nWindows Server Hyper-V：保留傳統虛擬化架構的方向\n\nHyper-V 本身是 Microsoft 內建在 Windows Server 的 Type-1 Hypervisor。\n\nWindows Server 2025 仍然包含 Hyper-V，並提供 Live Migration、High Availability、Failover Clustering 等企業虛擬化能力。\n\n與 Azure Local 最大的差別是：\n\nHyper-V 是虛擬化技術。\n\nAzure Local 則是把 Hyper-V、Storage、Cluster 與 Azure Management 整合成一套平台。\n\n如果企業只是希望：\n\nServer + SAN + Hypervisor\n\n繼續維持比較傳統的架構模式，Windows Server Hyper-V 仍然是一個方向。\n\n而且 Hyper-V 的 Storage 選擇相對彈性，可以搭配 Local Disk、SAN、NAS、Fibre Channel、iSCSI、SMB 或 Storage Spaces Direct。\n\n適合評估的情境\n\nWindows Server 環境比例高\n\n已經有 SAN / NAS\n\n希望保留傳統三層式架構\n\n不一定需要完整 Private Cloud 平台\n\n團隊本身熟悉 Microsoft Infrastructure\n\nOpenShift Virtualization：不是只換 Hypervisor，而是 VM 與 Container 整合\n\nRed Hat OpenShift Virtualization 與前面幾個方案的出發點又不太一樣。\n\n它以 KVM + KubeVirt 為基礎，讓 Virtual Machine 可以與 Container 一起運行在 OpenShift 平台上。\n\n因此企業可以同時管理：\n\n傳統 VM + Kubernetes Container\n\n這代表 OpenShift Virtualization 比較適合的問題不是：\n\n「我要找一套便宜一點的 ESXi。」\n\n而是：\n\n「未來 VM 與 Container 是否要走向同一套 Application Platform？」\n\nRed Hat 也提供 Migration Toolkit for Virtualization（MTV），可以從 VMware vSphere 將 VM 移轉到 OpenShift Virtualization，目前支援 Cold Migration 與 VMware Warm Migration。\n\n所以如果企業正在推 Application Modernization、DevOps 或 Kubernetes，OpenShift Virtualization 的定位就會比單純 Hypervisor 替換更有意義。\n\n適合評估的情境\n\n已經使用 OpenShift / Kubernetes\n\n同時存在大量 VM 與 Container\n\n有 Application Modernization 計畫\n\n開發與 Infrastructure 團隊希望使用共同平台\n\nVMware 替代真正要先確認的 4 件事\n\n① 你是真的要「換 Hypervisor」，還是「換整套架構」？\n\n如果企業現有 Server、SAN、Network 都還很新，只是想更換 VMware：\n\nVM Essentials 或 Hyper-V 這類可以沿用既有架構的方案，就值得優先評估。\n\n但如果 Server、Storage 也剛好準備汰換：\n\n就可以同時評估 Nutanix 或 Azure Local 等平台型方案。\n\n② 所有 VM 都真的可以搬嗎？\n\n這往往比 Hypervisor 規格更重要。\n\n例如：\n\nDatabase\n\nBackup Appliance\n\nFirewall / Network Appliance\n\nVDI\n\nGPU Workload\n\n特殊 Driver\n\nISV 認證系統\n\n都應該確認目標 Hypervisor 是否受到原廠支援。\n\n所以 VMware Migration 不應該直接變成：\n\n100 台 VMware VM → 全部搬走\n\n比較安全的做法通常是先進行：\n\nInventory → Compatibility → Dependency → Migration Wave\n\n再決定哪些 VM 先搬。\n\n③ Backup、DR、Monitoring 能不能繼續用？\n\n企業原本可能使用：\n\nVeeam + VMware\n\nPRTG + VMware\n\nZerto + VMware\n\n更換 Hypervisor 後，需要重新確認原本工具是否支援新平台，以及功能是否一致。\n\n所以替代 VMware 的成本不能只算 Hypervisor License。\n\n真正要算的是：\n\nHypervisor + Migration + Backup + DR + Monitoring + 人力 + Training\n\n也就是完整 TCO。\n\n④ 不一定需要一次離開 VMware\n\n這可能反而是 VMware 替代專案最重要的一點。\n\n企業通常不需要把選擇限制成：\n\n繼續 VMware\n\n或\n\n全部離開 VMware\n\n第三種方式是：\n\n保留部分 VMware + 新 Workload 使用新 Hypervisor + 舊 VM 分階段遷移。\n\n特別是 HPE VM Essentials 可以同時連接 VMware vCenter 與 HVM Cluster，因此企業可以先建立新的虛擬化環境，再逐步判斷哪些 Workload 適合遷移。\n\n這會把「VMware 替換專案」從一次性的 Big Bang Migration，改成較容易控制風險的 Virtualization Modernization Roadmap。",
+    "links": [],
+    "files": [
+      {
+        "name": "VME納管VMware.png",
+        "file": "assets/materials/19/d723eef2c696b7616a93-1.png",
+        "kind": "image"
+      },
+      {
+        "name": "VM ware替代方案.png",
+        "file": "assets/materials/19/072866369e70349af7f1-2.png",
+        "kind": "image"
+      }
+    ],
+    "status": "已核准",
+    "revision": "f3e51d80d004182cc95c3c3aa2c062b44dbaf75e00c2c20d8e9d77bb20d7f395",
+    "updatedAt": "2026-10-07T08:25:48.309169+00:00"
   }
 ]
