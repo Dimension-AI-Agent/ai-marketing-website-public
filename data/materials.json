@@ -18,30 +18,6 @@
     ]
   },
   {
-    "id": "material-21",
-    "title": "企業想自己做 AI，第一步該怎麼開始？",
-    "topicId": "competitive-positioning",
-    "format": "文字／文章",
-    "summary": "ChatGPT、RAG、AI Agent 開始進入企業後，很多公司第一個想到的問題都是：\n\n「如果我們想自己做 AI，是不是買一台 GPU Server 就可以開始？」\n\n答案是：可以開始，但 GPU 只是其中一層。\n\n真正要把 AI 從測試環境帶進企業使用，還需要處理模型、資料、Container、GPU 資源分配、權限、Storage、監控，以及後續更新與維運。\n\n所以企業真正要做的第一個選擇，不是「該買哪張 GPU」，而是：\n\n我們想自己建多少？又有哪些事情希望平台幫我們處理？\n\n大致可以分成三條路：\n\n自己買 GPU Server\n→ 自由度最高，平台自己建\n\n導入完整 Private AI Solution\n→ 硬體、AI 平台與管理工具一起規劃\n\n使用 Public Cloud AI\n→ 不先買硬體，需要多少算力就使用多少\n\n三種方法都可以做 AI，差別在於成本、資料位置、建置速度，以及企業要負責多少維運工作。",
-    "body": "做 AI，到底需要哪些東西？\n\n在比較三種方式之前，可以先把企業 AI 環境想成四層：\n\n① Infrastructure\n\n最底層是實際提供運算能力的設備：\n\nGPU、CPU、Memory、Storage、Network\n\n這一層解決的是：\n\nAI 有沒有足夠的算力可以跑？\n\n② AI Platform\n\n有了 GPU 之後，還需要：\n\nGPU Driver、CUDA、Container、Kubernetes、GPU 資源管理、Monitoring\n\n才能真正把 GPU 變成可以穩定提供給 AI 工作負載使用的平台。\n\nNVIDIA AI Enterprise 本身就包含 GPU Driver、Kubernetes Operators、GPU 管理與 AI Application Framework 等不同層級的軟體能力。\n\n③ Model & Data\n\n接下來才是：\n\nLLM、Embedding Model、企業資料、Vector Database、RAG\n\n也就是讓 AI 開始理解企業自己的資料。\n\n④ AI Application\n\n最後才會變成使用者真正看到的：\n\n企業 Chatbot、AI Agent、文件搜尋、知識問答、影像辨識、AI 助理。\n\n因此：\n\nGPU Server 解決的是算力，但企業真正需要的是一整條 AI Stack。\n\n方法一｜自己買 GPU Server\n\n適合想自己掌握整套環境的企業\n\n最直接的方法，就是自己採購 GPU Server。\n\n例如：\n\nGPU Server\n\n↓\n\nOS + NVIDIA Driver + CUDA\n\n↓\n\nContainer / Kubernetes\n\n↓\n\nAI Framework / Model Serving\n\n↓\n\nLLM / RAG / AI Application\n\n這種方式最大的優點是：\n\n自由度最高\n\n企業可以自己決定：\n\n用什麼 GPU\n\n使用什麼模型\n\nStorage 怎麼設計\n\nKubernetes 要不要使用\n\n使用哪一套 AI Framework\n\n軟體什麼時候升級\n\n但同時也代表：\n\n整合工作最多\n\nServer 買回來之後，企業還是要有人處理：\n\nDriver、CUDA、Container、Kubernetes、模型部署、Monitoring、Security、Upgrade。\n\n甚至不同版本之間也會有相容性問題。\n\nNVIDIA 官方目前就將 AI Enterprise 拆成 Application Software 與 Infrastructure Software，並分別管理 Driver、Kubernetes Operator、Framework 與版本生命週期。\n\n比較適合\n\nAI PoC\n\nAI 研發團隊\n\n已經有 Kubernetes / DevOps 能力\n\n希望高度客製化\n\n工作負載單純且明確\n\n方法二｜導入完整 Private AI Solution\n\n不只買 GPU，而是直接建立一套企業 AI 平台\n\n另一種方式，是直接導入完整的 Private AI Solution。\n\n例如 HPE Private Cloud AI。\n\n它的概念不是：\n\n「HPE 幫你賣一台 GPU Server。」\n\n而是把 AI 所需的 Infrastructure 與 Platform 整合起來：\n\nGPU Compute\n\n＋\n\nNetwork\n\n＋\n\nStorage\n\n＋\n\nAI Platform\n\n＋\n\nModel / Data Tools\n\n＋\n\n統一管理\n\n形成一套可以用來建置、部署與管理 AI Workload 的環境。\n\nHPE Private Cloud AI 目前以 HPE AI Essentials 作為核心軟體平台，並整合 NVIDIA AI Enterprise 與 NVIDIA NIM 等能力，支援企業建立包括 Inference、RAG 與 Fine-Tuning 在內的 AI 工作負載。\n\n跟自己買 GPU Server 差在哪？\n\n最大的差別其實不是 GPU。\n\n而是：\n\n「誰負責把這些東西組起來？」\n\n如果自己買 GPU Server：\n\n企業自己當 System Integrator\n\n需要決定每一層：\n\nGPU\n↓\nDriver\n↓\nContainer\n↓\nKubernetes\n↓\nAI Framework\n↓\nModel Serving\n↓\nMonitoring\n\n如果使用 HPE Private Cloud AI：\n\n這些底層元件已有較完整的整合與驗證，企業可以把更多資源放在：\n\n資料、模型與 AI Application。\n\n所以完整 AI Solution 真正要解決的是：\n\n降低企業建立與維護 AI Infrastructure 的複雜度。\n\n而不是單純「提供更多 GPU」。\n\n比較適合\n\nAI 已經準備正式上線\n\n多個部門會共同使用 AI\n\n希望資料留在企業內部\n\nIT 團隊不希望自行整合所有 AI Infrastructure\n\n希望建立長期使用的企業 AI Platform\n\n方法三｜直接使用 Public Cloud\n\n不買 GPU，先使用別人的 AI Infrastructure\n\n第三條路最簡單：\n\n先不要買 Server。\n\n直接使用 Azure、AWS 或其他 Public Cloud 的 GPU、AI Platform 或模型服務。\n\n最大的優勢就是：\n\n上線速度快\n\n不用等待：\n\n採購 Server\n→ 上架\n→ 安裝\n→ GPU 設定\n→ 建置平台\n\n可以直接從 Cloud 開始測試。\n\nMicrosoft 的 AI Infrastructure Guidance 也建議企業在適合的情境先評估 AI PaaS；如果需要自行運行 AI Infrastructure，再選擇對應 GPU VM、Container 與運算架構。\n\nAWS 也提供 GPU Accelerated EC2 Instance，以及已經預先配置 AI 軟體環境的 Deep Learning AMI。\n\n因此對還在找 Use Case 的企業而言，Cloud 可以降低第一階段的進入門檻。\n\n那上 Cloud 有什麼要考慮？\n\n當 AI 開始正式使用後，問題就會慢慢改變。\n\n資料在哪裡？\n\n如果 AI 要讀取：\n\nERP\nCRM\n內部文件\n研發資料\n客戶資料\n生產資料\n\n就必須考慮：\n\n資料如何送到 Cloud、Network、Latency、Security 與 Governance。\n\nGPU 使用時間有多長？\n\n如果一年只需要幾次大量 GPU：\n\n租用 Cloud 很有彈性。\n\n但如果 AI Service：\n\n每天 24 小時持續運作\n\n企業就應該進一步比較：\n\nCloud Consumption Cost\n\nvs.\n\nOn-Premises Infrastructure TCO\n\n而不是只比較一台 Server 的採購價格。\n\n\n到底該選哪一種？\n\n其實不需要先從產品開始選。\n\n如果你現在還在找 AI Use Case\n\n例如：\n\n「我們想知道 RAG 能不能用。」\n\n「我們想先做一個內部 Chatbot。」\n\n「目前只有幾個工程師測試。」\n\n這個階段比較重要的是：\n\n先把 AI 做出來。\n\n可以先評估：\n\nCloud 或單台 GPU Server。\n\n沒有必要一開始就建立大型 AI Infrastructure。\n\n如果 AI 已經準備正式上線\n\n當使用情境變成：\n\n10 人\n→ 100 人\n→ 500 人\n\n或從：\n\n1 個 AI Application\n→ 多個部門 AI\n→ 多套 Model\n\n問題就開始變成：\n\nGPU 怎麼分？\n\n誰可以使用哪些模型？\n\n資料權限怎麼控制？\n\n模型怎麼更新？\n\n服務掛掉誰處理？\n\n這時候真正需要的就不再只是一台 GPU Server，而是一套可以長期管理的 AI Platform。\n\n這也是 HPE Private Cloud AI 這類整合式方案比較有價值的階段。HPE 將 PCAI 定位為整合 AI Compute、Networking、Storage、AI Software 與管理能力的 Engineered System。\n\n最後，先問這 4 個問題\n\n企業開始規劃 AI Infrastructure 前，可以先確認：\n\n1. AI 現在是 PoC，還是準備正式上線？\n\n2. 資料可以上 Cloud，還是必須留在企業內？\n\n3. GPU 是偶爾使用，還是長時間持續使用？\n\n4. 公司有沒有能力自己維護 AI Platform？\n\n這四個問題回答完，通常就會慢慢看出適合的方向：\n\n快速測試\n→ Cloud\n\n需要地端算力，而且有技術團隊\n→ GPU Server\n\n準備正式企業化，又希望降低平台整合負擔\n→ Private AI Solution",
-    "links": [],
-    "files": [
-      {
-        "name": "AI架構比較圖.png",
-        "file": "assets/materials/21/074a8655fe5714e927c6-1.png",
-        "kind": "image"
-      }
-    ],
-    "status": "已核准",
-    "revision": "588ba03f08d0e73ef1626cc737297aeebbcf7999e9e1e3bfd75ed3588c91d123",
-    "updatedAt": "2026-09-29T09:04:29.378787+00:00",
-    "tags": [
-      "GPU",
-      "Private AI",
-      "雲端"
-    ]
-  },
-  {
     "id": "material-24",
     "title": "Supercomputing",
     "topicId": "hardware",
@@ -829,5 +805,30 @@
     "status": "已核准",
     "revision": "f3e51d80d004182cc95c3c3aa2c062b44dbaf75e00c2c20d8e9d77bb20d7f395",
     "updatedAt": "2026-10-07T08:25:48.309169+00:00"
+  },
+  {
+    "id": "material-21",
+    "title": "企業想自己做 AI，第一步該怎麼開始？",
+    "topicId": "competitive-positioning",
+    "format": "文字／文章",
+    "tags": [
+      "HPE",
+      "PCAI",
+      "地端",
+      "雲端"
+    ],
+    "summary": "ChatGPT、RAG、AI Agent 開始進入企業後，很多公司第一個想到的問題都是：\n\n「如果我們想自己做 AI，是不是買一台 GPU Server 就可以開始？」\n\n答案是：可以開始，但 GPU 只是其中一層。\n\n真正要把 AI 從測試環境帶進企業使用，還需要處理模型、資料、Container、GPU 資源分配、權限、Storage、監控，以及後續更新與維運。\n\n所以企業真正要做的第一個選擇，不是「該買哪張 GPU」，而是：\n\n我們想自己建多少？又有哪些事情希望平台幫我們處理？\n\n大致可以分成三條路：\n\n自己買 GPU Server\n→ 自由度最高，平台自己建\n\n導入完整 Private AI Solution\n→ 硬體、AI 平台與管理工具一起規劃\n\n使用 Public Cloud AI\n→ 不先買硬體，需要多少算力就使用多少\n\n三種方法都可以做 AI，差別在於成本、資料位置、建置速度，以及企業要負責多少維運工作。",
+    "body": "做 AI，到底需要哪些東西？\n\n在比較三種方式之前，可以先把企業 AI 環境想成四層：\n\n① Infrastructure\n\n最底層是實際提供運算能力的設備：\n\nGPU、CPU、Memory、Storage、Network\n\n這一層解決的是：\n\nAI 有沒有足夠的算力可以跑？\n\n② AI Platform\n\n有了 GPU 之後，還需要：\n\nGPU Driver、CUDA、Container、Kubernetes、GPU 資源管理、Monitoring\n\n才能真正把 GPU 變成可以穩定提供給 AI 工作負載使用的平台。\n\nNVIDIA AI Enterprise 本身就包含 GPU Driver、Kubernetes Operators、GPU 管理與 AI Application Framework 等不同層級的軟體能力。\n\n③ Model & Data\n\n接下來才是：\n\nLLM、Embedding Model、企業資料、Vector Database、RAG\n\n也就是讓 AI 開始理解企業自己的資料。\n\n④ AI Application\n\n最後才會變成使用者真正看到的：\n\n企業 Chatbot、AI Agent、文件搜尋、知識問答、影像辨識、AI 助理。\n\n因此：\n\nGPU Server 解決的是算力，但企業真正需要的是一整條 AI Stack。\n\n方法一｜自己買 GPU Server\n\n適合想自己掌握整套環境的企業\n\n最直接的方法，就是自己採購 GPU Server。\n\n例如：\n\nGPU Server\n\n↓\n\nOS + NVIDIA Driver + CUDA\n\n↓\n\nContainer / Kubernetes\n\n↓\n\nAI Framework / Model Serving\n\n↓\n\nLLM / RAG / AI Application\n\n這種方式最大的優點是：\n\n自由度最高\n\n企業可以自己決定：\n\n用什麼 GPU\n\n使用什麼模型\n\nStorage 怎麼設計\n\nKubernetes 要不要使用\n\n使用哪一套 AI Framework\n\n軟體什麼時候升級\n\n但同時也代表：\n\n整合工作最多\n\nServer 買回來之後，企業還是要有人處理：\n\nDriver、CUDA、Container、Kubernetes、模型部署、Monitoring、Security、Upgrade。\n\n甚至不同版本之間也會有相容性問題。\n\nNVIDIA 官方目前就將 AI Enterprise 拆成 Application Software 與 Infrastructure Software，並分別管理 Driver、Kubernetes Operator、Framework 與版本生命週期。\n\n比較適合\n\nAI PoC\n\nAI 研發團隊\n\n已經有 Kubernetes / DevOps 能力\n\n希望高度客製化\n\n工作負載單純且明確\n\n方法二｜導入完整 Private AI Solution\n\n不只買 GPU，而是直接建立一套企業 AI 平台\n\n另一種方式，是直接導入完整的 Private AI Solution。\n\n例如 HPE Private Cloud AI。\n\n它的概念不是：\n\n「HPE 幫你賣一台 GPU Server。」\n\n而是把 AI 所需的 Infrastructure 與 Platform 整合起來：\n\nGPU Compute\n\n＋\n\nNetwork\n\n＋\n\nStorage\n\n＋\n\nAI Platform\n\n＋\n\nModel / Data Tools\n\n＋\n\n統一管理\n\n形成一套可以用來建置、部署與管理 AI Workload 的環境。\n\nHPE Private Cloud AI 目前以 HPE AI Essentials 作為核心軟體平台，並整合 NVIDIA AI Enterprise 與 NVIDIA NIM 等能力，支援企業建立包括 Inference、RAG 與 Fine-Tuning 在內的 AI 工作負載。\n\n跟自己買 GPU Server 差在哪？\n\n最大的差別其實不是 GPU。\n\n而是：\n\n「誰負責把這些東西組起來？」\n\n如果自己買 GPU Server：\n\n企業自己當 System Integrator\n\n需要決定每一層：\n\nGPU\n↓\nDriver\n↓\nContainer\n↓\nKubernetes\n↓\nAI Framework\n↓\nModel Serving\n↓\nMonitoring\n\n如果使用 HPE Private Cloud AI：\n\n這些底層元件已有較完整的整合與驗證，企業可以把更多資源放在：\n\n資料、模型與 AI Application。\n\n所以完整 AI Solution 真正要解決的是：\n\n降低企業建立與維護 AI Infrastructure 的複雜度。\n\n而不是單純「提供更多 GPU」。\n\n比較適合\n\nAI 已經準備正式上線\n\n多個部門會共同使用 AI\n\n希望資料留在企業內部\n\nIT 團隊不希望自行整合所有 AI Infrastructure\n\n希望建立長期使用的企業 AI Platform\n\n方法三｜直接使用 Public Cloud\n\n不買 GPU，先使用別人的 AI Infrastructure\n\n第三條路最簡單：\n\n先不要買 Server。\n\n直接使用 Azure、AWS 或其他 Public Cloud 的 GPU、AI Platform 或模型服務。\n\n最大的優勢就是：\n\n上線速度快\n\n不用等待：\n\n採購 Server\n→ 上架\n→ 安裝\n→ GPU 設定\n→ 建置平台\n\n可以直接從 Cloud 開始測試。\n\nMicrosoft 的 AI Infrastructure Guidance 也建議企業在適合的情境先評估 AI PaaS；如果需要自行運行 AI Infrastructure，再選擇對應 GPU VM、Container 與運算架構。\n\nAWS 也提供 GPU Accelerated EC2 Instance，以及已經預先配置 AI 軟體環境的 Deep Learning AMI。\n\n因此對還在找 Use Case 的企業而言，Cloud 可以降低第一階段的進入門檻。\n\n那上 Cloud 有什麼要考慮？\n\n當 AI 開始正式使用後，問題就會慢慢改變。\n\n資料在哪裡？\n\n如果 AI 要讀取：\n\nERP\nCRM\n內部文件\n研發資料\n客戶資料\n生產資料\n\n就必須考慮：\n\n資料如何送到 Cloud、Network、Latency、Security 與 Governance。\n\nGPU 使用時間有多長？\n\n如果一年只需要幾次大量 GPU：\n\n租用 Cloud 很有彈性。\n\n但如果 AI Service：\n\n每天 24 小時持續運作\n\n企業就應該進一步比較：\n\nCloud Consumption Cost\n\nvs.\n\nOn-Premises Infrastructure TCO\n\n而不是只比較一台 Server 的採購價格。\n\n\n到底該選哪一種？\n\n其實不需要先從產品開始選。\n\n如果你現在還在找 AI Use Case\n\n例如：\n\n「我們想知道 RAG 能不能用。」\n\n「我們想先做一個內部 Chatbot。」\n\n「目前只有幾個工程師測試。」\n\n這個階段比較重要的是：\n\n先把 AI 做出來。\n\n可以先評估：\n\nCloud 或單台 GPU Server。\n\n沒有必要一開始就建立大型 AI Infrastructure。\n\n如果 AI 已經準備正式上線\n\n當使用情境變成：\n\n10 人\n→ 100 人\n→ 500 人\n\n或從：\n\n1 個 AI Application\n→ 多個部門 AI\n→ 多套 Model\n\n問題就開始變成：\n\nGPU 怎麼分？\n\n誰可以使用哪些模型？\n\n資料權限怎麼控制？\n\n模型怎麼更新？\n\n服務掛掉誰處理？\n\n這時候真正需要的就不再只是一台 GPU Server，而是一套可以長期管理的 AI Platform。\n\n這也是 HPE Private Cloud AI 這類整合式方案比較有價值的階段。HPE 將 PCAI 定位為整合 AI Compute、Networking、Storage、AI Software 與管理能力的 Engineered System。\n\n最後，先問這 4 個問題\n\n企業開始規劃 AI Infrastructure 前，可以先確認：\n\n1. AI 現在是 PoC，還是準備正式上線？\n\n2. 資料可以上 Cloud，還是必須留在企業內？\n\n3. GPU 是偶爾使用，還是長時間持續使用？\n\n4. 公司有沒有能力自己維護 AI Platform？\n\n這四個問題回答完，通常就會慢慢看出適合的方向：\n\n快速測試\n→ Cloud\n\n需要地端算力，而且有技術團隊\n→ GPU Server\n\n準備正式企業化，又希望降低平台整合負擔\n→ Private AI Solution",
+    "links": [],
+    "files": [
+      {
+        "name": "AI架構比較圖.png",
+        "file": "assets/materials/21/074a8655fe5714e927c6-1.png",
+        "kind": "image"
+      }
+    ],
+    "status": "已核准",
+    "revision": "4510490e878d14057c17efc0008c77b16c49249fbcd65b764657182f42d5cc1e",
+    "updatedAt": "2026-10-07T08:26:46.016469+00:00"
   }
 ]
