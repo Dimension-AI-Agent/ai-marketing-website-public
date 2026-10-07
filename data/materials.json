@@ -35,26 +35,6 @@
     ]
   },
   {
-    "id": "material-32",
-    "title": "Enterprise AI 每月趨勢｜企業真正需要注意的 AI 發展",
-    "topicId": "industry-trends",
-    "format": "文件／簡報",
-    "summary": "AI 每天都有新模型、新工具與新名詞，但企業真正需要知道的不是所有新聞，而是哪些發展會影響公司未來的 AI 導入、IT 架構、資安與營運。本系列將每月整理重要企業 AI 動態，並用簡單方式說明「發生什麼、為什麼重要、企業需要做什麼」。",
-    "body": "每月只挑真正跟企業有關的 AI\nAI 新聞非常多，但不是每一則都值得企業投入時間研究。\n因此 Enterprise AI 每月趨勢將聚焦：\n1｜AI Agent\n例如 Agentic AI、Multi-Agent、Computer Use 等發展。\n主要觀察：\nAI 能不能從「回答」走向真正的「執行工作」。\n\n2｜企業地端 AI\n包括 Local LLM、Private AI、Hybrid AI。\n主要觀察：\n企業資料是否可以留在內部，以及地端 AI 的成本與效能是否逐漸降低。\n\n3｜RAG 與企業知識\n觀察 AI 如何更準確地使用：\n- SOP\n- 文件\n- Database\n- 歷史案例\n\n4｜AI Infrastructure\n包括：\n- GPU\n- AI Server\n- Storage\n- Network\n了解企業 AI 成長後會需要什麼 IT 基礎。\n\n5｜Open Source AI\n持續追蹤：\n- 開源模型\n- Agent Framework\n- Vector DB\n- Workflow\n\n6｜AI Security & Governance\n包括：\n- 資料安全\n- Agent 權限\n- AI 法規\n- Audit\n- Human Approval\n每一篇都固定回答四件事\n發生了什麼？\n用簡單方式說明新聞。\n為什麼重要？\n不只是介紹技術。\n跟企業有什麼關係？\n說明可能影響哪些企業流程。\n現在需要做什麼？\n可以分成：\n- 值得導入\n- 值得 PoC\n- 持續觀察\n讓 AI 趨勢內容不只是新聞整理，而是真正幫企業判斷下一步。",
-    "links": [],
-    "files": [
-      {
-        "name": "第六章.png",
-        "file": "assets/materials/32/d904274245f03e99d354-1.png",
-        "kind": "image"
-      }
-    ],
-    "status": "已核准",
-    "revision": "27fd51ad3f370ab34e27c93af722ba881cbc87833ea109680b2c122e7f323eb8",
-    "updatedAt": "2026-09-29T11:22:28.135625+00:00",
-    "tags": []
-  },
-  {
     "id": "material-46",
     "title": "Agent 何時應停止並轉交人工",
     "topicId": "enterprise-adoption",
@@ -843,5 +823,25 @@
     "status": "已核准",
     "revision": "506343db6c25d08a4e1e2f7904ed7fcefde4de6b2b3fa4d2ab056fc4f1327508",
     "updatedAt": "2026-10-07T08:33:50.530103+00:00"
+  },
+  {
+    "id": "material-32",
+    "title": "Enterprise AI 每月趨勢｜企業真正需要注意的 AI 發展",
+    "topicId": "industry-trends",
+    "format": "文件／簡報",
+    "tags": [],
+    "summary": "AI 每天都有新模型、新工具與新名詞，但企業真正需要知道的不是所有新聞，而是哪些發展會影響公司未來的 AI 導入、IT 架構、資安與營運。本系列將每月整理重要企業 AI 動態，並用簡單方式說明「發生什麼、為什麼重要、企業需要做什麼」。",
+    "body": "每月只挑真正跟企業有關的 AI\nAI 新聞非常多，但不是每一則都值得企業投入時間研究。\n因此 Enterprise AI 每月趨勢將聚焦：\n1｜AI Agent\n例如 Agentic AI、Multi-Agent、Computer Use 等發展。\n主要觀察：\nAI 能不能從「回答」走向真正的「執行工作」。\n\n2｜企業地端 AI\n包括 Local LLM、Private AI、Hybrid AI。\n主要觀察：\n企業資料是否可以留在內部，以及地端 AI 的成本與效能是否逐漸降低。\n\n3｜RAG 與企業知識\n觀察 AI 如何更準確地使用：\n- SOP\n- 文件\n- Database\n- 歷史案例\n\n4｜AI Infrastructure\n包括：\n- GPU\n- AI Server\n- Storage\n- Network\n了解企業 AI 成長後會需要什麼 IT 基礎。\n\n5｜Open Source AI\n持續追蹤：\n- 開源模型\n- Agent Framework\n- Vector DB\n- Workflow\n\n6｜AI Security & Governance\n包括：\n- 資料安全\n- Agent 權限\n- AI 法規\n- Audit\n- Human Approval\n每一篇都固定回答四件事\n發生了什麼？\n用簡單方式說明新聞。\n為什麼重要？\n不只是介紹技術。\n跟企業有什麼關係？\n說明可能影響哪些企業流程。\n現在需要做什麼？\n可以分成：\n- 值得導入\n- 值得 PoC\n- 持續觀察\n讓 AI 趨勢內容不只是新聞整理，而是真正幫企業判斷下一步。",
+    "links": [],
+    "files": [
+      {
+        "name": "第六章.png",
+        "file": "assets/materials/32/d904274245f03e99d354-1.png",
+        "kind": "image"
+      }
+    ],
+    "status": "已核准",
+    "revision": "0c0bde854b29a2d1754161572aa03fa7bb0d9a4e28aa753fc59ad032a26995d4",
+    "updatedAt": "2026-10-07T08:34:56.444974+00:00"
   }
 ]
