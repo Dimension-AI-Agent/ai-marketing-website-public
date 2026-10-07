@@ -57,7 +57,8 @@ function searchScore(item, query) {
   const topic = topicOf(item).title.toLocaleLowerCase();
   const summary = String(item.summary || "").toLocaleLowerCase();
   const body = String(item.body || "").toLocaleLowerCase();
-  if (!words.every(word => title.includes(word) || topic.includes(word) || summary.includes(word) || body.includes(word))) return -1;
+  const tags = articleTags(item).join(' ').toLocaleLowerCase();
+  if (!words.every(word => title.includes(word) || topic.includes(word) || tags.includes(word) || summary.includes(word) || body.includes(word))) return -1;
   return words.reduce((score, word) => score + (title.includes(word) ? 8 : 0) + (topic.includes(word) ? 4 : 0) + (summary.includes(word) ? 2 : 0) + (body.includes(word) ? 1 : 0), 0);
 }
 function filteredItems(filter, query) {
@@ -160,8 +161,8 @@ function renderArticle(item) {
   const returnLabel = fromLibrary ? "← 返回所有文章" : fromScene ? `← 返回${siteLayerChoices[fromScene].title}場景` : isXundaCase(item) ? "← 返回訊達成功案例" : isHpe(item) ? "← 返回 HPE 專區" : "← 返回所有文章";
   document.title = `${item.title}｜訊達 AI 內容專欄`;
   document.querySelector("#app").innerHTML = `<div class="article-page">
-    <div class="article-top"><div class="container"><nav class="breadcrumb" aria-label="所在位置"><a href="./">內容專欄</a><span>›</span><span>${escapeHtml(topic.title)}</span></nav><div class="article-header"><span class="eyebrow">${escapeHtml(topic.track)} / ${escapeHtml(topic.title)}</span><h1>${escapeHtml(item.title)}</h1>${item.summary ? `<p class="lead${expandableSummary ? " is-collapsible" : ""}" id="article-summary">${escapeHtml(item.summary)}</p>${expandableSummary ? '<button type="button" class="summary-toggle" aria-controls="article-summary" aria-expanded="false">展開摘要</button>' : ""}` : ""}<div class="article-byline"><b>訊達 AI 內容</b><span>·</span><span>${escapeHtml(item.format || "文章")}</span></div></div></div></div>
-    <div class="container reading-wrap"><article class="article-body">${toc}${body}${attachmentsMarkup(item)}<section class="article-next-action" aria-labelledby="article-next-title"><span>讀完可以做什麼</span><h2 id="article-next-title">${escapeHtml(next.title)}</h2><p>${escapeHtml(next.why)}</p><button type="button" class="article-next-toggle" aria-controls="article-next-checks" aria-expanded="false">查看要確認的事項 ↗</button><ul id="article-next-checks" hidden>${next.checks.map(check => `<li>${escapeHtml(check)}</li>`).join("")}</ul></section><div class="article-end"><a class="back-link" href="${returnHref}">${returnLabel}</a></div></article>${guideMarkup}</div>
+    <div class="article-top"><div class="container"><nav class="breadcrumb" aria-label="所在位置"><a href="./">內容專欄</a><span>›</span><span>${escapeHtml(topic.title)}</span></nav><div class="article-header"><span class="eyebrow">${escapeHtml(topic.track)} / ${escapeHtml(topic.title)}</span><h1>${escapeHtml(item.title)}</h1>${item.summary ? `<p class="lead${expandableSummary ? " is-collapsible" : ""}" id="article-summary">${escapeHtml(item.summary)}</p>${expandableSummary ? '<button type="button" class="summary-toggle" aria-controls="article-summary" aria-expanded="false">展開摘要</button>' : ""}` : ""}<div class="article-byline"><b>訊達 AI 內容</b><span>·</span><span>${escapeHtml(item.format || "文章")}</span></div>${articleTagsMarkup(item)}</div></div></div>
+    <div class="container reading-wrap"><article class="article-body">${toc}${body}${attachmentsMarkup(item)}<section class="article-next-action" aria-labelledby="article-next-title"><span>讀完可以做什麼</span><h2 id="article-next-title">${escapeHtml(next.title)}</h2><p>${escapeHtml(next.why)}</p><button type="button" class="article-next-toggle" aria-controls="article-next-checks" aria-expanded="false">查看要確認的事項 ↗</button><ul id="article-next-checks" hidden>${next.checks.map(check => `<li>${escapeHtml(check)}</li>`).join("")}</ul></section>${relatedArticlesMarkup(item)}<div class="article-end"><a class="back-link" href="${escapeHtml(returnHref)}">${returnLabel}</a></div></article>${guideMarkup}</div>
   </div>`;
   const summaryToggle = document.querySelector(".summary-toggle");
   if (expandableSummary && summaryToggle?.addEventListener) summaryToggle.addEventListener("click", () => {
@@ -197,7 +198,7 @@ async function load() {
     if (!siteResponse.ok || !materialsResponse.ok) throw new Error("內容資料讀取失敗");
     const [site, materials] = await Promise.all([siteResponse.json(), materialsResponse.json()]);
     const topics = new Map();
-    site.tracks.forEach(track => track.topics.forEach(topic => topics.set(topic.id, { title: topic.title, track: track.title, trackId: track.id })));
+    site.tracks.forEach(track => track.topics.forEach(topic => topics.set(topic.id, { title: topic.title, description:topic.description, track: track.title, trackId: track.id })));
     content = { topics, tracks: site.tracks, articleOutlines: site.articleOutlines || {}, relatedReading: site.relatedReading || {}, items: materials.filter(item => item.status === "已核准"), guideRecommendations: guideRecommendations?.version === 1 ? guideRecommendations : null };
     window.addEventListener("hashchange", openLegacyHash);
     const legacyArticleId = /^#(material-\d+)$/.exec(location.hash)?.[1];
