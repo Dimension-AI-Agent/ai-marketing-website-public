@@ -330,31 +330,6 @@
     ]
   },
   {
-    "id": "material-36",
-    "title": "用 LangGraph 設計可保存狀態、恢復執行與人工介入的 Agent 流程",
-    "topicId": "ai-tools-frameworks",
-    "format": "照片／圖片",
-    "summary": "LangGraph 是支援長時間執行與狀態管理的 Agent 協調框架，可在流程中結合固定程式步驟與模型決策，並提供持久化及人工介入能力。這些機制適合用來說明企業流程如何保存進度、在必要步驟等待人員審核，以及在中斷後恢復執行。實際導入仍需設計資料存取、狀態儲存與故障處理，不能僅憑框架功能就視為完成企業整合。目前素材依據官方文件整理，尚未部署或實測。",
-    "body": "# LangGraph 概覽（已翻譯成中文）\n\n使用 LangGraph 取得更高程度的控制能力，設計能可靠處理複雜任務的 Agent。\n\nLangGraph 是一套低階的 Agent 編排框架與執行環境，用來建立、管理及部署長時間運作、具有狀態的 Agent。\n\n它最大的特色之一，是能在同一張 Graph 中混合：\n\n- **確定性的程式邏輯**\n- **由 LLM 驅動的 Agent 行為**\n\n因此開發者可以精確控制哪些流程必須固定、可預測且可稽核，哪些部分則交由模型彈性判斷。\n\nLangGraph 本身主要專注在 **Agent orchestration（Agent 編排）**。如果剛開始接觸 Agent，官方建議先了解模型（Models）與工具（Tools）等基本元件。\n\nLangGraph 可以搭配 LangChain 使用，但**並不強制依賴 LangChain**。\n\n如果希望使用較高階、已經封裝好的 Agent 架構，可以使用 LangChain Agents；LangGraph 則主要負責底層能力，例如：\n\n- Durable Execution（持久化執行）\n- Streaming（串流）\n- Human-in-the-loop（人在迴圈）\n- Persistence（狀態持久化）\n\n## LangChain 產品之間的關係\n\n- **Deep Agents**：建立在 LangGraph 上的 Agent Harness，提供規劃、Subagents、檔案系統工具及 Context Management。\n- **LangChain**：Agent Framework，提供模型、工具及 Agent Loop 的抽象層與整合。\n- **LangGraph**：Agent Orchestration Runtime，負責持久化執行、Streaming、Human-in-the-loop 與 Persistence。\n- **LangSmith**：提供 Trace、Evaluation、Prompt 管理及部署功能的平台。\n- **LangSmith Engine**：分析 LangGraph Agent 的 Trace，偵測問題並提出修正方案。\n- **LangSmith Fleet**：No-code Agent Builder，可透過範本與整合建立例行自動化 Agent。\n\n---\n\n# 安裝\n\n使用 pip：\n\n```bash\npip install -U langgraph\n```\n\n或使用 uv：\n\n```bash\nuv add langgraph\n```\n\n接著可以建立一個簡單的 Hello World Graph：\n\n```python\nfrom langgraph.graph import StateGraph, MessagesState, START, END\n\ndef mock_llm(state: MessagesState):\n    return {\"messages\": [{\"role\": \"ai\", \"content\": \"hello world\"}]}\n\ngraph = StateGraph(MessagesState)\ngraph.add_node(mock_llm)\ngraph.add_edge(START, \"mock_llm\")\ngraph.add_edge(\"mock_llm\", END)\ngraph = graph.compile()\n\ngraph.invoke({\"messages\": [{\"role\": \"user\", \"content\": \"hi!\"}]})\n```\n\n可以搭配 LangSmith 追蹤 Request、除錯 Agent 行為並評估輸出結果。\n\n---\n\n# 核心優勢\n\nLangGraph 提供建構長時間執行、具有狀態的 Workflow 或 Agent 所需的底層基礎設施。\n\n它不會替你抽象化 Prompt 或 Agent Architecture，而是提供以下核心能力：\n\n### 混合確定性流程與 Agent 流程\n\n可以在同一張 Graph 中，同時使用傳統程式邏輯與由 LLM 驅動的決策。\n\n需要可靠性、可預測性的地方使用 Deterministic Steps；需要彈性判斷的地方則使用 Agentic Steps。\n\n### Persistence\n\nAgent 即使執行失敗，也能保存目前狀態，之後從原本停止的位置繼續執行。\n\n### Human-in-the-loop\n\n可以在 Agent 執行流程中的任意階段加入人工監督，檢查或修改 Agent State。\n\n### Comprehensive Memory\n\n支援具有狀態的 Agent，包括：\n\n- 執行過程中的短期 Working Memory\n- 跨 Session 保存的 Long-term Memory\n\n### 使用 LangSmith 進行除錯\n\n可透過視覺化工具查看 Agent 執行路徑、State Transition，以及詳細的 Runtime Metrics。\n\n### Production-ready Deployment\n\n提供適合正式環境的可擴充基礎設施，用來處理 Stateful、Long-running Workflow 的部署需求。\n\n---\n\n# LangGraph 生態系\n\nLangGraph 可以單獨使用，也可以與其他 LangChain 產品搭配。\n\n## LangSmith Observability\n\n集中進行：\n\n- Request Tracing\n- Output Evaluation\n- Deployment Monitoring\n\n可以先使用 LangGraph 在本地端 Prototype，再搭配 Observability 與 Evaluation 能力部署到 Production。\n\n## LangSmith Deployment\n\n提供專門為 Long-running、Stateful Workflow 設計的 Agent 部署與擴充平台。\n\n也能讓團隊：\n\n- 發現 Agent\n- 重複使用 Agent\n- 設定 Agent\n- 分享 Agent\n- 使用 Studio 進行視覺化 Prototype\n\n## LangChain\n\n提供各種 Integration 與可組合元件，簡化 LLM Application 的開發。\n\nLangChain 中的 Agent Abstraction 本身就是建立在 LangGraph 之上。\n\n---\n\n# 致謝\n\nLangGraph 的設計受到 **Pregel** 與 **Apache Beam** 啟發，其公開 API 介面則參考了 **NetworkX**。\n\nLangGraph 由 LangChain 的開發公司 LangChain Inc. 建立，但即使不使用 LangChain，也可以獨立使用 LangGraph。",
-    "links": [
-      "https://docs.langchain.com/oss/python/langgraph/overview"
-    ],
-    "files": [
-      {
-        "name": "AI Agent 如何保存進度、等待人工審核，並在中斷後接續工作？(以「報價草稿審核」作為假想情境).png",
-        "file": "assets/materials/36/e4dba2a2722bfade2724-1.png",
-        "kind": "image"
-      }
-    ],
-    "status": "已核准",
-    "revision": "57ac16f44420f6c6c163925d9ea1e972331ba24c99add2730e71c6dee6cde155",
-    "updatedAt": "2026-09-30T02:57:30.687486+00:00",
-    "tags": [
-      "LangGraph",
-      "流程設計"
-    ]
-  },
-  {
     "id": "material-39",
     "title": "陌生裝置想連公司 Wi-Fi？從確認身分到決定權限",
     "topicId": "network-access-security",
@@ -817,5 +792,33 @@
     "status": "已核准",
     "revision": "29d03e3ea6ae6b5add4dc3f51559420744514f0ea87849ac9f8d62779d4c47e3",
     "updatedAt": "2026-10-07T08:05:40.852550+00:00"
+  },
+  {
+    "id": "material-36",
+    "title": "用 LangGraph 設計可保存狀態、恢復執行與人工介入的 Agent 流程",
+    "topicId": "ai-tools-frameworks",
+    "format": "照片／圖片",
+    "tags": [
+      "LangGraph",
+      "LangChain",
+      "LangSmith",
+      "人工接手",
+      "流程設計"
+    ],
+    "summary": "LangGraph 是支援長時間執行與狀態管理的 Agent 協調框架，可在流程中結合固定程式步驟與模型決策，並提供持久化及人工介入能力。這些機制適合用來說明企業流程如何保存進度、在必要步驟等待人員審核，以及在中斷後恢復執行。實際導入仍需設計資料存取、狀態儲存與故障處理，不能僅憑框架功能就視為完成企業整合。目前素材依據官方文件整理，尚未部署或實測。",
+    "body": "# LangGraph 概覽（已翻譯成中文）\n\n使用 LangGraph 取得更高程度的控制能力，設計能可靠處理複雜任務的 Agent。\n\nLangGraph 是一套低階的 Agent 編排框架與執行環境，用來建立、管理及部署長時間運作、具有狀態的 Agent。\n\n它最大的特色之一，是能在同一張 Graph 中混合：\n\n- **確定性的程式邏輯**\n- **由 LLM 驅動的 Agent 行為**\n\n因此開發者可以精確控制哪些流程必須固定、可預測且可稽核，哪些部分則交由模型彈性判斷。\n\nLangGraph 本身主要專注在 **Agent orchestration（Agent 編排）**。如果剛開始接觸 Agent，官方建議先了解模型（Models）與工具（Tools）等基本元件。\n\nLangGraph 可以搭配 LangChain 使用，但**並不強制依賴 LangChain**。\n\n如果希望使用較高階、已經封裝好的 Agent 架構，可以使用 LangChain Agents；LangGraph 則主要負責底層能力，例如：\n\n- Durable Execution（持久化執行）\n- Streaming（串流）\n- Human-in-the-loop（人在迴圈）\n- Persistence（狀態持久化）\n\n## LangChain 產品之間的關係\n\n- **Deep Agents**：建立在 LangGraph 上的 Agent Harness，提供規劃、Subagents、檔案系統工具及 Context Management。\n- **LangChain**：Agent Framework，提供模型、工具及 Agent Loop 的抽象層與整合。\n- **LangGraph**：Agent Orchestration Runtime，負責持久化執行、Streaming、Human-in-the-loop 與 Persistence。\n- **LangSmith**：提供 Trace、Evaluation、Prompt 管理及部署功能的平台。\n- **LangSmith Engine**：分析 LangGraph Agent 的 Trace，偵測問題並提出修正方案。\n- **LangSmith Fleet**：No-code Agent Builder，可透過範本與整合建立例行自動化 Agent。\n\n---\n\n# 安裝\n\n使用 pip：\n\n```bash\npip install -U langgraph\n```\n\n或使用 uv：\n\n```bash\nuv add langgraph\n```\n\n接著可以建立一個簡單的 Hello World Graph：\n\n```python\nfrom langgraph.graph import StateGraph, MessagesState, START, END\n\ndef mock_llm(state: MessagesState):\n    return {\"messages\": [{\"role\": \"ai\", \"content\": \"hello world\"}]}\n\ngraph = StateGraph(MessagesState)\ngraph.add_node(mock_llm)\ngraph.add_edge(START, \"mock_llm\")\ngraph.add_edge(\"mock_llm\", END)\ngraph = graph.compile()\n\ngraph.invoke({\"messages\": [{\"role\": \"user\", \"content\": \"hi!\"}]})\n```\n\n可以搭配 LangSmith 追蹤 Request、除錯 Agent 行為並評估輸出結果。\n\n---\n\n# 核心優勢\n\nLangGraph 提供建構長時間執行、具有狀態的 Workflow 或 Agent 所需的底層基礎設施。\n\n它不會替你抽象化 Prompt 或 Agent Architecture，而是提供以下核心能力：\n\n### 混合確定性流程與 Agent 流程\n\n可以在同一張 Graph 中，同時使用傳統程式邏輯與由 LLM 驅動的決策。\n\n需要可靠性、可預測性的地方使用 Deterministic Steps；需要彈性判斷的地方則使用 Agentic Steps。\n\n### Persistence\n\nAgent 即使執行失敗，也能保存目前狀態，之後從原本停止的位置繼續執行。\n\n### Human-in-the-loop\n\n可以在 Agent 執行流程中的任意階段加入人工監督，檢查或修改 Agent State。\n\n### Comprehensive Memory\n\n支援具有狀態的 Agent，包括：\n\n- 執行過程中的短期 Working Memory\n- 跨 Session 保存的 Long-term Memory\n\n### 使用 LangSmith 進行除錯\n\n可透過視覺化工具查看 Agent 執行路徑、State Transition，以及詳細的 Runtime Metrics。\n\n### Production-ready Deployment\n\n提供適合正式環境的可擴充基礎設施，用來處理 Stateful、Long-running Workflow 的部署需求。\n\n---\n\n# LangGraph 生態系\n\nLangGraph 可以單獨使用，也可以與其他 LangChain 產品搭配。\n\n## LangSmith Observability\n\n集中進行：\n\n- Request Tracing\n- Output Evaluation\n- Deployment Monitoring\n\n可以先使用 LangGraph 在本地端 Prototype，再搭配 Observability 與 Evaluation 能力部署到 Production。\n\n## LangSmith Deployment\n\n提供專門為 Long-running、Stateful Workflow 設計的 Agent 部署與擴充平台。\n\n也能讓團隊：\n\n- 發現 Agent\n- 重複使用 Agent\n- 設定 Agent\n- 分享 Agent\n- 使用 Studio 進行視覺化 Prototype\n\n## LangChain\n\n提供各種 Integration 與可組合元件，簡化 LLM Application 的開發。\n\nLangChain 中的 Agent Abstraction 本身就是建立在 LangGraph 之上。\n\n---\n\n# 致謝\n\nLangGraph 的設計受到 **Pregel** 與 **Apache Beam** 啟發，其公開 API 介面則參考了 **NetworkX**。\n\nLangGraph 由 LangChain 的開發公司 LangChain Inc. 建立，但即使不使用 LangChain，也可以獨立使用 LangGraph。",
+    "links": [
+      "https://docs.langchain.com/oss/python/langgraph/overview"
+    ],
+    "files": [
+      {
+        "name": "AI Agent 如何保存進度、等待人工審核，並在中斷後接續工作？(以「報價草稿審核」作為假想情境).png",
+        "file": "assets/materials/36/e4dba2a2722bfade2724-1.png",
+        "kind": "image"
+      }
+    ],
+    "status": "已核准",
+    "revision": "8abcdc8e5b286b94f687f36544757779f0b8df3213743540841da00274ba0070",
+    "updatedAt": "2026-10-07T08:06:01.756743+00:00"
   }
 ]
