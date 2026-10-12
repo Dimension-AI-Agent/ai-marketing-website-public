@@ -6,12 +6,14 @@ const vm = require('node:vm');
 
 const guideCode = fs.readFileSync(path.join(__dirname, '../guide.js'), 'utf8');
 const guide = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/guide-recommendations.json'), 'utf8'));
+const site = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/site.json'), 'utf8'));
+const topics = new Map(site.tracks.flatMap(track => track.topics.map(topic => [topic.id, {title:topic.title, description:topic.description}])));
 function page(config = guide, items = []) {
   const root = { innerHTML: '' };
   const progress = { textContent: '' };
   let focused = 0;
   const context = vm.createContext({
-    content: { guideRecommendations: config, items },
+    content: { guideRecommendations: config, items, topics },
     escapeHtml: value => String(value ?? '').replace(/[&<>"']/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[ch]),
     isHpe: item => /HPE/.test(item.title), articleUrl: item => '?article=' + encodeURIComponent(item.id),
     document: { querySelector: selector => selector === '#guide-content' ? root : selector === '#guide-progress' ? progress : selector === '#guide-current-title' ? { focus() { focused++; } } : null }
@@ -109,4 +111,28 @@ test('missing results retain recoverable error states instead of an empty report
   const actual = page(config); actual.choose(3); actual.choose(0);
   assert.match(actual.root.innerHTML, /這項建議暫時無法顯示/);
   actual.control('back'); assert.match(actual.root.innerHTML, /目前卡在哪裡/);
+});
+
+test('all ten real reports offer a populated article category even when reviewed versions expire', () => {
+  const materials = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/materials.json'), 'utf8'));
+  for (const [id, result] of Object.entries(guide.results)) {
+    assert.ok(topics.has(result.browseTopic), id + ' needs a valid category');
+    const available = materials.filter(item => item.status === '已核准' && item.topicId === result.browseTopic);
+    assert.ok(available.length > 0, id + ' category must contain articles');
+    const actual = page(guide, materials);
+    vm.runInContext(`guidedCurrent=${JSON.stringify(id)}; guidedHistory=[{from:'start',answer:'目前情況'}]; renderGuide();`,actual.context);
+    assert.ok(actual.root.innerHTML.includes(`href="./?topic=${result.browseTopic}#all-articles"`));
+    assert.ok(actual.root.innerHTML.includes(topics.get(result.browseTopic).title));
+    assert.ok(actual.root.innerHTML.includes(`${available.length} 篇`));
+  }
+});
+
+test('removed or empty browse categories fall back to all articles without changing recommendation approvals', () => {
+  const config = structuredClone(guide); config.results.r7.browseTopic = 'missing-topic';
+  const actual = page(config); actual.choose(3); actual.choose(0);
+  assert.match(actual.root.innerHTML, /href="\.\/#all-articles"/);
+  assert.doesNotMatch(actual.root.innerHTML, /topic=missing-topic|article=material-34/);
+  config.results.r7.browseTopic = 'ai-security';
+  const empty = page(config); empty.choose(3); empty.choose(0);
+  assert.match(empty.root.innerHTML, /href="\.\/#all-articles"/);
 });
