@@ -51,7 +51,7 @@ function renderGuide() {
   if (question) {
     progress.textContent = `第 ${guidedHistory.length + 1} 題`;
     const previous = guidedHistory.at(-1);
-    root.innerHTML = `<div class="guided-question">${previous ? `<p class="guided-answer"><strong>上一個回答：</strong>${escapeHtml(previous.answer)}</p>` : ""}<h3 id="guide-current-title">${escapeHtml(question.title)}</h3>${question.hint ? `<p class="guided-hint">${escapeHtml(question.hint)}</p>` : ""}<div class="guided-options" role="group" aria-labelledby="guide-current-title">${question.options.map(([label], index) => `<button type="button" data-guide-option="${index}"><span>${escapeHtml(label)}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></button>`).join("")}</div>${guideControls()}</div>`;
+    root.innerHTML = `<div class="guided-question">${previous ? `<p class="guided-answer"><strong>上一個回答：</strong>${escapeHtml(previous.answer)}</p>` : ""}<h3 id="guide-current-title" tabindex="-1">${escapeHtml(question.title)}</h3>${question.hint ? `<p class="guided-hint">${escapeHtml(question.hint)}</p>` : ""}<div class="guided-options" role="group" aria-labelledby="guide-current-title">${question.options.map(([label], index) => `<button type="button" data-guide-option="${index}"><span>${escapeHtml(label)}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></button>`).join("")}</div>${guideControls()}</div>`;
     return;
   }
   const result = content.guideRecommendations.results[guidedCurrent];
@@ -60,16 +60,17 @@ function renderGuide() {
     root.innerHTML = '<p class="guided-error">這項建議暫時無法顯示。請回到上一題再選一次。</p>' + guideControls();
     return;
   }
-  progress.textContent = "建議";
-  const [lead, ...actions] = result.guidance.split("\n\n");
+  progress.textContent = "結果摘要";
+  const actions = Array.isArray(result.actions) ? result.actions.filter(action => typeof action === "string" && action.trim()) : [];
+  const actionMarkup = actions.length ? `<ol class="guided-report-actions">${actions.map(action => `<li>${escapeHtml(action)}</li>`).join("")}</ol>` : result.guidance.split("\n\n").map(paragraph => `<p>${escapeHtml(paragraph)}</p>`).join("");
   const links = (Array.isArray(result.articles) ? result.articles : []).filter(link => {
     const article = content.items.find(item => item.id === link.id);
-    return article && !isHpe(article) && article.revision === link.revision;
+    return article && article.status === "已核准" && !isHpe(article) && article.revision === link.revision;
   }).slice(0, 2).map(link => {
     const article = content.items.find(item => item.id === link.id);
     return `<a href="${articleUrl(article)}"><strong>${escapeHtml(article.title)} ↗</strong><small>${escapeHtml(link.why)}</small></a>`;
   }).join("");
-  root.innerHTML = `<div class="guided-result"><p class="guided-result-label">可以先做的事</p><h3 id="guide-current-title">${escapeHtml(result.title)}</h3><p>${escapeHtml(lead)}</p><p>${escapeHtml(actions.join(" "))}</p><div class="guided-controls"><button type="button" data-guide-action="back">← 修改上一題</button><button type="button" data-guide-action="reset">重新選情況</button></div></div>${links ? `<div class="guided-reading"><h4>相關文章</h4><div>${links}</div></div>` : ""}<p class="guided-recap"><strong>你的選擇：</strong>${guidedHistory.map(item => escapeHtml(item.answer)).join("　→　")}</p>`;
+  root.innerHTML = `<section class="guided-report" aria-labelledby="guide-current-title"><h3 id="guide-current-title" tabindex="-1">你的 AI 導入摘要</h3><div class="guided-report-grid"><div class="guided-report-overview"><dl><dt>目前情況</dt><dd>${escapeHtml(guidedHistory[0]?.answer || "尚未選擇情況")}</dd><dt>優先處理</dt><dd class="guided-report-priority">${escapeHtml(result.title)}</dd></dl></div><section class="guided-report-action-section" aria-labelledby="guide-actions-title"><h4 id="guide-actions-title">建議行動</h4>${actionMarkup}</section></div>${links ? `<div class="guided-reading"><h4>相關閱讀</h4><div>${links}</div></div>` : ""}<details class="guided-report-answers"><summary>查看回答（${guidedHistory.length} 題）</summary><ol>${guidedHistory.map(item => `<li><span>${escapeHtml(guidedQuestions[item.from]?.title || "回答")}</span><strong>${escapeHtml(item.answer)}</strong></li>`).join("")}</ol></details><div class="guided-controls"><button type="button" data-guide-action="back">修改上一題</button><button type="button" data-guide-action="reset">重新開始</button></div></section>`;
 }
 
 function handleGuideClick(event) {
@@ -80,7 +81,7 @@ function handleGuideClick(event) {
     guidedHistory.push({ from: guidedCurrent, answer: choice[0] });
     guidedCurrent = choice[1];
     renderGuide();
-    document.querySelector("#topics").scrollIntoView({ block: "start", behavior: "smooth" });
+    document.querySelector("#guide-current-title")?.focus();
     return;
   }
   const action = event.target.closest("[data-guide-action]")?.dataset.guideAction;
@@ -88,9 +89,11 @@ function handleGuideClick(event) {
     const previous = guidedHistory.pop();
     if (previous) guidedCurrent = previous.from;
     renderGuide();
+    document.querySelector("#guide-current-title")?.focus();
   } else if (action === "reset") {
     guidedCurrent = "start";
     guidedHistory = [];
     renderGuide();
+    document.querySelector("#guide-current-title")?.focus();
   }
 }
