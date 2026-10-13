@@ -167,5 +167,66 @@
         }
       ]
     }
+  },
+  "assessment": {
+    "version": 1,
+    "status": "local-demo",
+    "articles": {
+      "material-26": {
+        "id": "material-26",
+        "revision": "a5a988657014b888c3e72942777c36a16e37610a3d9f0db87b719b6ffda0b032",
+        "why": "核對資料使用、來源版本與權限的測試前提。"
+      },
+      "material-27": {
+        "id": "material-27",
+        "revision": "7d533b436fd70b75363a8b8f70909ae05f81225f11246c54664cc5b03e5b9991",
+        "why": "了解 AI 如何接入既有系統，以及整合時需確認的資料與存取條件。"
+      },
+      "material-30": {
+        "id": "material-30",
+        "revision": "4492ca1a1d8266b8179429af83af504064a194134b78207b9b53196e27423989",
+        "why": "從具體需求到小範圍測試，確認目前該補齊哪些條件。"
+      },
+      "material-31": {
+        "id": "material-31",
+        "revision": "506343db6c25d08a4e1e2f7904ed7fcefde4de6b2b3fa4d2ab056fc4f1327508",
+        "why": "對照不同效益面向，界定你們要觀察的改善結果。"
+      },
+      "material-34": {
+        "id": "material-34",
+        "revision": "29d03e3ea6ae6b5add4dc3f51559420744514f0ea87849ac9f8d62779d4c47e3",
+        "why": "以內部資料的存取邊界，檢查不同身分能讀到哪些內容。"
+      },
+      "material-35": {
+        "id": "material-35",
+        "revision": "64bec11fa969b0316348c5eae2b2163b70007fc0e1a8c293524a4f0bd3f00fa3",
+        "why": "用任務完成、品質、穩定性與執行紀錄，設計可重做的比較。"
+      },
+      "material-41": {
+        "id": "material-41",
+        "revision": "3f3367489c2da6019649e37c4738ed3cf0aff0dc84b56ae075f455ba5292597a",
+        "why": "拆開工作流程的輸入、動作、交接與例外，辨認哪一步需要改善。"
+      },
+      "material-44": {
+        "id": "material-44",
+        "revision": "6ae59252c014a67007a68cdf14561faa3c10309e52568291cc11ca76882e2c2c",
+        "why": "整理小範圍驗證所需的範例、成功條件與測試方式。"
+      },
+      "material-46": {
+        "id": "material-46",
+        "revision": "18b256bb2af97e6603ffc5c6f84e16b556f7750399484326e808d4ac884dc5c9",
+        "why": "確認哪些情況應交給人，以及交接時需要提供哪些資訊。"
+      },
+      "material-50": {
+        "id": "material-50",
+        "revision": "4612fff9375c4349bb1c0698562b7fd27b33544557389832d949b98291721ff2",
+        "why": "釐清誰執行、誰決定、誰能接手，對照審核或交接的缺口。"
+      },
+      "material-53": {
+        "id": "material-53",
+        "revision": "d97189964add5cf87b9fd9cc7ee180eadc8740013ba02c0a16788dab259d50c0",
+        "why": "參考訊達將特定報價工作縮成明確範圍的做法。"
+      }
+    }
   }
 }
