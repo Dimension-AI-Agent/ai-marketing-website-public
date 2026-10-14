@@ -238,8 +238,10 @@ test("library lists all approved articles and supports category search and empty
   context.updateLibrary("", "絕對不會出現的詞");
   assert.match(result.innerHTML, /沒有找到相符的文章/);
   assert.doesNotMatch(result.innerHTML, /class="library-article"/);
-  context.updateLibrary("software", "");
-  assert.match(result.innerHTML, /這個分類還沒有文章/);
+  const emptyCategory = createPage({ records: materials.filter(item => item.topicId !== "software"), hash: "#all-articles" });
+  await emptyCategory.context.load();
+  emptyCategory.context.updateLibrary("software", "");
+  assert.match(emptyCategory.elements.get("#library-results").innerHTML, /這個分類還沒有文章/);
 });
 
 test("library keeps all topic definitions but hides empty desktop and mobile filters", async () => {
