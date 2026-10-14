@@ -238,8 +238,10 @@ test("library lists all approved articles and supports category search and empty
   context.updateLibrary("", "絕對不會出現的詞");
   assert.match(result.innerHTML, /沒有找到相符的文章/);
   assert.doesNotMatch(result.innerHTML, /class="library-article"/);
-  context.updateLibrary("software", "");
-  assert.match(result.innerHTML, /這個分類還沒有文章/);
+  const emptyCategory = createPage({ records: materials.filter(item => item.topicId !== "software"), hash: "#all-articles" });
+  await emptyCategory.context.load();
+  emptyCategory.context.updateLibrary("software", "");
+  assert.match(emptyCategory.elements.get("#library-results").innerHTML, /這個分類還沒有文章/);
 });
 
 test("library keeps all topic definitions but hides empty desktop and mobile filters", async () => {
@@ -285,23 +287,24 @@ test("library deep links and article return retain category and keyword", async 
   assert.match(article.elements.get("#app").innerHTML, /topic=enterprise-adoption/);
 });
 
-test("guided recommendations retain approved articles at reviewed revisions", async () => {
+test("five-question recommendations use current Demo revisions and retain article guards", async () => {
   const { context, elements } = createPage();
   await context.load();
-  assert.match(elements.get("#guide-content").innerHTML, /目前最接近哪種情況/);
-  vm.runInContext('guidedCurrent = "r2"; guidedHistory = [{from:"start",answer:"有想做的事"}]; renderGuide();', context);
+  assert.match(elements.get("#guide-content").innerHTML, /這次最想改善哪一類工作/);
+  const answers = 'guidedAnswers = ["search","undecided","pilot","usable","unconfirmed"]; renderGuide();';
+  vm.runInContext(answers, context);
   assert.match(elements.get("#guide-content").innerHTML, /article=material-31/);
   const changed = materials.map(item => item.id === "material-31" ? { ...item, revision: "new-revision" } : item);
   const stale = createPage({ records: changed });
   await stale.context.load();
-  vm.runInContext('guidedCurrent = "r2"; renderGuide();', stale.context);
+  vm.runInContext(answers, stale.context);
   assert.doesNotMatch(stale.elements.get("#guide-content").innerHTML, /article=material-31/);
   const hpe = materials.find(item => item.id === "material-5");
   const withHpe = structuredClone(guide);
-  withHpe.results.r2.articles = [{ id: hpe.id, revision: hpe.revision, why: "測試跨區" }, ...withHpe.results.r2.articles];
+  withHpe.assessment.articles["material-31"] = { id:hpe.id, revision:hpe.revision, why:"測試跨區" };
   const isolated = createPage({ guideConfig: withHpe });
   await isolated.context.load();
-  vm.runInContext('guidedCurrent = "r2"; renderGuide();', isolated.context);
+  vm.runInContext(answers, isolated.context);
   assert.doesNotMatch(isolated.elements.get("#guide-content").innerHTML, /article=material-5/);
 });
 
