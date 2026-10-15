@@ -140,7 +140,7 @@
   .site-brand { gap: 13px; }
   .dimension-logo { width: 120px; height: 90px; }
   .dimension-subtitle { padding-left: 13px; max-width: none; font-size: 11px; }
-  .site-nav { gap: 14px; justify-content: space-between; }
+  .site-nav { gap: 8px 14px; justify-content: flex-start; flex-wrap: wrap; overflow: visible; }
   .site-nav a { font-size: 11px; padding-block: 9px; }
   .site-hero { gap: 0; padding-block: 43px 35px; min-height: 0; }
   .site-hero h1 { font-size: clamp(33px, 9.2vw, 46px); margin-bottom: 22px; line-height: 1.3; }
