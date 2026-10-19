@@ -172,6 +172,11 @@
     "version": 1,
     "status": "approved",
     "articles": {
+      "material-13": {
+        "id": "material-13",
+        "revision": "38c9f5ef12a62ce1f042d52f5ac7f0cbe8705556f2bd2051848f7ce9f372970a",
+        "why": "看 AI 如何串接 CRM、ERP 等系統整理建議，再由人審核確認。"
+      },
       "material-26": {
         "id": "material-26",
         "revision": "a5a988657014b888c3e72942777c36a16e37610a3d9f0db87b719b6ffda0b032",
@@ -181,6 +186,16 @@
         "id": "material-27",
         "revision": "7d533b436fd70b75363a8b8f70909ae05f81225f11246c54664cc5b03e5b9991",
         "why": "了解 AI 如何接入既有系統，以及整合時需確認的資料與存取條件。"
+      },
+      "material-28": {
+        "id": "material-28",
+        "revision": "fc19affcfb24688de68b8f4f79f642265c39e5138bb30fc5afe5bb00b518226c",
+        "why": "了解規則固定的步驟，為什麼不一定需要大型語言模型。"
+      },
+      "material-29": {
+        "id": "material-29",
+        "revision": "2cc186c5597be88bdbb7601d9dc90d3f0710c01f784dcc42f06a16ff2944e56e",
+        "why": "使用 AI 工具前，先弄清楚公司資料會送到哪裡、如何設定權限。"
       },
       "material-30": {
         "id": "material-30",
@@ -211,6 +226,11 @@
         "id": "material-44",
         "revision": "6ae59252c014a67007a68cdf14561faa3c10309e52568291cc11ca76882e2c2c",
         "why": "整理小範圍驗證所需的範例、成功條件與測試方式。"
+      },
+      "material-45": {
+        "id": "material-45",
+        "revision": "2246b39b719c4873f5d4a58cd93efab53833ea955dab01abd7b2d217b13773ef",
+        "why": "從試做走到正式上線後，每個階段要確認的風險與分工。"
       },
       "material-46": {
         "id": "material-46",
