@@ -7,3 +7,28 @@
 @media(max-width:700px){.header nav{width:100%;margin:0;flex-wrap:wrap;gap:12px 20px;padding:4px 0 9px}.header nav a{font-size:13px}.overview-intro{display:block;padding:4px 0 8px}.overview-intro h1{font-size:33px;margin-bottom:19px}.overview-intro .lead{font-size:15px}.guide-overview .back{margin-bottom:20px}.home-path-links{grid-template-columns:1fr;gap:0;margin-top:12px}.home-path-links strong{font-size:20px}.home-paths{padding-top:25px}}
 
 .loading{max-width:1180px;margin:0 auto;padding:65px 32px;color:var(--muted)}.role-reading{margin-top:18px!important}.not-found button{cursor:pointer}.not-found .text-link{margin-left:18px}
+
+/* Match the approved wordmark header used by the main site. */
+.header { background: #fff; min-height: 96px; padding-block: 12px; }
+.brand { gap: 20px; font-weight: 500; }
+.brand img { width: 166px; height: auto; aspect-ratio: 947 / 360; flex: none; }
+.brand span { padding-left: 20px; border-left: 1px solid #bdc7c1; color: #425760; }
+@media (min-width: 701px) and (max-width: 1050px) {
+  .header { flex-wrap: wrap; gap: 0; padding-block: 8px; }
+  .brand { width: 100%; }
+  .brand img { width: 152px; }
+  .header nav { margin: 0; }
+}
+@media (max-width: 700px) {
+  .header { min-height: 0; padding-block: 10px 7px; gap: 3px; }
+  .brand { gap: 13px; }
+  .brand img { width: 140px; height: auto; }
+  .brand span { padding-left: 13px; }
+  .header nav { margin-top: 3px; gap: 5px 14px; padding: 0; }
+  .header nav a { display: inline-flex; align-items: center; min-height: 44px; font-size: 11px; padding-block: 8px; }
+}
+@media (max-width: 350px) {
+  .brand { gap: 10px; }
+  .brand img { width: 122px; }
+  .brand span { font-size: 10px; padding-left: 10px; }
+}
