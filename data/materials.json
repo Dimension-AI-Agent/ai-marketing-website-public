@@ -824,7 +824,7 @@
   {
     "id": "material-13",
     "title": "訊達智慧維修 AI Agent｜從電話報修到智慧派工與知識回寫",
-    "topicId": "on-prem-integration",
+    "topicId": "xunda-self-adoption",
     "format": "照片／圖片",
     "tags": [
       "Demo",
@@ -844,7 +844,7 @@
       }
     ],
     "status": "已核准",
-    "revision": "0c4414a25c779a4ae0479b4837dbf690bcfa8db6bfca3e382a258c4cede58ed7",
-    "updatedAt": "2026-11-02T06:54:15.067854+00:00"
+    "revision": "3c64c3b602ced45cbfc094f138253090f7423af80ff55cb318a4f9223f394d5e",
+    "updatedAt": "2026-11-02T07:00:15.758255+00:00"
   }
 ]
