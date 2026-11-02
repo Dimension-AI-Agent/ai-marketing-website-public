@@ -163,8 +163,32 @@ test("HPE application cases appear in HPE even beyond the featured articles", as
   assert.doesNotMatch(html.slice(html.indexOf('id="cases-view"')), /article=test-hpe-case/);
 });
 
-test("empty Xunda view never adopts legacy industry or HPE cases as customer successes", async () => {
-  const page = createPage({ records: materials.filter(item => item.topicId !== "xunda-customer-cases") });
+test("self-adoption cases appear with their type, remain searchable and return to success cases", async () => {
+  const quotation = { ...materials.find(item => item.id === "material-53"), topicId: "xunda-self-adoption" };
+  const draft = { ...quotation, id: "draft-self-adoption", status: "待審", title: "未核准自身導入" };
+  const hpeSelf = { ...quotation, id: "hpe-self-adoption", title: "HPE 自身導入測試" };
+  const records = [...materials.filter(item => item.id !== quotation.id), quotation, draft, hpeSelf];
+  const page = createPage({ records, hash: "#cases" });
+  await page.context.load();
+  const html = page.elements.get("#app").innerHTML;
+  const cases = html.slice(html.indexOf('id="cases-view"'));
+  const hpe = html.slice(html.indexOf('id="hpe-view"'), html.indexOf('id="cases-view"'));
+  assert.match(cases, /訊達自身導入/);
+  assert.match(cases, /article=material-53/);
+  assert.match(cases, /article=hpe-self-adoption/);
+  assert.doesNotMatch(cases, /案例公開準備中|draft-self-adoption|未核准自身導入|article=material-13|article=material-37/);
+  assert.doesNotMatch(hpe, /article=hpe-self-adoption/);
+  page.context.updateLibrary("xunda-self-adoption", "報價");
+  assert.match(page.elements.get("#library-results").innerHTML, /article=material-53/);
+  assert.doesNotMatch(page.elements.get("#library-results").innerHTML, /draft-self-adoption/);
+  const article = createPage({ records, search: "?article=material-53" });
+  await article.context.load();
+  assert.match(article.elements.get("#app").innerHTML, /href="\.\/#cases">← 返回訊達成功案例/);
+  assert.match(article.elements.get("#app").innerHTML, /訊達自身導入|對照自身導入的條件/);
+});
+
+test("empty Xunda view never adopts legacy industry, demos or HPE cases as successes", async () => {
+  const page = createPage({ records: materials.filter(item => !["xunda-customer-cases", "xunda-self-adoption"].includes(item.topicId)) });
   await page.context.load();
   const cases = page.elements.get("#app").innerHTML.split('id="cases-view"')[1];
   assert.match(cases, /案例公開準備中/);
@@ -257,7 +281,7 @@ test("library keeps all topic definitions but hides empty desktop and mobile fil
       assert.doesNotMatch(html, new RegExp(`<option value="${topic.id}">`));
     }
   }
-  assert.equal(site.tracks.flatMap(track=>track.topics).length,16);
+  assert.equal(site.tracks.flatMap(track=>track.topics).length,17);
 });
 
 test("legacy search and filters migrate to the complete library without losing the selection", async () => {
