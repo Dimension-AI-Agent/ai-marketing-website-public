@@ -32,3 +32,41 @@
   .brand img { width: 122px; }
   .brand span { font-size: 10px; padding-left: 10px; }
 }
+
+.overview-intro{grid-template-columns:.8fr 1.45fr;gap:60px}
+.overview-intro .lead p{margin-bottom:10px}
+.overview-intro .lead p:last-child{margin-bottom:0;color:var(--muted);font-size:15px}
+.step-name{line-height:1.6}
+.step-grid{column-gap:44px}
+.governance{margin:35px 0;padding:30px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.governance h2{font-size:27px;margin-bottom:10px}
+.governance>p{color:var(--muted);font-size:15px;margin-bottom:24px}
+.governance dl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;margin:0}
+.governance dt{font-weight:700;margin-bottom:8px;line-height:1.65}
+.governance dd{margin:0;color:var(--muted);font-size:14px}
+.preparation{display:grid;grid-template-columns:1fr 1.2fr;gap:65px;margin-top:45px;padding:35px 0 5px;border-top:1px solid var(--line)}
+.preparation h2{font-size:27px}
+.preparation p{color:var(--muted);font-size:15px}
+.preparation .text-link{font-size:14px;line-height:1.8;display:inline-flex;align-items:center;gap:10px}
+.preparation ul{list-style:none;padding:0;margin:0}
+.preparation li{margin:0;padding:13px 0;border-bottom:1px solid var(--line);font-size:15px}
+.preparation li:first-child{padding-top:0}
+.participants p{margin-bottom:0;color:var(--muted)}
+.decision-notes{padding:26px 0 0;border-top:1px solid var(--line)}
+.decision-notes h2{margin-bottom:20px}
+.decision-notes dl{margin:0;display:grid;gap:20px}
+.decision-notes dt{font-weight:700;font-size:15px;margin-bottom:5px}
+.decision-notes dd{margin:0;color:var(--muted);font-size:15px}
+.scenario-guide{display:inline-flex;gap:10px;align-items:center;margin-top:20px;font-size:14px}
+.scenario-bottom .primary{margin-right:24px}
+@media(max-width:1000px){.overview-intro{gap:32px;grid-template-columns:.85fr 1.25fr}.preparation{gap:35px}.governance dl{gap:22px}}
+@media(max-width:700px){
+  .overview-intro{display:block}.overview-intro .lead p:last-child{font-size:14px}
+  .governance{margin:29px 0;padding:24px 0}.governance h2,.preparation h2{font-size:23px}
+  .governance dl{grid-template-columns:1fr;gap:21px}.governance>p{font-size:14px;margin-bottom:21px}
+  .governance dt{font-size:15px}.governance dd{font-size:14px}
+  .preparation{grid-template-columns:1fr;gap:25px;margin-top:30px;padding-top:25px}
+  .preparation p{font-size:14px;margin-bottom:18px}.preparation li{font-size:14px}
+  .participants p{font-size:15px}.decision-notes{padding-top:24px}
+  .scenario-guide{font-size:13px}.scenario-bottom .primary{margin-right:0}
+}
