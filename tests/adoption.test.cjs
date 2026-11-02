@@ -28,16 +28,23 @@ test('the public guide has exactly eight ordered steps and matching scenario row
   }
   const {steps,...rest}=data;
   assert.equal(context.validateAdoptionData(rest),false);
+  for (const mutate of [d=>delete d.steps[0].participants,d=>delete d.steps[3].governance,d=>delete d.steps[6].backtrack,d=>delete d.overview.governance,d=>delete d.overview.preparation]) {
+    const invalid=structuredClone(data);mutate(invalid);assert.equal(context.validateAdoptionData(invalid),false);
+  }
 });
 
 test('overview, all eight details and scenario routes load without changing the homepage view',async()=>{
   const {context,main}=page();await context.loadAdoption();
   assert.match(main.innerHTML,/<h1 id="steps-title">AI導入步驟<\/h1>/);
   assert.equal((main.innerHTML.match(/class="step-entry"/g)||[]).length,8);
+  assert.match(main.innerHTML,/安全、權限與責任，貫穿每一步/);
+  assert.match(main.innerHTML,/href="\.\/#guide"/);
   for(let n=1;n<=8;n++){
     context.location.hash=`#step/${n}`;context.renderAdoption();
     assert.ok(main.innerHTML.includes(`<h1>${data.steps[n-1].title}</h1>`));
     assert.match(main.innerHTML,/應留下的成果|往下一步走的條件/);
+    assert.match(main.innerHTML,/找誰一起做？/);
+    assert.match(main.innerHTML,/什麼時候回頭調整？/);
     assert.ok(main.innerHTML.includes(`href="#scenario/${n}"`));
   }
   context.location.hash='#scenario/5';context.renderAdoption();
@@ -62,7 +69,7 @@ test('JSON text and live article titles are escaped; unpublished and missing lin
 
 test('catalog outage leaves the guide useful; guide failure has retry and can recover',async()=>{
   const catalogFailure=page({catalogOk:false,hash:'#step/4'});await catalogFailure.context.loadAdoption();
-  assert.match(catalogFailure.main.innerHTML,/驗證模型與工作負載/);assert.match(catalogFailure.main.innerHTML,/目前沒有可用的延伸閱讀/);
+  assert.ok(catalogFailure.main.innerHTML.includes(`<h1>${data.steps[3].title}</h1>`));assert.match(catalogFailure.main.innerHTML,/目前沒有可用的延伸閱讀/);
   const invalid=page({guide:{version:1}});await invalid.context.loadAdoption();assert.match(invalid.main.innerHTML,/data-adoption-retry/);
   const failed=page({guideOk:false});await failed.context.loadAdoption();assert.match(failed.main.innerHTML,/暫時無法載入/);
   failed.context.fetch=async url=>({ok:true,json:async()=>url.endsWith('ai-adoption.json')?data:materials});
