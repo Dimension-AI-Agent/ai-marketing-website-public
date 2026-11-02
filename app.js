@@ -40,7 +40,7 @@ const layerMeta = {
   infrastructure: { title: "基礎架構", topics: ["hardware", "software", "competitive-positioning", "industry-trends", "solutions-other"] }
 };
 
-function isXundaCase(item) { return item.topicId === "xunda-customer-cases"; }
+function isXundaCase(item) { return ["xunda-customer-cases", "xunda-self-adoption"].includes(item.topicId); }
 function isHpe(item) { return !isXundaCase(item) && (/\bHPE\b/i.test(item.title) || item.topicId === "hpe-use-cases"); }
 function matchesFilter(item, filter) {
   if (filter === "all") return true;
@@ -128,6 +128,7 @@ function nextActionFor(item) {
     "network-access-security": ["盤點裝置與網路存取條件", "先列出裝置類型、使用者身分與需要保護的網路範圍。", ["哪些裝置需要連入？", "如何確認使用者或裝置身分？", "不同角色可進入哪些網段？"]],
     "industry-cases": ["比對自己的流程條件", "先確認文章中的情境與你的工作流程有多少相似處。", ["你想改善的是哪一段流程？", "目前有哪些系統和交接點？", "哪些結果需要另外驗證？"]],
     "xunda-customer-cases": ["對照案例的導入條件", "把案例中的問題、訊達參與範圍與結果，對照自己的環境。", ["目前遇到的問題與案例有哪些相似處？", "資料、系統與參與人員有哪些差異？", "哪些成果仍需要在自己的環境驗證？"]],
+    "xunda-self-adoption": ["對照自身導入的條件", "把訊達內部實際使用的流程與已確認的改善，對照自己的工作環境。", ["你目前有哪些相似的重複工作？", "需要哪些資料、系統與人工確認？", "哪些改善可以先在小範圍驗證？"]],
     "industry-trends": ["記下需要追蹤的變化", "把趨勢轉成與自己業務或技術環境有關的待確認問題。", ["哪項變化與目前工作有關？", "需要補查哪些原始資料？", "何時再檢視這項判斷？"]]
   };
   const solution = ["hardware", "software", "integrated-solutions", "competitive-positioning", "hpe-use-cases"].includes(item.topicId)
